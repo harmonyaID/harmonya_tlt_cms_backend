@@ -1,0 +1,8 @@
+<?php
+
+$base = base_path("routes/web/features/admin/");
+
+require($base . "auth.php");
+require($base . "access.php");
+require($base . "staff.php");
+require($base . "activity.php");

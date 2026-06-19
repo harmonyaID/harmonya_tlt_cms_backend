@@ -3,6 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use Database\Seeders\Access\AccessPermissionSeeder;
+use Database\Seeders\Access\AccessRoleSeeder;
+use Database\Seeders\Setting\CountrySeeder;
+use Database\Seeders\Staff\StaffSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +18,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // Add seeder class
+            StaffSeeder::class,
+            AccessRoleSeeder::class,
+            AccessPermissionSeeder::class,
+            CountrySeeder::class,
         ]);
     }
 }

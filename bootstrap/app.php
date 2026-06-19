@@ -1,5 +1,7 @@
 <?php
 
+use App\Console\Commands\Member\MemberSubscriptionBillingCommand;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -9,33 +11,27 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(using: function () {
         $namespace = 'App\\Http\\Controllers';
 
-        $version = config('base.conf.version');
-        $service = config('base.conf.service');
-
-        Route::match(['get', 'post'], 'testing', "$namespace\\Controller@testing");
-
-        Route::prefix(config('base.conf.prefix.web') . "/$version/$service")
+        // WEB ADMIN
+        Route::prefix(config('core.prefix.web.admin'))
             ->middleware(['web'])
-            ->namespace("$namespace\\" . config('base.conf.namespace.web'))
-            ->group(base_path('routes/web.php'));
-
-        Route::prefix(config('base.conf.prefix.mobile') . "/$version/$service")
-            ->middleware(['web'])
-            ->namespace("$namespace\\" . config('base.conf.namespace.mobile'))
-            ->group(base_path('routes/mobile.php'));
-
-        Route::prefix(config('base.conf.prefix.mygx') . "/$version/$service")
-            ->middleware(['web'])
-            ->namespace("$namespace\\" . config('base.conf.namespace.mygx'))
-            ->group(base_path('routes/mygx.php'));
+            ->namespace("$namespace\\" . config('core.namespace.web.admin'))
+            ->group(base_path('routes/web/admin.php'));
     })
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->remove([
-            \Illuminate\Http\Middleware\HandleCors::class
+        $middleware->validateCsrfTokens(["*"]);
+
+        $middleware->alias([
+            'auth.web.admin' => \App\Http\Middleware\AuthenticateWebAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->withSchedule(function () {
-        //
+    })
+    ->withSchedule(function (Schedule $schedule) {
+
+        // Member
+        $schedule->command('member:subscription-billing-generate')->dailyAt('00:30');
+
+        // Recommendation
+        $schedule->command('recommendation:partner')->dailyAt('01:30');
+
     })->create();

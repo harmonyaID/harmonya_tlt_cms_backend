@@ -52,13 +52,12 @@ class SaveActivity
     /**
      * @return SaveActivity
      */
-    public function setCaused()
+    public function setCausedBy()
     {
-        // TODO: Change to auth_company_office_ids() after install globalxtreme/laravel-identifier.
-//        if ($user = auth_user()) {
-//            $this->activity->causedBy = $user['id'];
-//            $this->activity->causedByName = $user['fullName'];
-//        }
+        if ($data = created_by()) {
+            $this->activity->causedBy = $data['createdBy'];
+            $this->activity->causedByName = $data['createdByName'];
+        }
 
         return $this;
     }
@@ -114,16 +113,6 @@ class SaveActivity
      */
     public function log(string|null $description = null)
     {
-        if (!$this->activity->causedBy) {
-
-            // TODO: Change to auth_company_office_ids() after install globalxtreme/laravel-identifier.
-//            if ($user = auth_user()) {
-//                $this->activity->causedBy = $user['id'];
-//                $this->activity->causedByName = $user['fullName'];
-//            }
-
-        }
-
         if ($description) {
             $this->setDescription($description);
         }

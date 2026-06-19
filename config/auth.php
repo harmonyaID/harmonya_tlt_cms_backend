@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => env('AUTH_GUARD', 'web-admin'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'staff'),
     ],
 
     /*
@@ -36,9 +36,10 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+        'web-admin' => [
+            'driver' => 'jwt',
+            'provider' => 'staff',
+            'hash' => false
         ],
     ],
 
@@ -60,15 +61,10 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'staff' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', ''),
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+            'model' => \App\Models\Staff\StaffUser::class,
+        ]
     ],
 
     /*
@@ -91,9 +87,21 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+        'staff' => [
+            'provider' => 'staff',
+            'table' => env('AUTH_STAFF_PASSWORD_RESET_TOKEN_TABLE', 'staff_user_passwords'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'partner' => [
+            'provider' => 'partner',
+            'table' => env('AUTH_PARTNER_PASSWORD_RESET_TOKEN_TABLE', 'partner_staff_user_passwords'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'member' => [
+            'provider' => 'member',
+            'table' => env('AUTH_MEMBER_PASSWORD_RESET_TOKEN_TABLE', 'member_user_passwords'),
             'expire' => 60,
             'throttle' => 60,
         ],
@@ -111,5 +119,17 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+
+    'password_default' => env('AUTH_PASSWORD_DEFAULT', 'adminnewin101'),
+    'password_default_partner' => env('AUTH_PASSWORD_DEFAULT', 'partnernewin101'),
+    'password_default_member' => env('AUTH_PASSWORD_DEFAULT', 'membernewin101'),
+
+    'forgot-password-link' => [
+        'staff' => env('FORGOT_PASSWORD_LINK_STAFF', ''),
+        'partner' => env('FORGOT_PASSWORD_LINK_PARTNER', ''),
+        'member' => env('FORGOT_PASSWORD_LINK_MEMBER', ''),
+    ],
+
+    'with-permission' => env('WITH_PERMISSION', false)
 
 ];

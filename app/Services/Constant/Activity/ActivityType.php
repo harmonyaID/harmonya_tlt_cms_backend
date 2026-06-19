@@ -6,12 +6,11 @@ use App\Services\Constant\BaseCodeName;
 
 class ActivityType extends BaseCodeName
 {
-    const GENERAL = 'general';
-    const COMPONENT = 'component';
-
+    const ACCESS = 'access';
+    const STAFF = 'staff';
     const OPTION = [
-        self::GENERAL,
-        self::COMPONENT,
+        self::ACCESS,
+        self::STAFF,
     ];
 
 }

@@ -5,9 +5,11 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.2",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "yusologia/lara-core": "^1.0",
+        "php-open-source-saver/jwt-auth": "^2.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -35,7 +37,17 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "app/Services/Helpers/activity.php",
+            "app/Services/Helpers/helpers.php",
+
+            "app/Services/Helpers/Status/globals.php",
+            "app/Services/Helpers/Status/auth.php",
+            "app/Services/Helpers/Status/access.php",
+            "app/Services/Helpers/Status/staff.php",
+            "app/Services/Helpers/Status/setting.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [

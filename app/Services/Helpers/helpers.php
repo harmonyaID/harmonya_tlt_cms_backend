@@ -1,104 +1,127 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-
-if (!function_exists('filename')) {
+if (!function_exists('has_role_staff')) {
 
     /**
-     * @param $file
-     * @param $text
-     * @param $keyId
-     * @param string|null $extension
+     * @param $name
+     * @param $account
+     * @param bool $useException
      *
-     * @return string
+     * @return bool
      */
-    function filename($file, $text, $keyId = null, string|null $extension = null): string
+    function has_role_staff($name, $account = null, bool $useException = true): bool
     {
-        return ($keyId ? "$keyId-" : "") . Str::random(20) . str_shuffle(str_replace(' ', '', $text)) . '.' . ($extension ?: $file->getClientOriginalExtension());
+        if (!$account) {
+            $account = get_account();
+            if (!$account) {
+                if ($useException) {
+                    errPermissionRestricted();
+                }
+
+                return false;
+            }
+        }
+
+        if ($account->isSuperadmin) {
+            return true;
+        }
+
+        if (!$account->hasRole($name)) {
+            if ($useException) {
+                errPermissionRestricted();
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
 }
 
-if (!function_exists('convert_string_to_array')) {
+if (!function_exists('has_permission_staff')) {
 
     /**
-     * @param string|array|null $values
+     * @param $name
+     * @param $account
+     * @param bool $useException
      *
+     * @return bool
+     */
+    function has_permission_staff($name, $account = null, bool $useException = true): bool
+    {
+        if (!$account) {
+            $account = get_account();
+            if (!$account) {
+                if ($useException) {
+                    errPermissionRestricted();
+                }
+
+                return false;
+            }
+        }
+
+        if ($account->isSuperadmin) {
+            return true;
+        }
+
+        if (!$account->hasPermission($name)) {
+            if ($useException) {
+                errPermissionRestricted();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+}
+
+if (!function_exists("created_by")) {
+
+    /**
      * @return array
      */
-    function convert_string_to_array(string|array|null $values = null): array
+    function created_by()
     {
-        if (!$values) {
-            return [];
-        }
-
-        if (is_array($values)) {
-            return $values;
-        }
-
-        $values = preg_replace('/[^A-Za-z0-9\-]/', ' ', $values);
-        $values = preg_replace('/\s+/', ' ', $values);
-
-        $values = explode(" ", $values);
-        return collect($values)->filter(function ($value) {
-            return $value;
-        })->values()->toArray();
+        return request()->createdByAccount;
     }
 
 }
 
-if (!function_exists("snake_to_camel_case")) {
+if (!function_exists("get_auth")) {
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
-    function snake_to_camel_case(string $text)
+    function get_auth()
     {
-        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $text))));
-    }
-
-}
-
-if (!function_exists("alphabet_from_number")) {
-
-    /**
-     * @param float|int|string $number
-     *
-     * @return bool `true` if $long is valid, `false` if not
-     */
-    function alphabet_from_number($number, $less = 0)
-    {
-        // Set default start number
-        $defaultNumber = 0;
-
-        $alphabet = 'A';
-        for ($i = $alphabet; $defaultNumber <= $number; $i++) {
-            if ($defaultNumber == ($number - $less)) {
-                return $i;
+        $user = null;
+        foreach (config('auth.guards') as $guard => $item) {
+            $user = Auth::guard($guard)->user();
+            if ($user) {
+                break;
             }
-            $defaultNumber++;
         }
-        return null;
+
+        if (!$user) {
+            errUnauthenticated("User not found");
+        }
+
+        return $user;
     }
 
 }
 
-if (!function_exists("storage_link")) {
+if (!function_exists("get_account")) {
 
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    function storage_link(string $path)
+    function get_account()
     {
-        if (!$path) {
+        $user = get_auth();
+        if (!$user) {
             return null;
         }
 
-        return config('base.conf.storage-link') . $path;
+        return $user->account;
     }
-
 }

@@ -3,7 +3,7 @@
 namespace Database\Migrations\Traits;
 
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
+use function Laravel\Prompts\table;
 
 trait HasCustomMigration
 {
@@ -26,36 +26,32 @@ trait HasCustomMigration
      */
     public function getDefaultCreatedBy(Blueprint $table)
     {
-        $table->char('createdBy')->nullable();
-        $table->string('createdByName')->nullable();
+        $table->bigInteger('createdBy')->nullable();
+        $table->string('createdByName', 250)->nullable();
     }
 
     /**
-     * @param $from
-     * @param $owner
-     * @param $connection
+     * @param Blueprint $table
      *
      * @return void
      */
-    public function changeOwner($from = null, $to = null, $connection = null)
+    public function getDefaultUpdatedBy(Blueprint $table)
     {
-        if (!$from) {
-            $from = env('DB_USERNAME');
-        }
+        $table->bigInteger('updatedBy')->nullable();
+        $table->string('updatedByName', 250)->nullable();
+    }
 
-        if (!$to) {
-            $to = env("DB_OWNER");
-        }
-
-        if ($from && $to) {
-            $query = sprintf("REASSIGN OWNED BY %s TO %s", $from, $to);
-
-            if ($connection) {
-                DB::connection($connection)->statement($query);
-            } else {
-                DB::statement($query);
-            }
-        }
+    /**
+     * @param Blueprint $table
+     * @param $column
+     * @param $precision
+     * @param $scale
+     *
+     * @return \Illuminate\Database\Schema\ColumnDefinition
+     */
+    public function floatCustom(Blueprint $table, $column, $precision = 53, $scale = 2): \Illuminate\Database\Schema\ColumnDefinition
+    {
+        return $table->addColumn('float', $column, compact('precision', 'scale'));
     }
 
 }
