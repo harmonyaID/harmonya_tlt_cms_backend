@@ -21,8 +21,13 @@ class AccessPermissionName
     const STAFF_STAFF_CREATE = AccessGroup::STAFF . '.staff.create';
     const STAFF_STAFF_UPDATE = AccessGroup::STAFF . '.staff.update';
     const STAFF_STAFF_DELETE = AccessGroup::STAFF . '.staff.delete';
+    const STAFF_PAGE= AccessGroup::STAFF . '.page.*';
+    const STAFF_PAGE_VIEW = AccessGroup::STAFF . '.page.view';
+    const STAFF_PAGE_CREATE = AccessGroup::STAFF . '.page.create';
+    const STAFF_PAGE_UPDATE = AccessGroup::STAFF . '.page.update';
+    const STAFF_PAGE_DELETE = AccessGroup::STAFF . '.page.delete';
 
-     // Access
+    // Access
     const STAFF_ACCESS = AccessGroup::STAFF . '.access.*';
     const STAFF_ACCESS_VIEW = AccessGroup::STAFF . '.access.view';
     const STAFF_ACCESS_UPDATE = AccessGroup::STAFF . '.access.update';
@@ -40,6 +45,11 @@ class AccessPermissionName
         self::STAFF_STAFF_CREATE,
         self::STAFF_STAFF_UPDATE,
         self::STAFF_STAFF_DELETE,
+        self::STAFF_PAGE,
+        self::STAFF_PAGE_VIEW,
+        self::STAFF_PAGE_CREATE,
+        self::STAFF_PAGE_UPDATE,
+        self::STAFF_PAGE_DELETE,
 
         self::STAFF_ACCESS,
         self::STAFF_ACCESS_VIEW,

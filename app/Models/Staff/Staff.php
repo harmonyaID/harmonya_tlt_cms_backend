@@ -45,16 +45,6 @@ class Staff extends BaseModel
         return $this->belongsTo(SettingCountry::class, 'countryId');
     }
 
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(NotificationStaff::class, 'staffId');
-    }
-
-    public function notificationTokens(): HasMany
-    {
-        return $this->hasMany(NotificationStaffToken::class, 'staffId');
-    }
-
 
     /** --- SCOPES --- */
 

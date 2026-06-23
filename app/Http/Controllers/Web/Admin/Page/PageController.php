@@ -1,18 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Web\Admin\Staff;
+namespace App\Http\Controllers\Web\Admin\Page;
 
 use App\Algorithms\Staff\StaffAlgo;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ActivationRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Staff\StaffRequest;
+use App\Models\Page\Page;
 use App\Models\Staff\Staff;
+use App\Parser\Page\PageParser;
 use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-class StaffController extends Controller
+class PageController extends Controller
 {
     public function __construct()
     {
@@ -20,31 +24,31 @@ class StaffController extends Controller
 
             // VIEW
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_ACCESS_VIEW);
+                has_permission_staff(AccessPermissionName::STAFF_PAGE_VIEW);
                 return $next($request);
             })->only(['get', 'detail']);
 
             // CREATE
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_STAFF_CREATE);
+                has_permission_staff(AccessPermissionName::STAFF_PAGE_CREATE);
                 return $next($request);
             })->only(['create']);
 
             // UPDATE
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_STAFF_UPDATE);
+                has_permission_staff(AccessPermissionName::STAFF_PAGE_UPDATE);
                 return $next($request);
             })->only(['update', 'activation', 'changePassword']);
 
             // DELETE
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_STAFF_DELETE);
+                has_permission_staff(AccessPermissionName::STAFF_PAGE_DELETE);
                 return $next($request);
             })->only(['delete']);
 
             // ADMIN
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_STAFF);
+                has_permission_staff(AccessPermissionName::STAFF_PAGE);
                 return $next($request);
             })->only(['updateSuperadmin']);
 
@@ -59,8 +63,25 @@ class StaffController extends Controller
      */
     public function get(Request $request)
     {
-        $staffs = Staff::filter($request)->getOrPaginate($request);
-        return success(StaffParser::briefs($staffs), pagination: pagination($staffs));
+        $pages = Page::filter($request)->getOrPaginate($request, true);
+        $pages->map(function ($item){
+            if ($item->featuredImage){
+                $item['featuredImage'] = Storage::url(PathConstant::IMAGES_PAGE ."/". $item->featuredImage);
+            }
+            $item['seoImage'] = '';
+            if ($item->seo){
+                if ($item->seo->image)
+                    $item['seoImage'] = Storage::url(PathConstant::IMAGES_PAGE ."/". $item->seo->image);
+            }
+        });
+
+        if (!$pages || count($pages) == 0) {
+            return errPageGet();
+        }
+
+        return success(PageParser::briefs($pages), pagination: pagination($pages));
+
+        return success(null, null, $page);
     }
 
     /**
@@ -70,7 +91,12 @@ class StaffController extends Controller
      */
     public function detail($id)
     {
-        
+        $staff = Staff::find($id);
+        if (!$staff) {
+            errStaffGet();
+        }
+
+        return success($staff);
     }
 
     /**
