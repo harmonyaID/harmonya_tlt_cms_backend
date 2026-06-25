@@ -64,16 +64,6 @@ class StaffController extends Controller
     }
 
     /**
-     * @param $id
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed
-     */
-    public function detail($id)
-    {
-        
-    }
-
-    /**
      * @param StaffRequest $request
      *
      * @return \Illuminate\Http\JsonResponse|mixed|null
