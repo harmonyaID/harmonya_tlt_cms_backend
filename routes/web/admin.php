@@ -9,3 +9,4 @@ require($base . "activity.php");
 require($base . "page.php");
 require($base . "language.php");
 require($base . "configuration.php");
+require($base . "component.php");
