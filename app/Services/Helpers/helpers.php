@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Language\Translation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 if (!function_exists('has_role_staff')) {
@@ -124,4 +125,53 @@ if (!function_exists("get_account")) {
 
         return $user->account;
     }
+}
+
+if (!function_exists('filename')) {
+
+    /**
+     * @param $file
+     * @param $text
+     *
+     * @return string
+     */
+    function filename($file, $text)
+    {
+        return Str::random(20) . str_shuffle(str_replace(' ', '', $text)) . '.' . $file->getClientOriginalExtension();
+    }
+
+}
+
+if (!function_exists("translations")) {
+
+    /**
+     * @param $key
+     *
+     * @return array|mixed
+     */
+    function translations($key)
+    {
+        $translations = config('app.translations');
+
+        if (count($translations) > 0) {
+            $translation = collect($translations)->where('key', $key)->first();
+        } else {
+            $translation = Translation::findByKey($key);
+        }
+
+        return optional($translation)->translations ?: [];
+    }
+
+}
+
+if (!function_exists("locale")) {
+
+    /**
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    function locale()
+    {
+        return config('app.locale') ?: config('app.fallback_locale');
+    }
+
 }

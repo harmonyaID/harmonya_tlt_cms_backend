@@ -59,4 +59,24 @@ class PathConstant
     const PDF_PROPERTY = 'PDFs/properties/';
     const PDF_PROPERTY_AGREEMENT = 'PDFs/properties/agreements/';
 
+    /*
+     |--------------------------------------------------------------------------
+     | IMAGE PATH
+     |-------------------------------------------------------------------------
+     */
+
+    public static function IMAGES_LANGUAGE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_LANGUAGE);
+    }
+    /*
+     |--------------------------------------------------------------------------
+     | LANGUAGE PATH
+     |-------------------------------------------------------------------------
+     */
+    public static function LANG_STORAGE_PUBLIC_PATH($locale)
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::LANG . $locale . '/');
+    }
+
 }

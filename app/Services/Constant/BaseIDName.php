@@ -2,8 +2,17 @@
 
 namespace App\Services\Constant;
 
+use Illuminate\Support\Str;
+
 class BaseIDName
 {
+    private const CAPITALS = [
+        'NPWP',
+        'NPWPD',
+        'KTP',
+        'PBB',
+    ];
+
     const UNKNOWN = 'unknown';
 
     const OPTION = [
@@ -60,6 +69,53 @@ class BaseIDName
         }
 
         return ['id' => $id, 'name' => static::display($id)];
+    }
+
+        /**
+     * @param $const
+     * @param $transKey
+     *
+     * @return mixed|string
+     */
+    public static function customDisplay($const, $transKey = null)
+    {
+        if ($transKey) {
+            $translations = translations($transKey);
+            if (count($translations) > 0) {
+
+                if (array_key_exists(locale(), $translations)) {
+                    $value = $translations[locale()];
+                    if ($value) {
+                        return $value;
+                    }
+                }
+
+            }
+        }
+
+        $const = str_replace("_", " ", $const);
+        return self::identify(Str::title($const));
+    }
+
+    
+
+    /**
+     * @param $text
+     *
+     * @return string
+     */
+    public static function identify($text)
+    {
+        foreach (self::CAPITALS as $CAPITAL) {
+
+            $capitalTitle = Str::title($CAPITAL);
+            if (stripos($text, $capitalTitle) !== false) {
+                $text = str_replace($capitalTitle, $CAPITAL, $text);
+            }
+
+        }
+
+        return $text;
     }
 
 }
