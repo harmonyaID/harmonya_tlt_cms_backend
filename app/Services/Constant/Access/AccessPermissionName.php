@@ -39,6 +39,11 @@ class AccessPermissionName
     const STAFF_LANGUAGE_UPDATE = AccessGroup::STAFF . '.language.update';
     const STAFF_LANGUAGE_DELETE = AccessGroup::STAFF . '.language.delete';
 
+    // Configuration
+    const STAFF_CONFIGURATION = AccessGroup::STAFF . '.configuration.*';
+    const STAFF_CONFIGURATION_VIEW = AccessGroup::STAFF . '.configuration.view';
+    const STAFF_CONFIGURATION_UPDATE = AccessGroup::STAFF . '.configuration.update';
+
     /** --- OPTIONS --- */
 
     const STAFF_OPTION = [
@@ -62,12 +67,15 @@ class AccessPermissionName
         self::STAFF_ACCESS_VIEW,
         self::STAFF_ACCESS_UPDATE,
 
-
         self::STAFF_LANGUAGE,
         self::STAFF_LANGUAGE_VIEW,
         self::STAFF_LANGUAGE_CREATE,
         self::STAFF_LANGUAGE_UPDATE,
-        self::STAFF_LANGUAGE_DELETE
+        self::STAFF_LANGUAGE_DELETE,
+
+        self::STAFF_CONFIGURATION,
+        self::STAFF_CONFIGURATION_VIEW,
+        self::STAFF_CONFIGURATION_UPDATE,
     ];
 
     /** --- FUNCTIONS --- */
