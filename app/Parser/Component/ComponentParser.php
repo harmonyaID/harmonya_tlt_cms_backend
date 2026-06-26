@@ -2,7 +2,7 @@
 
 namespace App\Parser\Component;
 
-use GlobalXtreme\Parser\BaseParser;
+use Logia\Core\Parser\BaseParser;
 
 class ComponentParser extends BaseParser
 {

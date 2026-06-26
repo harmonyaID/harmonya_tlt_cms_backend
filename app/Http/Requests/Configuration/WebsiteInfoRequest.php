@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Configuration;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Logia\Core\Validation\Support\FormRequest;
 
 class WebsiteInfoRequest extends FormRequest
 {
