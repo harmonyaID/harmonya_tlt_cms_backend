@@ -97,7 +97,7 @@ class AuthenticationAlgo
             }
 
             if ($user->password) {
-                if (!Hash::check($request->oldPassword, $user->password)) {
+                if (!Hash::check($request->currentPassword, $user->password)) {
                     errAuthChangePassword("Your old password is wrong!!");
                 }
             }
