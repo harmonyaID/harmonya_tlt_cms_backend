@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_website_contact_forms', function (Blueprint $table) {
+        Schema::create('website_contact_forms', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('formTypeId')->nullable();
