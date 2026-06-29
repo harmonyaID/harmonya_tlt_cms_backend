@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Language;
 
-use Illuminate\Foundation\Http\FormRequest ;
+use Logia\Core\Validation\Support\FormRequest;
 
 class LanguageGroupRequest extends FormRequest
 {

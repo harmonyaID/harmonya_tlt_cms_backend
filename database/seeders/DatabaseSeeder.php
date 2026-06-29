@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             StaffSeeder::class,
             AccessRoleSeeder::class,
             AccessPermissionSeeder::class,
-            // CountrySeeder::class,
+            CountrySeeder::class,
             LanguageGroupSeeder::class,
             LanguageSeeder::class,
             TranslatorSeeder::class,

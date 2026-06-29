@@ -46,7 +46,7 @@ trait HasActivity
 
     public function saveActivity(string|null $description = null)
     {
-        $type = ActivityType::GENERAL;
+        $type = "GENERAL";
         if (method_exists($this, "getActivityType")) {
             $type = $this->getActivityType();
         }

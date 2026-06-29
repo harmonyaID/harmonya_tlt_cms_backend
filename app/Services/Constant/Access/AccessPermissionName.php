@@ -44,6 +44,33 @@ class AccessPermissionName
     const STAFF_CONFIGURATION_VIEW = AccessGroup::STAFF . '.configuration.view';
     const STAFF_CONFIGURATION_UPDATE = AccessGroup::STAFF . '.configuration.update';
 
+    // Media Partner
+    const STAFF_MEDIA_PARTNER = AccessGroup::STAFF . '.media-partner.*';
+    const STAFF_MEDIA_PARTNER_VIEW = AccessGroup::STAFF . '.media-partner.view';
+    const STAFF_MEDIA_PARTNER_CREATE = AccessGroup::STAFF . '.media-partner.create';
+    const STAFF_MEDIA_PARTNER_UPDATE = AccessGroup::STAFF . '.media-partner.update';
+    const STAFF_MEDIA_PARTNER_DELETE = AccessGroup::STAFF . '.media-partner.delete';
+
+    // Website Contact Form
+    const STAFF_WEBSITE_CONTACT_FORM = AccessGroup::STAFF . '.website-contact-form.*';
+    const STAFF_WEBSITE_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.website-contact-form.view';
+    const STAFF_WEBSITE_CONTACT_FORM_CREATE = AccessGroup::STAFF . '.website-contact-form.create';
+    const STAFF_WEBSITE_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.website-contact-form.update';
+    const STAFF_WEBSITE_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.website-contact-form.delete';
+
+    // TLT Review
+    const STAFF_TLT_REVIEW = AccessGroup::STAFF . '.tlt-review.*';
+    const STAFF_TLT_REVIEW_VIEW = AccessGroup::STAFF . '.tlt-review.view';
+    const STAFF_TLT_REVIEW_CREATE = AccessGroup::STAFF . '.tlt-review.create';
+    const STAFF_TLT_REVIEW_UPDATE = AccessGroup::STAFF . '.tlt-review.update';
+    const STAFF_TLT_REVIEW_DELETE = AccessGroup::STAFF . '.tlt-review.delete';
+
+    // FAQ
+    const STAFF_FAQ        = AccessGroup::STAFF . '.faq.*';
+    const STAFF_FAQ_VIEW   = AccessGroup::STAFF . '.faq.view';
+    const STAFF_FAQ_CREATE = AccessGroup::STAFF . '.faq.create';
+    const STAFF_FAQ_UPDATE = AccessGroup::STAFF . '.faq.update';
+    const STAFF_FAQ_DELETE = AccessGroup::STAFF . '.faq.delete';
     /** --- OPTIONS --- */
 
     const STAFF_OPTION = [
@@ -76,6 +103,32 @@ class AccessPermissionName
         self::STAFF_CONFIGURATION,
         self::STAFF_CONFIGURATION_VIEW,
         self::STAFF_CONFIGURATION_UPDATE,
+
+        self::STAFF_MEDIA_PARTNER,
+        self::STAFF_MEDIA_PARTNER_VIEW,
+        self::STAFF_MEDIA_PARTNER_CREATE,
+        self::STAFF_MEDIA_PARTNER_UPDATE,
+        self::STAFF_MEDIA_PARTNER_DELETE,
+
+        self::STAFF_WEBSITE_CONTACT_FORM,
+        self::STAFF_WEBSITE_CONTACT_FORM_VIEW,
+        self::STAFF_WEBSITE_CONTACT_FORM_CREATE,
+        self::STAFF_WEBSITE_CONTACT_FORM_UPDATE,
+        self::STAFF_WEBSITE_CONTACT_FORM_DELETE,
+
+        self::STAFF_TLT_REVIEW,
+        self::STAFF_TLT_REVIEW_VIEW,
+        self::STAFF_TLT_REVIEW_CREATE,
+        self::STAFF_TLT_REVIEW_UPDATE,
+        self::STAFF_TLT_REVIEW_DELETE,
+
+        self::STAFF_FAQ,
+        self::STAFF_FAQ_VIEW,
+        self::STAFF_FAQ_CREATE,
+        self::STAFF_FAQ_UPDATE,
+        self::STAFF_FAQ_DELETE,
+
+
     ];
 
     /** --- FUNCTIONS --- */

@@ -46,7 +46,15 @@
             "app/Services/Helpers/Status/auth.php",
             "app/Services/Helpers/Status/access.php",
             "app/Services/Helpers/Status/staff.php",
-            "app/Services/Helpers/Status/setting.php"
+            "app/Services/Helpers/Status/setting.php",
+            "app/Services/Helpers/Status/mediaPartner.php",
+            "app/Services/Helpers/Status/configuration.php",
+            "app/Services/Helpers/Status/language.php",
+            "app/Services/Helpers/Status/page.php",
+            "app/Services/Helpers/Status/websiteContactForm.php",
+            "app/Services/Helpers/Status/tltReview.php",
+            "app/Services/Helpers/Status/faq.php"
+
         ]
     },
     "scripts": {

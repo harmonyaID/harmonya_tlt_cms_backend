@@ -53,4 +53,42 @@ class AuthenticationController extends Controller
         $algo = new AuthenticationAlgo($this->guard);
         return $algo->logout();
     }
+
+    /**
+     * @param ChangePasswordRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed|null
+     * @throws \Logia\Core\Exception\ErrorException
+     */
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $algo = new AuthenticationAlgo($this->guard);
+        return $algo->changePassword($request);
+    }
+
+    /**
+     * @param ForgotPasswordRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed|null
+     * @throws \Logia\Core\Exception\ErrorException
+     */
+    public function forgotPassword(ForgotPasswordRequest $request)
+    {
+        $algo = new AuthenticationAlgo($this->guard);
+        return $algo->forgotPassword(StaffUser::class, $request);
+    }
+
+    /**
+     * @param $token
+     * @param ResetPasswordRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed|null
+     * @throws \Logia\Core\Exception\ErrorException
+     */
+    public function resetPassword($token, ResetPasswordRequest $request)
+    {
+        $algo = new AuthenticationAlgo($this->guard);
+        return $algo->resetPassword(StaffUserPassword::class, $token, $request);
+    }
+
 }
