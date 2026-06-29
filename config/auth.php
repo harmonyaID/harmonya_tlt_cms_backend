@@ -120,9 +120,9 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
-    'password_default' => env('AUTH_PASSWORD_DEFAULT', 'adminnewin101'),
-    'password_default_partner' => env('AUTH_PASSWORD_DEFAULT', 'partnernewin101'),
-    'password_default_member' => env('AUTH_PASSWORD_DEFAULT', 'membernewin101'),
+    'password_default' => env('AUTH_PASSWORD_DEFAULT', 'admin123'),
+    'password_default_partner' => env('AUTH_PASSWORD_DEFAULT', 'partner123'),
+    'password_default_member' => env('AUTH_PASSWORD_DEFAULT', 'member123'),
 
     'forgot-password-link' => [
         'staff' => env('FORGOT_PASSWORD_LINK_STAFF', ''),
