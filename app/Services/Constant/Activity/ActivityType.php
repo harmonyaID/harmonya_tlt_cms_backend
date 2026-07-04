@@ -13,6 +13,9 @@ class ActivityType extends BaseCodeName
     const WEBSITE_CONTACT_FORM = 'website_contact_form';
     const TLT_REVIEW = 'tlt_review';
     const FAQ = 'faq';
+    const BOAT = 'boat';
+    const BOAT_TYPE = 'boat_type';
+    const BOAT_CONTACT_FORM = 'boat_contact_form';
 
     const OPTION = [
         self::ACCESS,
@@ -21,7 +24,10 @@ class ActivityType extends BaseCodeName
         self::MEDIA_PARTNER,
         self::WEBSITE_CONTACT_FORM,
         self::TLT_REVIEW,
-        self::FAQ
+        self::FAQ,
+        self::BOAT, 
+        self::BOAT_TYPE, 
+        self::BOAT_CONTACT_FORM
 
 
     ];

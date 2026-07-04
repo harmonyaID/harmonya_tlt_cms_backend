@@ -52,6 +52,7 @@ class PathConstant
 
     const IMAGES_MEDIA_PARTNER = 'images/media-partners/';
     const IMAGES_TLT_REVIEW = 'images/tlt-reviews/';
+    const IMAGES_BOAT = 'images/boats/';
 
 
     /*
@@ -72,7 +73,7 @@ class PathConstant
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_LANGUAGE);
     }
-    
+
     public static function IMAGES_MEDIA_PARTNER_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_MEDIA_PARTNER);
@@ -81,6 +82,11 @@ class PathConstant
     public static function IMAGES_TLT_REVIEW_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_TLT_REVIEW);
+    }
+
+    public static function IMAGES_BOAT_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT);
     }
 
     /*
@@ -92,5 +98,4 @@ class PathConstant
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::LANG . $locale . '/');
     }
-
 }
