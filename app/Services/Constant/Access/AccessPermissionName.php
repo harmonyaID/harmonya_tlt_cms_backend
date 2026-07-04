@@ -73,6 +73,27 @@ class AccessPermissionName
     const STAFF_FAQ_DELETE = AccessGroup::STAFF . '.faq.delete';
     /** --- OPTIONS --- */
 
+    // Boat
+    const STAFF_BOAT = AccessGroup::STAFF . '.boat.*';
+    const STAFF_BOAT_VIEW = AccessGroup::STAFF . '.boat.view';
+    const STAFF_BOAT_CREATE = AccessGroup::STAFF . '.boat.create';
+    const STAFF_BOAT_UPDATE = AccessGroup::STAFF . '.boat.update';
+    const STAFF_BOAT_DELETE = AccessGroup::STAFF . '.boat.delete';
+
+    // Boat Type
+    const STAFF_BOAT_TYPE = AccessGroup::STAFF . '.boat-type.*';
+    const STAFF_BOAT_TYPE_VIEW = AccessGroup::STAFF . '.boat-type.view';
+    const STAFF_BOAT_TYPE_CREATE = AccessGroup::STAFF . '.boat-type.create';
+    const STAFF_BOAT_TYPE_UPDATE = AccessGroup::STAFF . '.boat-type.update';
+    const STAFF_BOAT_TYPE_DELETE = AccessGroup::STAFF . '.boat-type.delete';
+
+    // Boat Contact Form
+    const STAFF_BOAT_CONTACT_FORM = AccessGroup::STAFF . '.boat-contact-form.*';
+    const STAFF_BOAT_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.boat-contact-form.view';
+    const STAFF_BOAT_CONTACT_FORM_CREATE = AccessGroup::STAFF . '.boat-contact-form.create';
+    const STAFF_BOAT_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.boat-contact-form.update';
+    const STAFF_BOAT_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.boat-contact-form.delete';
+    
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
