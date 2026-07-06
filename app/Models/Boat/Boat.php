@@ -4,7 +4,9 @@ namespace App\Models\Boat;
 
 use App\Models\BaseModel;
 use App\Parser\Boat\BoatParser;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Boat extends BaseModel
@@ -44,6 +46,11 @@ class Boat extends BaseModel
     {
         return $this->hasMany(BoatCustomInformation::class, 'boatId')->orderBy('order');
     }
+    
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(BoatComponentType::class, 'boatComponentTypeId');
+    }
 
     /*
      |--------------------------------------------------------------------------
@@ -66,7 +73,6 @@ class Boat extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
-
         })->orderBy('id', 'DESC');
     }
 }

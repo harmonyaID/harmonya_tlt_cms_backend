@@ -39,19 +39,18 @@ class BoatController extends Controller
                 has_permission_staff(AccessPermissionName::STAFF_BOAT_DELETE);
                 return $next($request);
             })->only(['delete']);
-
         }
     }
 
     public function get(Request $request)
     {
-        $boats = Boat::filter($request)->with(['photos', 'customInformations'])->getOrPaginate($request);
+        $boats = Boat::filter($request)->with(['type', 'photos', 'customInformations'])->getOrPaginate($request);
         return success(BoatParser::briefs($boats), pagination: pagination($boats));
     }
 
     public function detail($id)
     {
-        $boat = Boat::with(['photos', 'customInformations'])->find($id);
+        $boat = Boat::with(['type', 'photos', 'customInformations'])->find($id);
         if (!$boat) errBoatGet();
 
         return success(BoatParser::first($boat));

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Boat;
 
+use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
 class BoatRequest extends FormRequest
@@ -14,7 +15,11 @@ class BoatRequest extends FormRequest
     public function rules()
     {
         return [
-            'boatComponentTypeId'  => 'required|integer|exists:boat_component_types,id',
+            'boatComponentTypeId'  => [
+                'required',
+                'integer',
+                Rule::exists('boat_component_types', 'id')->whereNull('deletedAt'),
+            ],
             'description'          => 'nullable|string',
             'isActive'             => 'required|boolean',
 

@@ -36,9 +36,18 @@ class BoatParser extends BaseParser
             $promoPhotos[] = Storage::disk('public')->url(PathConstant::IMAGES_BOAT_PROMO . $photo);
         }
 
+        $boatComponentType = null;
+
+        if (isset($data->type)) {
+            $boatComponentType = [
+                'id'   => $data->boatComponentTypeId,
+                'name' => optional($data->type)->name,
+            ];
+        }
+
         return [
             'id'                  => $data->id,
-            'boatComponentTypeId' => $data->boatComponentTypeId,
+            'boatComponentType'   => $boatComponentType,
             'description'         => $data->description,
             'promoPhotos'         => $promoPhotos,
             'priceFile'           => $data->priceFile
@@ -71,7 +80,8 @@ class BoatParser extends BaseParser
 
         return [
             'id'                  => $data->id,
-            'boatComponentTypeId' => $data->boatComponentTypeId,
+            'boatComponentTypeId'   => $data->boatComponentTypeId,
+            'boatComponentTypeName' => optional($data->type)->name,
             'promoPhotos'         => $promoPhotos,
             'photos'              => $photos,
             'isActive'            => $data->isActive,
