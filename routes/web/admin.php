@@ -15,5 +15,4 @@ require($base . "website-contact-form.php");
 require($base . "tlt-review.php");
 require($base . "faq.php");
 require($base . "boat.php");
-require($base . "boat-type.php");
 require($base . "boat-contact-form.php");

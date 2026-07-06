@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Boat;
 
+use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
 class BoatRequest extends FormRequest
@@ -14,22 +15,35 @@ class BoatRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'routeFrom' => 'nullable|string',
-            'routeTo' => 'nullable|string',
-            'departureTimesFromBali' => 'nullable|array',
-            'departureTimesFromBali.*' => 'string',
-            'departureTimesFromLembongan' => 'nullable|array',
-            'departureTimesFromLembongan.*' => 'string',
-            'notes' => 'nullable|string',
-            'discountPercentage' => 'nullable|integer|min:0|max:100',
-            'isActive' => 'required|boolean',
+            'boatComponentTypeId'  => [
+                'required',
+                'integer',
+                Rule::exists('boat_component_types', 'id')->whereNull('deletedAt'),
+            ],
+            'description'          => 'nullable|string',
+            'isActive'             => 'required|boolean',
 
-            'photos' => 'nullable|array',
-            'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
-            'deletePhotoIds' => 'nullable|array',
-            'deletePhotoIds.*' => 'integer|exists:boat_photos,id',
+            // price file
+            'priceFile'            => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
+
+            // promo photos (json) — kirim ulang semua saat ganti
+            'promoPhotos'          => 'nullable|array',
+            'promoPhotos.*'        => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+
+            // photos
+            'photos'               => 'nullable|array',
+            'photos.*'             => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+
+            // hapus foto tertentu saat update
+            'deletePhotoIds'       => 'nullable|array',
+            'deletePhotoIds.*'     => 'integer|exists:boat_photos,id',
+
+            // custom informations
+            'customInformations'          => 'nullable|array',
+            'customInformations.*.id'     => 'nullable|integer',
+            'customInformations.*.name'   => 'required_with:customInformations|string',
+            'customInformations.*.value'  => 'required_with:customInformations|string',
+            'customInformations.*.order'  => 'nullable|integer',
         ];
     }
 }

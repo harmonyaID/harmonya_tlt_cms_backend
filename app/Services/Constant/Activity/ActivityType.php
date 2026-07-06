@@ -14,7 +14,7 @@ class ActivityType extends BaseCodeName
     const TLT_REVIEW = 'tlt_review';
     const FAQ = 'faq';
     const BOAT = 'boat';
-    const BOAT_TYPE = 'boat_type';
+    const BOAT_COMPONENT_TYPE = 'boat_component_type';
     const BOAT_CONTACT_FORM = 'boat_contact_form';
 
     const OPTION = [
@@ -26,7 +26,7 @@ class ActivityType extends BaseCodeName
         self::TLT_REVIEW,
         self::FAQ,
         self::BOAT, 
-        self::BOAT_TYPE, 
+        self::BOAT_COMPONENT_TYPE, 
         self::BOAT_CONTACT_FORM
 
 
