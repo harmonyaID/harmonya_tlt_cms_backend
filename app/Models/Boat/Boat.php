@@ -19,13 +19,12 @@ class Boat extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
-        'departureTimesFromBali' => 'array',
-        'departureTimesFromLembongan' => 'array',
-        'discountPercentage' => 'integer',
-        'isActive' => 'boolean',
-        self::CREATED_AT => 'datetime',
-        self::UPDATED_AT => 'datetime',
-        self::DELETED_AT => 'datetime',
+        'boatComponentTypeId' => 'integer',
+        'promoPhotos'         => 'array',
+        'isActive'            => 'boolean',
+        self::CREATED_AT      => 'datetime',
+        self::UPDATED_AT      => 'datetime',
+        self::DELETED_AT      => 'datetime',
     ];
 
     public $parserClass = BoatParser::class;
@@ -41,9 +40,9 @@ class Boat extends BaseModel
         return $this->hasMany(BoatPhoto::class, 'boatId')->orderBy('order');
     }
 
-    public function types(): HasMany
+    public function customInformations(): HasMany
     {
-        return $this->hasMany(BoatType::class, 'boatId');
+        return $this->hasMany(BoatCustomInformation::class, 'boatId')->orderBy('order');
     }
 
     /*
@@ -57,11 +56,11 @@ class Boat extends BaseModel
         return $query->where(function ($query) use ($request) {
 
             if ($request->has('search') && strlen($request->search) > 1) {
-                $query->where(function ($search) use ($request) {
-                    $search->where('name', 'LIKE', "%$request->search%")
-                        ->orWhere('routeFrom', 'LIKE', "%$request->search%")
-                        ->orWhere('routeTo', 'LIKE', "%$request->search%");
-                });
+                $query->where('description', 'LIKE', "%$request->search%");
+            }
+
+            if ($request->has('boatComponentTypeId') && $request->boatComponentTypeId) {
+                $query->where('boatComponentTypeId', $request->boatComponentTypeId);
             }
 
             if ($request->has('isActive') && $request->isActive !== null) {

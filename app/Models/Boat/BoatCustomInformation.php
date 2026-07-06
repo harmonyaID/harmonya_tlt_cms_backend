@@ -3,13 +3,11 @@
 namespace App\Models\Boat;
 
 use App\Models\BaseModel;
-use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
-class BoatPhoto extends BaseModel
+class BoatCustomInformation extends BaseModel
 {
-    protected $table = 'boat_photos';
+    protected $table = 'boat_custom_informations';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -24,10 +22,5 @@ class BoatPhoto extends BaseModel
     public function boat(): BelongsTo
     {
         return $this->belongsTo(Boat::class, 'boatId');
-    }
-
-    public function photoUrl(): string
-    {
-        return Storage::disk('public')->url(PathConstant::IMAGES_BOAT . $this->photo);
     }
 }

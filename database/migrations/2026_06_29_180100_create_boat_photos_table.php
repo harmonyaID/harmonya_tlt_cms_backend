@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('boatId');
             $table->string('photo');
-            $table->unsignedInteger('order')->default(0);
+            $table->integer('order')->default(0);
 
             $this->getDefaultTimestamps($table);
         });

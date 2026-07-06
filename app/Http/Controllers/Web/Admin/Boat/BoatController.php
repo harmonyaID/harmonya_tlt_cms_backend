@@ -16,21 +16,25 @@ class BoatController extends Controller
     {
         if (config('auth.with-permission')) {
 
+            // VIEW
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_BOAT_VIEW);
                 return $next($request);
             })->only(['get', 'detail']);
 
+            // CREATE
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_BOAT_CREATE);
                 return $next($request);
             })->only(['create']);
 
+            // UPDATE
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_BOAT_UPDATE);
                 return $next($request);
             })->only(['update']);
 
+            // DELETE
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_BOAT_DELETE);
                 return $next($request);
@@ -41,16 +45,14 @@ class BoatController extends Controller
 
     public function get(Request $request)
     {
-        $boats = Boat::filter($request)->with('photos')->getOrPaginate($request);
+        $boats = Boat::filter($request)->with(['photos', 'customInformations'])->getOrPaginate($request);
         return success(BoatParser::briefs($boats), pagination: pagination($boats));
     }
 
     public function detail($id)
     {
-        $boat = Boat::with('photos', 'types')->find($id);
-        if (!$boat) {
-            errBoatGet();
-        }
+        $boat = Boat::with(['photos', 'customInformations'])->find($id);
+        if (!$boat) errBoatGet();
 
         return success(BoatParser::first($boat));
     }

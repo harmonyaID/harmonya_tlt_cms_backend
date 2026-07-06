@@ -11,13 +11,9 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::create('boats', function (Blueprint $table) {
+        Schema::create('boat_component_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('boatComponentTypeId');
-            $table->longText('description')->nullable();
-            $table->json('promoPhotos')->nullable();
-            $table->string('priceFile')->nullable();
-            $table->boolean('isActive')->default(true);
+            $table->string('name');
 
             $this->getDefaultTimestamps($table);
         });
@@ -25,6 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('boats');
+        Schema::dropIfExists('boat_component_types');
     }
 };
