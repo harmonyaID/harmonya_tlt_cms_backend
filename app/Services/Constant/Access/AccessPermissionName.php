@@ -115,6 +115,32 @@ class AccessPermissionName
     const STAFF_BLOG_UPDATE = AccessGroup::STAFF . '.blog.update';
     const STAFF_BLOG_DELETE = AccessGroup::STAFF . '.blog.delete';
 
+    // Experience Type
+    const STAFF_EXPERIENCE_TYPE = AccessGroup::STAFF . '.experience-type.*';
+    const STAFF_EXPERIENCE_TYPE_VIEW = AccessGroup::STAFF . '.experience-type.view';
+    const STAFF_EXPERIENCE_TYPE_CREATE = AccessGroup::STAFF . '.experience-type.create';
+    const STAFF_EXPERIENCE_TYPE_UPDATE = AccessGroup::STAFF . '.experience-type.update';
+    const STAFF_EXPERIENCE_TYPE_DELETE = AccessGroup::STAFF . '.experience-type.delete';
+
+    // Experience Category
+    const STAFF_EXPERIENCE_CATEGORY = AccessGroup::STAFF . '.experience-category.*';
+    const STAFF_EXPERIENCE_CATEGORY_VIEW = AccessGroup::STAFF . '.experience-category.view';
+    const STAFF_EXPERIENCE_CATEGORY_CREATE = AccessGroup::STAFF . '.experience-category.create';
+    const STAFF_EXPERIENCE_CATEGORY_UPDATE = AccessGroup::STAFF . '.experience-category.update';
+    const STAFF_EXPERIENCE_CATEGORY_DELETE = AccessGroup::STAFF . '.experience-category.delete';
+
+    // Experience
+    const STAFF_EXPERIENCE = AccessGroup::STAFF . '.experience.*';
+    const STAFF_EXPERIENCE_VIEW = AccessGroup::STAFF . '.experience.view';
+    const STAFF_EXPERIENCE_CREATE = AccessGroup::STAFF . '.experience.create';
+    const STAFF_EXPERIENCE_UPDATE = AccessGroup::STAFF . '.experience.update';
+    const STAFF_EXPERIENCE_DELETE = AccessGroup::STAFF . '.experience.delete';
+
+    const STAFF_EXPERIENCE_INQUIRY_FORM        = AccessGroup::STAFF . '.experience-inquiry-form.*';
+    const STAFF_EXPERIENCE_INQUIRY_FORM_VIEW   = AccessGroup::STAFF . '.experience-inquiry-form.view';
+    const STAFF_EXPERIENCE_INQUIRY_FORM_CREATE = AccessGroup::STAFF . '.experience-inquiry-form.create';
+    const STAFF_EXPERIENCE_INQUIRY_FORM_DELETE = AccessGroup::STAFF . '.experience-inquiry-form.delete';
+
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -199,6 +225,31 @@ class AccessPermissionName
         self::STAFF_BLOG_TAG_CREATE,
         self::STAFF_BLOG_TAG_UPDATE,
         self::STAFF_BLOG_TAG_DELETE,
+
+        self::STAFF_EXPERIENCE_TYPE,
+        self::STAFF_EXPERIENCE_TYPE_VIEW,
+        self::STAFF_EXPERIENCE_TYPE_CREATE,
+        self::STAFF_EXPERIENCE_TYPE_UPDATE,
+        self::STAFF_EXPERIENCE_TYPE_DELETE,
+
+        self::STAFF_EXPERIENCE_CATEGORY,
+        self::STAFF_EXPERIENCE_CATEGORY_VIEW,
+        self::STAFF_EXPERIENCE_CATEGORY_CREATE,
+        self::STAFF_EXPERIENCE_CATEGORY_UPDATE,
+        self::STAFF_EXPERIENCE_CATEGORY_DELETE,
+
+        self::STAFF_EXPERIENCE,
+        self::STAFF_EXPERIENCE_VIEW,
+        self::STAFF_EXPERIENCE_CREATE,
+        self::STAFF_EXPERIENCE_UPDATE,
+        self::STAFF_EXPERIENCE_DELETE,
+
+        self::STAFF_EXPERIENCE_INQUIRY_FORM,
+        self::STAFF_EXPERIENCE_INQUIRY_FORM_VIEW,
+        self::STAFF_EXPERIENCE_INQUIRY_FORM_CREATE,
+        self::STAFF_EXPERIENCE_INQUIRY_FORM_DELETE,
+
+
     ];
 
     /** --- FUNCTIONS --- */

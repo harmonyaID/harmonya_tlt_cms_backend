@@ -56,6 +56,9 @@ class PathConstant
     const IMAGES_BOAT_PROMO = 'images/boats/promos/';
     const FILES_BOAT        = 'files/boats/';
 
+    const IMAGES_EXPERIENCE = 'images/experiences/';
+    const PDF_EXPERIENCE = 'PDFs/experiences/';
+
     /*
      |--------------------------------------------------------------------------
      | IMAGES
@@ -104,6 +107,16 @@ class PathConstant
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
     }
 
+
+    public static function IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_EXPERIENCE);
+    }
+
+    public static function PDF_EXPERIENCE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::PDF_EXPERIENCE);
+    }
     /*
      |--------------------------------------------------------------------------
      | LANGUAGE PATH
