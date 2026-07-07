@@ -17,3 +17,4 @@ require($base . "faq.php");
 require($base . "boat.php");
 require($base . "boat-contact-form.php");
 require($base . "blog.php");
+require($base . "experience.php");

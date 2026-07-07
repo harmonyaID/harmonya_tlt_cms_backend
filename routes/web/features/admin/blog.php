@@ -3,7 +3,6 @@
 use App\Http\Controllers\Web\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Web\Admin\Blog\BlogController;
 use App\Http\Controllers\Web\Admin\Blog\BlogTagController;
-use App\Http\Controllers\Web\Admin\Boat\BoatController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("blogs")
@@ -12,9 +11,6 @@ Route::prefix("blogs")
 
         Route::get('', [BlogController::class, 'get']);
         Route::post('', [BlogController::class, 'create']);
-        Route::get('{id}', [BlogController::class, 'detail']);
-        Route::post('{id}', [BlogController::class, 'update']);
-        Route::delete('{id}', [BlogController::class, 'delete']);
 
         Route::prefix('categories')
             ->group(function () {
@@ -34,4 +30,8 @@ Route::prefix("blogs")
                 Route::put('{id}', [BlogTagController::class, 'update']);
                 Route::delete('{id}', [BlogTagController::class, 'delete']);
             });
+
+        Route::get('{id}', [BlogController::class, 'detail']);
+        Route::post('{id}', [BlogController::class, 'update']);
+        Route::delete('{id}', [BlogController::class, 'delete']);
     });
