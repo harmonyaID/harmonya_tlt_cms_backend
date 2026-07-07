@@ -16,3 +16,4 @@ require($base . "tlt-review.php");
 require($base . "faq.php");
 require($base . "boat.php");
 require($base . "boat-contact-form.php");
+require($base . "blog.php");

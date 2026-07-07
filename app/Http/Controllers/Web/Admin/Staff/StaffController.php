@@ -63,6 +63,14 @@ class StaffController extends Controller
         return success(StaffParser::briefs($staffs), pagination: pagination($staffs));
     }
 
+    public function detail($id)
+    {
+        $staff = Staff::find($id);
+        if (!$staff) errStaffGet();
+
+        return success(StaffParser::first($staff));
+    }
+
     /**
      * @param StaffRequest $request
      *
