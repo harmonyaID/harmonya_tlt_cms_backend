@@ -13,9 +13,6 @@ Route::prefix("experiences")
 
         Route::get('', [ExperienceController::class, 'get']);
         Route::post('', [ExperienceController::class, 'create']);
-        Route::get('{id}', [ExperienceController::class, 'detail']);
-        Route::post('{id}', [ExperienceController::class, 'update']);
-        Route::delete('{id}', [ExperienceController::class, 'delete']);
 
         Route::prefix("types")->middleware('auth.web.admin')->group(function () {
             Route::get('', [ExperienceTypeController::class, 'get']);
@@ -41,4 +38,9 @@ Route::prefix("experiences")
                 Route::get('{id}', [ExperienceInquiryFormController::class, 'detail']);
                 Route::delete('{id}', [ExperienceInquiryFormController::class, 'delete']);
             });
+
+
+        Route::get('{id}', [ExperienceController::class, 'detail']);
+        Route::post('{id}', [ExperienceController::class, 'update']);
+        Route::delete('{id}', [ExperienceController::class, 'delete']);
     });
