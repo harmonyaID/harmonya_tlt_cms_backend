@@ -49,6 +49,7 @@ class StaffParser extends BaseParser
             'fullName' => $data->fullName,
             'email' => $data->user?->email,
             'phone' => $data->phone,
+            'isSuperadmin' => $data->isSuperadmin,
             'gender' => Gender::idName($data->genderId),
             'country' => $data->country?->only('id', 'name'),
             'address' => $data->address,

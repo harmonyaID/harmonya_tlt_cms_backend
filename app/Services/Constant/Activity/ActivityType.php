@@ -16,6 +16,9 @@ class ActivityType extends BaseCodeName
     const BOAT = 'boat';
     const BOAT_COMPONENT_TYPE = 'boat_component_type';
     const BOAT_CONTACT_FORM = 'boat_contact_form';
+    const BLOG_CATEGORY = 'blog_category';
+    const BLOG_TAG = 'blog_tag';
+    const BLOG = 'blog';
 
     const OPTION = [
         self::ACCESS,
@@ -25,10 +28,12 @@ class ActivityType extends BaseCodeName
         self::WEBSITE_CONTACT_FORM,
         self::TLT_REVIEW,
         self::FAQ,
-        self::BOAT, 
-        self::BOAT_COMPONENT_TYPE, 
-        self::BOAT_CONTACT_FORM
-
+        self::BOAT,
+        self::BOAT_COMPONENT_TYPE,
+        self::BOAT_CONTACT_FORM,
+        self::BLOG_CATEGORY,
+        self::BLOG_TAG,
+        self::BLOG
 
     ];
 }

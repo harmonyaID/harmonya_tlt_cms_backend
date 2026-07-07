@@ -99,7 +99,10 @@ class PathConstant
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::FILES_BOAT);
     }
-
+    public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
+    }
 
     /*
      |--------------------------------------------------------------------------

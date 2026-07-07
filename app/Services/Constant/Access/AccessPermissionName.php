@@ -21,7 +21,7 @@ class AccessPermissionName
     const STAFF_STAFF_CREATE = AccessGroup::STAFF . '.staff.create';
     const STAFF_STAFF_UPDATE = AccessGroup::STAFF . '.staff.update';
     const STAFF_STAFF_DELETE = AccessGroup::STAFF . '.staff.delete';
-    const STAFF_PAGE= AccessGroup::STAFF . '.page.*';
+    const STAFF_PAGE = AccessGroup::STAFF . '.page.*';
     const STAFF_PAGE_VIEW = AccessGroup::STAFF . '.page.view';
     const STAFF_PAGE_CREATE = AccessGroup::STAFF . '.page.create';
     const STAFF_PAGE_UPDATE = AccessGroup::STAFF . '.page.update';
@@ -87,14 +87,34 @@ class AccessPermissionName
     const STAFF_BOAT_COMPONENT_TYPE_UPDATE = AccessGroup::STAFF . '.boat-component-type.update';
     const STAFF_BOAT_COMPONENT_TYPE_DELETE = AccessGroup::STAFF . '.boat-component-type.delete';
 
-// masukkan ke STAFF_OPTION: ..., self::STAFF_BOAT_COMPONENT_TYPE, dst
     // Boat Contact Form
     const STAFF_BOAT_CONTACT_FORM = AccessGroup::STAFF . '.boat-contact-form.*';
     const STAFF_BOAT_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.boat-contact-form.view';
     const STAFF_BOAT_CONTACT_FORM_CREATE = AccessGroup::STAFF . '.boat-contact-form.create';
     const STAFF_BOAT_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.boat-contact-form.update';
     const STAFF_BOAT_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.boat-contact-form.delete';
-    
+
+    // Blog Category
+    const STAFF_BLOG_CATEGORY = AccessGroup::STAFF . '.blog-category.*';
+    const STAFF_BLOG_CATEGORY_VIEW = AccessGroup::STAFF . '.blog-category.view';
+    const STAFF_BLOG_CATEGORY_CREATE = AccessGroup::STAFF . '.blog-category.create';
+    const STAFF_BLOG_CATEGORY_UPDATE = AccessGroup::STAFF . '.blog-category.update';
+    const STAFF_BLOG_CATEGORY_DELETE = AccessGroup::STAFF . '.blog-category.delete';
+
+    // Blog Tag
+    const STAFF_BLOG_TAG = AccessGroup::STAFF . '.blog-tag.*';
+    const STAFF_BLOG_TAG_VIEW = AccessGroup::STAFF . '.blog-tag.view';
+    const STAFF_BLOG_TAG_CREATE = AccessGroup::STAFF . '.blog-tag.create';
+    const STAFF_BLOG_TAG_UPDATE = AccessGroup::STAFF . '.blog-tag.update';
+    const STAFF_BLOG_TAG_DELETE = AccessGroup::STAFF . '.blog-tag.delete';
+
+    // Blog
+    const STAFF_BLOG = AccessGroup::STAFF . '.blog.*';
+    const STAFF_BLOG_VIEW = AccessGroup::STAFF . '.blog.view';
+    const STAFF_BLOG_CREATE = AccessGroup::STAFF . '.blog.create';
+    const STAFF_BLOG_UPDATE = AccessGroup::STAFF . '.blog.update';
+    const STAFF_BLOG_DELETE = AccessGroup::STAFF . '.blog.delete';
+
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -161,6 +181,24 @@ class AccessPermissionName
         self::STAFF_BOAT_COMPONENT_TYPE_CREATE,
         self::STAFF_BOAT_COMPONENT_TYPE_UPDATE,
         self::STAFF_BOAT_COMPONENT_TYPE_DELETE,
+
+        self::STAFF_BLOG,
+        self::STAFF_BLOG_VIEW,
+        self::STAFF_BLOG_CREATE,
+        self::STAFF_BLOG_UPDATE,
+        self::STAFF_BLOG_DELETE,
+
+        self::STAFF_BLOG_CATEGORY,
+        self::STAFF_BLOG_CATEGORY_VIEW,
+        self::STAFF_BLOG_CATEGORY_CREATE,
+        self::STAFF_BLOG_CATEGORY_UPDATE,
+        self::STAFF_BLOG_CATEGORY_DELETE,
+
+        self::STAFF_BLOG_TAG,
+        self::STAFF_BLOG_TAG_VIEW,
+        self::STAFF_BLOG_TAG_CREATE,
+        self::STAFF_BLOG_TAG_UPDATE,
+        self::STAFF_BLOG_TAG_DELETE,
     ];
 
     /** --- FUNCTIONS --- */
@@ -202,5 +240,4 @@ class AccessPermissionName
 
         return $display;
     }
-
 }
