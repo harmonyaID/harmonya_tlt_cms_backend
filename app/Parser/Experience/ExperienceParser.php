@@ -12,7 +12,11 @@ class ExperienceParser extends BaseParser
 
         $photos = [];
         foreach ($data->photos as $photo) {
-            $photos[] = ['id' => $photo->id, 'photo' => $photo->photoUrl(), 'order' => $photo->order];
+            $photos[] = [
+                'id' => $photo->id,
+                'photo' => $photo->photoUrl(),
+                'order' => $photo->order,
+            ];
         }
 
         return [
@@ -20,16 +24,17 @@ class ExperienceParser extends BaseParser
             'type' => optional($data->type)->only('id', 'name'),
             'category' => optional($data->category)->only('id', 'name'),
             'name' => $data->name,
+            'openHours' => $data->openHours,
             'description' => $data->description,
             'thumbnail' => $data->thumbnailUrl(),
-            'catalogPdf' => $data->catalogPdfUrl(),
-            'openHours' => $data->openHours,
-            'mapEmbedUrl' => $data->mapEmbedUrl,
+            'mapImage' => $data->mapImageUrl(),
             'mapLocationUrl' => $data->mapLocationUrl,
             'whatsapp' => $data->whatsapp,
             'instagram' => $data->instagram,
             'website' => $data->website,
+            'catalogs' => $data->catalogsWithUrl(),
             'isActive' => $data->isActive,
+            'showInquiry' => $data->showInquiry,
             'photos' => $photos,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
@@ -44,11 +49,12 @@ class ExperienceParser extends BaseParser
             'type' => optional($data->type)->only('id', 'name'),
             'category' => optional($data->category)->only('id', 'name'),
             'name' => $data->name,
-            'thumbnail' => $data->thumbnailUrl(),
             'openHours' => $data->openHours,
+            'thumbnail' => $data->thumbnailUrl(),
             'whatsapp' => $data->whatsapp,
             'instagram' => $data->instagram,
             'isActive' => $data->isActive,
+            'showInquiry' => $data->showInquiry,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }

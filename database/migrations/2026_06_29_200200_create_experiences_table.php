@@ -18,15 +18,15 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('thumbnail')->nullable();
-            $table->string('catalogPdf')->nullable();
             $table->string('openHours')->nullable();
-            $table->string('mapEmbedUrl')->nullable();
+            $table->string('mapImage')->nullable();
             $table->string('mapLocationUrl')->nullable();
             $table->string('whatsapp')->nullable();
             $table->string('instagram')->nullable();
             $table->string('website')->nullable();
             $table->boolean('isActive')->default(true);
             $table->boolean('showInquiry')->default(false);
+            $table->json('catalogs')->nullable();
             $this->getDefaultTimestamps($table);
         });
     }

@@ -24,16 +24,19 @@ class ExperienceAlgo
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->experience = Experience::create($request->except('thumbnail', 'catalogPdf', 'photos', 'deletePhotoIds') + created_by());
+
+                $this->experience = Experience::create(
+                    $request->except('thumbnail', 'mapImage', 'photos', 'deletePhotoIds', 'catalogs') + created_by()
+                );
                 if (!$this->experience) errExperienceSave();
 
                 if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
-                    $this->experience->thumbnail = $this->uploadThumbnail($request);
+                    $this->experience->thumbnail = $this->uploadImage($request->file('thumbnail'), 'thumbnail');
                     $this->experience->save();
                 }
 
-                if ($request->hasFile('catalogPdf') && $request->file('catalogPdf')->isValid()) {
-                    $this->experience->catalogPdf = $this->uploadPdf($request);
+                if ($request->hasFile('mapImage') && $request->file('mapImage')->isValid()) {
+                    $this->experience->mapImage = $this->uploadImage($request->file('mapImage'), 'map');
                     $this->experience->save();
                 }
 
@@ -41,9 +44,15 @@ class ExperienceAlgo
                     $this->uploadPhotos($request);
                 }
 
+                if ($request->has('catalogs')) {
+                    $this->experience->catalogs = $this->processCatalogs($request);
+                    $this->experience->save();
+                }
+
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::CREATE)
                     ->log("Enter new experience: " . $this->experience->name);
+
             });
 
             return success($this->experience->load('type', 'category', 'photos'));
@@ -54,15 +63,18 @@ class ExperienceAlgo
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->experience->update($request->except('thumbnail', 'catalogPdf', 'photos', 'deletePhotoIds'));
+
+                $this->experience->update(
+                    $request->except('thumbnail', 'mapImage', 'photos', 'deletePhotoIds', 'catalogs')
+                );
 
                 if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
-                    $this->experience->thumbnail = $this->uploadThumbnail($request);
+                    $this->experience->thumbnail = $this->uploadImage($request->file('thumbnail'), 'thumbnail', $this->experience->thumbnail);
                     $this->experience->save();
                 }
 
-                if ($request->hasFile('catalogPdf') && $request->file('catalogPdf')->isValid()) {
-                    $this->experience->catalogPdf = $this->uploadPdf($request);
+                if ($request->hasFile('mapImage') && $request->file('mapImage')->isValid()) {
+                    $this->experience->mapImage = $this->uploadImage($request->file('mapImage'), 'map', $this->experience->mapImage);
                     $this->experience->save();
                 }
 
@@ -74,9 +86,15 @@ class ExperienceAlgo
                     $this->uploadPhotos($request);
                 }
 
+                if ($request->has('catalogs')) {
+                    $this->experience->catalogs = $this->processCatalogs($request);
+                    $this->experience->save();
+                }
+
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::UPDATE)
                     ->log("Update experience: " . $this->experience->name);
+
             });
 
             return success($this->experience->load('type', 'category', 'photos'));
@@ -87,6 +105,7 @@ class ExperienceAlgo
     {
         try {
             DB::transaction(function () {
+
                 $imgPath = PathConstant::IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH();
                 $pdfPath = PathConstant::PDF_EXPERIENCE_STORAGE_PUBLIC_PATH();
 
@@ -94,8 +113,8 @@ class ExperienceAlgo
                     unlink($imgPath . $this->experience->thumbnail);
                 }
 
-                if ($this->experience->catalogPdf && file_exists($pdfPath . $this->experience->catalogPdf)) {
-                    unlink($pdfPath . $this->experience->catalogPdf);
+                if ($this->experience->mapImage && file_exists($imgPath . $this->experience->mapImage)) {
+                    unlink($imgPath . $this->experience->mapImage);
                 }
 
                 foreach ($this->experience->photos as $photo) {
@@ -103,11 +122,20 @@ class ExperienceAlgo
                     $photo->delete();
                 }
 
+                if ($this->experience->catalogs) {
+                    foreach ($this->experience->catalogs as $catalog) {
+                        if (!empty($catalog['file']) && file_exists($pdfPath . $catalog['file'])) {
+                            unlink($pdfPath . $catalog['file']);
+                        }
+                    }
+                }
+
                 if (!$this->experience->delete()) errExperienceDelete();
 
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::DELETE)
                     ->log("Delete experience: " . $this->experience->name);
+
             });
 
             return success();
@@ -120,32 +148,16 @@ class ExperienceAlgo
      |-------------------------------------------------------------------------
      */
 
-    private function uploadThumbnail(Request $request)
+    private function uploadImage($file, string $prefix, ?string $oldFile = null)
     {
-        $file = $request->file('thumbnail');
         $dirPath = PathConstant::IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH();
         if (!file_exists($dirPath)) mkdir($dirPath, 0777, true);
 
-        if ($this->experience->thumbnail && file_exists($dirPath . $this->experience->thumbnail)) {
-            unlink($dirPath . $this->experience->thumbnail);
+        if ($oldFile && file_exists($dirPath . $oldFile)) {
+            unlink($dirPath . $oldFile);
         }
 
-        $filename = filename($file, $this->experience->name);
-        $file->move($dirPath, $filename);
-        return $filename;
-    }
-
-    private function uploadPdf(Request $request)
-    {
-        $file = $request->file('catalogPdf');
-        $dirPath = PathConstant::PDF_EXPERIENCE_STORAGE_PUBLIC_PATH();
-        if (!file_exists($dirPath)) mkdir($dirPath, 0777, true);
-
-        if ($this->experience->catalogPdf && file_exists($dirPath . $this->experience->catalogPdf)) {
-            unlink($dirPath . $this->experience->catalogPdf);
-        }
-
-        $filename = filename($file, $this->experience->name);
+        $filename = filename($file, $this->experience->name . '-' . $prefix);
         $file->move($dirPath, $filename);
         return $filename;
     }
@@ -162,18 +174,67 @@ class ExperienceAlgo
             $lastOrder++;
             $filename = filename($photo, $this->experience->name);
             $photo->move($dirPath, $filename);
-            ExperiencePhoto::create(['experienceId' => $this->experience->id, 'photo' => $filename, 'order' => $lastOrder]);
+            ExperiencePhoto::create([
+                'experienceId' => $this->experience->id,
+                'photo' => $filename,
+                'order' => $lastOrder,
+            ]);
         }
     }
 
     private function deletePhotos(array $photoIds)
     {
         $dirPath = PathConstant::IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH();
-        $photos = ExperiencePhoto::where('experienceId', $this->experience->id)->whereIn('id', $photoIds)->get();
+        $photos = ExperiencePhoto::where('experienceId', $this->experience->id)
+            ->whereIn('id', $photoIds)->get();
 
         foreach ($photos as $photo) {
             if (file_exists($dirPath . $photo->photo)) unlink($dirPath . $photo->photo);
             $photo->delete();
         }
+    }
+
+    private function processCatalogs(Request $request): array
+    {
+        $pdfPath = PathConstant::PDF_EXPERIENCE_STORAGE_PUBLIC_PATH();
+        if (!file_exists($pdfPath)) mkdir($pdfPath, 0777, true);
+
+        $existing = $this->experience->catalogs ?? [];
+        $existingFiles = array_column($existing, 'file');
+
+        $result = [];
+        $catalogs = $request->input('catalogs', []);
+        $catalogFiles = $request->file('catalogs', []);
+
+        foreach ($catalogs as $index => $catalog) {
+            $name = $catalog['name'];
+            $existingFile = $catalog['existingFile'] ?? null;
+
+            if (!empty($catalogFiles[$index]['file']) && $catalogFiles[$index]['file']->isValid()) {
+
+                if ($existingFile && file_exists($pdfPath . $existingFile)) {
+                    unlink($pdfPath . $existingFile);
+                }
+
+                $file = $catalogFiles[$index]['file'];
+                $filename = filename($file, $this->experience->name . '-' . $name);
+                $file->move($pdfPath, $filename);
+
+                $result[] = ['name' => $name, 'file' => $filename];
+
+            } elseif ($existingFile) {
+                $result[] = ['name' => $name, 'file' => $existingFile];
+            }
+        }
+
+        // hapus file lama yang tidak ada di list baru
+        $newFiles = array_column($result, 'file');
+        foreach ($existingFiles as $oldFile) {
+            if (!in_array($oldFile, $newFiles) && file_exists($pdfPath . $oldFile)) {
+                unlink($pdfPath . $oldFile);
+            }
+        }
+
+        return $result;
     }
 }
