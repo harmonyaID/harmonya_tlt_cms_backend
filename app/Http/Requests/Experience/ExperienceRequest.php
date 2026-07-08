@@ -14,21 +14,27 @@ class ExperienceRequest extends FormRequest
             'experienceTypeId' => 'required|integer|exists:experience_types,id',
             'experienceCategoryId' => 'nullable|integer|exists:experience_categories,id',
             'name' => 'required|string',
-            'description' => 'nullable|string',
             'openHours' => 'nullable|string',
-            'mapEmbedUrl' => 'nullable|string',
+            'description' => 'nullable|string',
             'mapLocationUrl' => 'nullable|string',
             'whatsapp' => 'nullable|string',
             'instagram' => 'nullable|string',
             'website' => 'nullable|string',
             'isActive' => 'required|boolean',
+            'showInquiry' => 'required|boolean',
+
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'catalogPdf' => 'nullable|file|mimes:pdf|max:10240',
+            'mapImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+
             'photos' => 'nullable|array',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'deletePhotoIds' => 'nullable|array',
             'deletePhotoIds.*' => 'integer|exists:experience_photos,id',
-            'showInquiry' => 'required|boolean',
+
+            'catalogs' => 'nullable|array',
+            'catalogs.*.name' => 'required_with:catalogs|string',
+            'catalogs.*.file' => 'nullable|file|mimes:pdf|max:10240',
+            'catalogs.*.existingFile' => 'nullable|string',
         ];
     }
 }

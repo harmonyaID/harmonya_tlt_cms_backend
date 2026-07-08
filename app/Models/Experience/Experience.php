@@ -22,12 +22,12 @@ class Experience extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
+        'catalogs' => 'array',
         'isActive' => 'boolean',
+        'showInquiry' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
-        'showInquiry' => 'boolean',
-
     ];
 
     public $parserClass = ExperienceParser::class;
@@ -53,11 +53,10 @@ class Experience extends BaseModel
         return $this->hasMany(ExperiencePhoto::class, 'experienceId')->orderBy('order');
     }
 
-    public function inquiryForms(): HasMany
+    public function events(): HasMany
     {
-        return $this->hasMany(ExperienceInquiryForm::class, 'experienceId')->orderBy('id', 'DESC');
+        return $this->hasMany(ExperienceEvent::class, 'experienceId')->orderBy('eventDate', 'DESC');
     }
-
 
     /*
      |--------------------------------------------------------------------------
@@ -87,6 +86,7 @@ class Experience extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
+
         })->orderBy('id', 'DESC');
     }
 
@@ -102,9 +102,22 @@ class Experience extends BaseModel
         return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE . $this->thumbnail);
     }
 
-    public function catalogPdfUrl()
+    public function mapImageUrl()
     {
-        if (!$this->catalogPdf) return null;
-        return Storage::disk('public')->url(PathConstant::PDF_EXPERIENCE . $this->catalogPdf);
+        if (!$this->mapImage) return null;
+        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE . $this->mapImage);
+    }
+
+    public function catalogsWithUrl()
+    {
+        if (!$this->catalogs) return [];
+
+        return array_map(function ($catalog) {
+            return [
+                'name' => $catalog['name'],
+                'file' => $catalog['file'],
+                'fileUrl' => Storage::disk('public')->url(PathConstant::PDF_EXPERIENCE . $catalog['file']),
+            ];
+        }, $this->catalogs);
     }
 }

@@ -45,7 +45,7 @@ class ExperienceController extends Controller
 
     public function detail($id)
     {
-        $experience = Experience::with('type', 'category', 'photos', 'events')->find($id);
+        $experience = Experience::with('type', 'category', 'photos', 'events.photos')->find($id);
         if (!$experience) errExperienceGet();
         return success(ExperienceParser::first($experience));
     }
