@@ -23,6 +23,7 @@ class BlogRequest extends FormRequest
             'publishedAt' => 'nullable|date',
             'isActive' => 'required|boolean',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'deleteThumbnail' => 'nullable|boolean',
             'tagIds' => 'nullable|array',
             'tagIds.*' => 'integer|exists:blog_tags,id',
         ];
