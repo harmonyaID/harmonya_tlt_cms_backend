@@ -86,7 +86,6 @@ class Experience extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
-
         })->orderBy('id', 'DESC');
     }
 
@@ -110,14 +109,17 @@ class Experience extends BaseModel
 
     public function catalogsWithUrl()
     {
-        if (!$this->catalogs) return [];
-
-        return array_map(function ($catalog) {
-            return [
-                'name' => $catalog['name'],
-                'file' => $catalog['file'],
-                'fileUrl' => Storage::disk('public')->url(PathConstant::PDF_EXPERIENCE . $catalog['file']),
-            ];
-        }, $this->catalogs);
+        return collect($this->catalogs ?? [])
+            ->map(function ($catalog) {
+                return [
+                    'id'   => $catalog['id'],
+                    'name' => $catalog['name'],
+                    'file' => Storage::disk('public')->url(
+                        PathConstant::PDF_EXPERIENCE . $catalog['file']
+                    ),
+                ];
+            })
+            ->values()
+            ->all();
     }
 }

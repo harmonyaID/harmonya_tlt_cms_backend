@@ -6,7 +6,10 @@ use Logia\Core\Validation\Support\FormRequest;
 
 class ExperienceRequest extends FormRequest
 {
-    public function authorize() { return true; }
+    public function authorize()
+    {
+        return true;
+    }
 
     public function rules()
     {
@@ -32,9 +35,12 @@ class ExperienceRequest extends FormRequest
             'deletePhotoIds.*' => 'integer|exists:experience_photos,id',
 
             'catalogs' => 'nullable|array',
+            'catalogs.*.id' => 'nullable|integer',
             'catalogs.*.name' => 'required_with:catalogs|string',
             'catalogs.*.file' => 'nullable|file|mimes:pdf|max:10240',
-            'catalogs.*.existingFile' => 'nullable|string',
+
+            'deleteCatalogIds' => 'nullable|array',
+            'deleteCatalogIds.*' => 'integer',
         ];
     }
 }

@@ -50,11 +50,9 @@ class BlogAlgo
                     ->setType(ActivityType::BLOG)
                     ->setAction(ActivityAction::CREATE)
                     ->log("Enter new blog: " . $this->blog->title);
-
             });
 
             return success($this->blog->load('category', 'tags'));
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -78,6 +76,16 @@ class BlogAlgo
                     $this->blog->save();
                 }
 
+                if ($request->boolean('deleteThumbnail')) {
+                    $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+
+                    if ($this->blog->thumbnail && file_exists($dirPath . $this->blog->thumbnail)) {
+                        unlink($dirPath . $this->blog->thumbnail);
+                    }
+
+                    $this->blog->thumbnail = null;
+                    $this->blog->save();
+                }
                 if ($request->has('tagIds') && is_array($request->tagIds)) {
                     $this->blog->tags()->sync($request->tagIds);
                 }
@@ -87,11 +95,9 @@ class BlogAlgo
                     ->setType(ActivityType::BLOG)
                     ->setAction(ActivityAction::UPDATE)
                     ->log("Update blog: " . $this->blog->title);
-
             });
 
             return success($this->blog->load('category', 'tags'));
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -119,11 +125,9 @@ class BlogAlgo
                     ->setType(ActivityType::BLOG)
                     ->setAction(ActivityAction::DELETE)
                     ->log("Delete blog: " . $this->blog->title);
-
             });
 
             return success();
-
         } catch (\Error $error) {
             exception($error);
         }

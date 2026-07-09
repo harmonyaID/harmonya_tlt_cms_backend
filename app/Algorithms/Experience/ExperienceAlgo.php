@@ -26,7 +26,14 @@ class ExperienceAlgo
             DB::transaction(function () use ($request) {
 
                 $this->experience = Experience::create(
-                    $request->except('thumbnail', 'mapImage', 'photos', 'deletePhotoIds', 'catalogs') + created_by()
+                    $request->except(
+                        'thumbnail',
+                        'mapImage',
+                        'photos',
+                        'deletePhotoIds',
+                        'catalogs',
+                        'deleteCatalogIds'
+                    )
                 );
                 if (!$this->experience) errExperienceSave();
 
@@ -52,11 +59,12 @@ class ExperienceAlgo
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::CREATE)
                     ->log("Enter new experience: " . $this->experience->name);
-
             });
 
             return success($this->experience->load('type', 'category', 'photos'));
-        } catch (\Error $error) { exception($error); }
+        } catch (\Error $error) {
+            exception($error);
+        }
     }
 
     public function update(Request $request)
@@ -65,7 +73,14 @@ class ExperienceAlgo
             DB::transaction(function () use ($request) {
 
                 $this->experience->update(
-                    $request->except('thumbnail', 'mapImage', 'photos', 'deletePhotoIds', 'catalogs')
+                    $request->except(
+                        'thumbnail',
+                        'mapImage',
+                        'photos',
+                        'deletePhotoIds',
+                        'catalogs',
+                        'deleteCatalogIds'
+                    )
                 );
 
                 if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
@@ -86,7 +101,8 @@ class ExperienceAlgo
                     $this->uploadPhotos($request);
                 }
 
-                if ($request->has('catalogs')) {
+
+                if ($request->has('catalogs') || $request->has('deleteCatalogIds')) {
                     $this->experience->catalogs = $this->processCatalogs($request);
                     $this->experience->save();
                 }
@@ -94,11 +110,12 @@ class ExperienceAlgo
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::UPDATE)
                     ->log("Update experience: " . $this->experience->name);
-
             });
 
             return success($this->experience->load('type', 'category', 'photos'));
-        } catch (\Error $error) { exception($error); }
+        } catch (\Error $error) {
+            exception($error);
+        }
     }
 
     public function delete()
@@ -135,11 +152,12 @@ class ExperienceAlgo
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::DELETE)
                     ->log("Delete experience: " . $this->experience->name);
-
             });
 
             return success();
-        } catch (\Error $error) { exception($error); }
+        } catch (\Error $error) {
+            exception($error);
+        }
     }
 
     /*
@@ -197,44 +215,97 @@ class ExperienceAlgo
     private function processCatalogs(Request $request): array
     {
         $pdfPath = PathConstant::PDF_EXPERIENCE_STORAGE_PUBLIC_PATH();
-        if (!file_exists($pdfPath)) mkdir($pdfPath, 0777, true);
 
-        $existing = $this->experience->catalogs ?? [];
-        $existingFiles = array_column($existing, 'file');
+        if (!file_exists($pdfPath)) {
+            mkdir($pdfPath, 0777, true);
+        }
 
-        $result = [];
-        $catalogs = $request->input('catalogs', []);
-        $catalogFiles = $request->file('catalogs', []);
+        $catalogs = $this->experience->catalogs ?? [];
 
-        foreach ($catalogs as $index => $catalog) {
-            $name = $catalog['name'];
-            $existingFile = $catalog['existingFile'] ?? null;
+        if ($request->filled('deleteCatalogIds')) {
 
-            if (!empty($catalogFiles[$index]['file']) && $catalogFiles[$index]['file']->isValid()) {
+            foreach ($catalogs as $key => $catalog) {
 
-                if ($existingFile && file_exists($pdfPath . $existingFile)) {
-                    unlink($pdfPath . $existingFile);
+                if (!in_array($catalog['id'], $request->deleteCatalogIds)) {
+                    continue;
                 }
 
-                $file = $catalogFiles[$index]['file'];
+                if (!empty($catalog['file']) && file_exists($pdfPath . $catalog['file'])) {
+                    unlink($pdfPath . $catalog['file']);
+                }
+
+                unset($catalogs[$key]);
+            }
+
+            $catalogs = array_values($catalogs);
+        }
+
+        /*
+     |--------------------------------------------------------------------------
+     | Next ID
+     |--------------------------------------------------------------------------
+     */
+        $ids = array_column($catalogs, 'id');
+        $nextId = empty($ids) ? 1 : max($ids) + 1;
+
+        /*
+     |--------------------------------------------------------------------------
+     | Update / Create
+     |--------------------------------------------------------------------------
+     */
+        $requestCatalogs = $request->input('catalogs', []);
+        $requestFiles = $request->file('catalogs', []);
+
+        foreach ($requestCatalogs as $index => $item) {
+
+            $catalogId = $item['id'] ?? null;
+            $name = $item['name'];
+
+            $file = $requestFiles[$index]['file'] ?? null;
+
+            if ($catalogId) {
+
+                foreach ($catalogs as &$catalog) {
+
+                    if ($catalog['id'] != $catalogId) {
+                        continue;
+                    }
+
+                    $catalog['name'] = $name;
+
+                    if ($file && $file->isValid()) {
+
+                        if (!empty($catalog['file']) && file_exists($pdfPath . $catalog['file'])) {
+                            unlink($pdfPath . $catalog['file']);
+                        }
+
+                        $filename = filename($file, $this->experience->name . '-' . $name);
+                        $file->move($pdfPath, $filename);
+
+                        $catalog['file'] = $filename;
+                    }
+
+                    break;
+                }
+
+                unset($catalog);
+
+                continue;
+            }
+
+            if ($file && $file->isValid()) {
+
                 $filename = filename($file, $this->experience->name . '-' . $name);
                 $file->move($pdfPath, $filename);
 
-                $result[] = ['name' => $name, 'file' => $filename];
-
-            } elseif ($existingFile) {
-                $result[] = ['name' => $name, 'file' => $existingFile];
+                $catalogs[] = [
+                    'id'   => $nextId++,
+                    'name' => $name,
+                    'file' => $filename,
+                ];
             }
         }
 
-        // hapus file lama yang tidak ada di list baru
-        $newFiles = array_column($result, 'file');
-        foreach ($existingFiles as $oldFile) {
-            if (!in_array($oldFile, $newFiles) && file_exists($pdfPath . $oldFile)) {
-                unlink($pdfPath . $oldFile);
-            }
-        }
-
-        return $result;
+        return array_values($catalogs);
     }
 }

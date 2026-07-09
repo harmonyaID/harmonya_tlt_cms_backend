@@ -25,10 +25,13 @@ class BoatRequest extends FormRequest
 
             // price file
             'priceFile'            => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
+            'deletePriceFile'  => 'nullable|boolean',
 
             // promo photos (json) — kirim ulang semua saat ganti
             'promoPhotos'          => 'nullable|array',
             'promoPhotos.*'        => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+            'deletePromoPhotoIds'   => 'nullable|array',
+            'deletePromoPhotoIds.*' => 'integer',
 
             // photos
             'photos'               => 'nullable|array',

@@ -32,10 +32,16 @@ class BoatParser extends BaseParser
         }
 
         $promoPhotos = [];
-        foreach ($data->promoPhotos ?? [] as $photo) {
-            $promoPhotos[] = Storage::disk('public')->url(PathConstant::IMAGES_BOAT_PROMO . $photo);
-        }
 
+        foreach ($data->promoPhotos ?? [] as $photo) {
+
+            $promoPhotos[] = [
+                'id'   => $photo['id'],
+                'file' => Storage::disk('public')->url(
+                    PathConstant::IMAGES_BOAT_PROMO . $photo['file']
+                ),
+            ];
+        }
         $boatComponentType = null;
 
         if (isset($data->type)) {
@@ -74,8 +80,15 @@ class BoatParser extends BaseParser
         }
 
         $promoPhotos = [];
+
         foreach ($data->promoPhotos ?? [] as $photo) {
-            $promoPhotos[] = Storage::disk('public')->url(PathConstant::IMAGES_BOAT_PROMO . $photo);
+
+            $promoPhotos[] = [
+                'id'   => $photo['id'],
+                'file' => Storage::disk('public')->url(
+                    PathConstant::IMAGES_BOAT_PROMO . $photo['file']
+                ),
+            ];
         }
 
         return [
