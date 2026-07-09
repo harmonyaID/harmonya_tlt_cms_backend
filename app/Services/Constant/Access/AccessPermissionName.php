@@ -141,6 +141,12 @@ class AccessPermissionName
     const STAFF_EXPERIENCE_INQUIRY_FORM_CREATE = AccessGroup::STAFF . '.experience-inquiry-form.create';
     const STAFF_EXPERIENCE_INQUIRY_FORM_DELETE = AccessGroup::STAFF . '.experience-inquiry-form.delete';
 
+    // Menu
+const STAFF_MENU = AccessGroup::STAFF . '.menu.*';
+const STAFF_MENU_VIEW = AccessGroup::STAFF . '.menu.view';
+const STAFF_MENU_CREATE = AccessGroup::STAFF . '.menu.create';
+const STAFF_MENU_UPDATE = AccessGroup::STAFF . '.menu.update';
+const STAFF_MENU_DELETE = AccessGroup::STAFF . '.menu.delete';
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -249,6 +255,10 @@ class AccessPermissionName
         self::STAFF_EXPERIENCE_INQUIRY_FORM_CREATE,
         self::STAFF_EXPERIENCE_INQUIRY_FORM_DELETE,
 
+        self::STAFF_MENU,
+        self::STAFF_MENU_VIEW,
+        self::STAFF_MENU_CREATE,
+        self::STAFF_MENU_UPDATE,
 
     ];
 

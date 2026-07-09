@@ -53,11 +53,6 @@ class Experience extends BaseModel
         return $this->hasMany(ExperiencePhoto::class, 'experienceId')->orderBy('order');
     }
 
-    public function events(): HasMany
-    {
-        return $this->hasMany(ExperienceEvent::class, 'experienceId')->orderBy('eventDate', 'DESC');
-    }
-
     /*
      |--------------------------------------------------------------------------
      | Scopes

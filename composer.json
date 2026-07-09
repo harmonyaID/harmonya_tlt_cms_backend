@@ -56,9 +56,8 @@
             "app/Services/Helpers/Status/faq.php",
             "app/Services/Helpers/Status/boat.php",
             "app/Services/Helpers/Status/boatContactForm.php",
-            "app/Services/Helpers/Status/blog.php"
-
-
+            "app/Services/Helpers/Status/blog.php",
+            "app/Services/Helpers/Status/menu.php"
         ]
     },
     "scripts": {

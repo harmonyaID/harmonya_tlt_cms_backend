@@ -23,6 +23,7 @@ class ActivityType extends BaseCodeName
     const EXPERIENCE_CATEGORY = 'experience_category';
     const EXPERIENCE = 'experience';
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
+    const MENU = 'menu';
 
     const OPTION = [
         self::ACCESS,
@@ -41,6 +42,7 @@ class ActivityType extends BaseCodeName
         self::EXPERIENCE_TYPE,
         self::EXPERIENCE_CATEGORY,
         self::EXPERIENCE,
-        self::EXPERIENCE_INQUIRY_FORM
+        self::EXPERIENCE_INQUIRY_FORM,
+        self::MENU
     ];
 }
