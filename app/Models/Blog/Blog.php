@@ -3,6 +3,7 @@
 namespace App\Models\Blog;
 
 use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
 use App\Parser\Blog\BlogParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,7 +47,10 @@ class Blog extends BaseModel
     {
         return $this->belongsToMany(BlogTag::class, 'blog_tag', 'blogId', 'tagId');
     }
-
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
     /*
      |--------------------------------------------------------------------------
      | Scopes
@@ -71,7 +75,6 @@ class Blog extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
-
         })->orderBy('id', 'DESC');
     }
 
