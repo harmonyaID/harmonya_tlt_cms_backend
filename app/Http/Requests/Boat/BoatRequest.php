@@ -20,6 +20,7 @@ class BoatRequest extends FormRequest
                 'integer',
                 Rule::exists('boat_component_types', 'id')->whereNull('deletedAt'),
             ],
+            'name'          => 'required|string',
             'description'          => 'nullable|string',
             'isActive'             => 'required|boolean',
 
