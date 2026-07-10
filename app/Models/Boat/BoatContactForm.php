@@ -4,7 +4,6 @@ namespace App\Models\Boat;
 
 use App\Models\BaseModel;
 use App\Models\Boat\Boat;
-use App\Models\Boat\BoatType;
 use App\Parser\Boat\BoatContactFormParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -49,7 +48,7 @@ class BoatContactForm extends BaseModel
 
     public function boatType(): BelongsTo
     {
-        return $this->belongsTo(BoatType::class, 'boatTypeId');
+        return $this->belongsTo(BoatComponentType::class, 'boatTypeId');
     }
 
     /*
