@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Experience;
 
+use App\Http\Requests\ChangeMailStatusRequest;
 use App\Models\Experience\ExperienceInquiryForm;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
@@ -31,12 +32,12 @@ class ExperienceInquiryFormAlgo
                     ->setType(ActivityType::EXPERIENCE_INQUIRY_FORM)
                     ->setAction(ActivityAction::CREATE)
                     ->log("New inquiry form submitted. Name: " . $this->form->fullName);
-
             });
 
             return success($this->form->load('experience'));
-
-        } catch (\Error $error) { exception($error); }
+        } catch (\Error $error) {
+            exception($error);
+        }
     }
 
     public function delete()
@@ -51,11 +52,20 @@ class ExperienceInquiryFormAlgo
                     ->setType(ActivityType::EXPERIENCE_INQUIRY_FORM)
                     ->setAction(ActivityAction::DELETE)
                     ->log("Delete inquiry form. Name: " . $this->form->fullName);
-
             });
 
             return success();
+        } catch (\Error $error) {
+            exception($error);
+        }
+    }
 
-        } catch (\Error $error) { exception($error); }
+    public function changeStatus(ChangeMailStatusRequest $request): ExperienceInquiryForm
+    {
+        $this->form->update([
+            'statusId' => $request->statusId,
+        ]);
+
+        return success($this->form->load('experience'));
     }
 }

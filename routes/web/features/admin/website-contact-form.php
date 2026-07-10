@@ -13,5 +13,5 @@ Route::prefix("website-contact-forms")
         Route::put('{id}', [WebsiteContactFormController::class, 'update']);
         Route::delete('{id}', [WebsiteContactFormController::class, 'delete']);
         Route::patch('{id}/read', [WebsiteContactFormController::class, 'markAsRead']);
-
+        Route::patch('{id}/status', [WebsiteContactFormController::class, 'changeStatus']);
     });

@@ -37,6 +37,7 @@ Route::prefix("experiences")
                 Route::post('', [ExperienceInquiryFormController::class, 'create']);
                 Route::get('{id}', [ExperienceInquiryFormController::class, 'detail']);
                 Route::delete('{id}', [ExperienceInquiryFormController::class, 'delete']);
+                Route::patch('{id}/status', [ExperienceInquiryFormController::class, 'changeStatus']);
             });
 
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web\Admin\WebsiteContactForm;
 
 use App\Algorithms\WebsiteContactForm\WebsiteContactFormAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangeMailStatusRequest;
+use App\Http\Requests\Website\WebsiteContactFormChangeStatusRequest;
 use App\Http\Requests\WebsiteContactForm\WebsiteContactFormRequest;
 use App\Models\WebsiteContactForm\WebsiteContactForm;
 use App\Parser\WebsiteContactForm\WebsiteContactFormParser;
@@ -39,7 +41,6 @@ class WebsiteContactFormController extends Controller
                 has_permission_staff(AccessPermissionName::STAFF_WEBSITE_CONTACT_FORM_DELETE);
                 return $next($request);
             })->only(['delete']);
-
         }
     }
 
@@ -117,5 +118,10 @@ class WebsiteContactFormController extends Controller
     {
         $algo = new WebsiteContactFormAlgo((int)$id);
         return $algo->markAsRead();
+    }
+
+    public function changeStatus($id, ChangeMailStatusRequest $request) {
+        $algo = new WebsiteContactFormAlgo((int)$id);
+        return $algo->changeStatus($request);
     }
 }
