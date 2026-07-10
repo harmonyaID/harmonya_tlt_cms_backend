@@ -2,6 +2,8 @@
 
 namespace App\Algorithms\WebsiteContactForm;
 
+use App\Http\Requests\ChangeMailStatusRequest;
+use App\Http\Requests\Website\WebsiteContactFormChangeStatusRequest;
 use App\Models\WebsiteContactForm\WebsiteContactForm;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
@@ -46,11 +48,9 @@ class WebsiteContactFormAlgo
                     ->setType(ActivityType::WEBSITE_CONTACT_FORM)
                     ->setAction(ActivityAction::CREATE)
                     ->log("Enter new contact form. Name: " . $this->contactForm->name);
-
             });
 
             return success($this->contactForm);
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -75,11 +75,9 @@ class WebsiteContactFormAlgo
                     ->setType(ActivityType::WEBSITE_CONTACT_FORM)
                     ->setAction(ActivityAction::UPDATE)
                     ->log("Update contact form. Name: " . $this->contactForm->name);
-
             });
 
             return success($this->contactForm);
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -104,11 +102,9 @@ class WebsiteContactFormAlgo
                     ->setType(ActivityType::WEBSITE_CONTACT_FORM)
                     ->setAction(ActivityAction::DELETE)
                     ->log("Delete contact form. Name: " . $this->contactForm->name);
-
             });
 
             return success();
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -127,9 +123,17 @@ class WebsiteContactFormAlgo
             });
 
             return success($this->contactForm->fresh());
-
         } catch (\Error $error) {
             exception($error);
         }
+    }
+
+    public function changeStatus(ChangeMailStatusRequest $request): WebsiteContactForm {
+        $this->contactForm->update([
+            'statusId' => $request->statusId,
+        ]);
+
+        return success($this->contactForm->fresh());
+
     }
 }

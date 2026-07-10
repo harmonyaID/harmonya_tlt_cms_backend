@@ -2,6 +2,7 @@
 
 namespace App\Parser\WebsiteContactForm;
 
+use App\Services\Constant\Global\MailStatus;
 use Logia\Core\Parser\BaseParser;
 
 class WebsiteContactFormParser extends BaseParser
@@ -18,10 +19,13 @@ class WebsiteContactFormParser extends BaseParser
             return null;
         }
 
+        $status = MailStatus::idName($data->statusId);
+
         return [
             'id' => $data->id,
             'formType' => optional($data->getFormType)->only('id', 'name'),
             'name' => $data->name,
+            'status' => $status,
             'email' => $data->email,
             'phone' => $data->phone,
             'subject' => $data->subject,
@@ -42,10 +46,13 @@ class WebsiteContactFormParser extends BaseParser
             return null;
         }
 
+        $status = MailStatus::idName($data->statusId);
+
         return [
             'id' => $data->id,
             'formType' => optional($data->getFormType)->only('id', 'name'),
             'name' => $data->name,
+            'status' => $status,
             'email' => $data->email,
             'phone' => $data->phone,
             'subject' => $data->subject,

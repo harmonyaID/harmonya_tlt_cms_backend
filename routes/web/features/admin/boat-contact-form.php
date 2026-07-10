@@ -12,5 +12,6 @@ Route::prefix("boat-contact-forms")
         Route::get('{id}', [BoatContactFormController::class, 'detail']);
         Route::delete('{id}', [BoatContactFormController::class, 'delete']);
         Route::patch('{id}/read', [BoatContactFormController::class, 'markAsRead']);
+        Route::patch('{id}/status', [BoatContactFormController::class, 'changeStatus']);
 
     });

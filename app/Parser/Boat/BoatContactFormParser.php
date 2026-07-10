@@ -2,6 +2,7 @@
 
 namespace App\Parser\Boat;
 
+use App\Services\Constant\Global\MailStatus;
 use Logia\Core\Parser\BaseParser;
 
 class BoatContactFormParser extends BaseParser
@@ -13,11 +14,14 @@ class BoatContactFormParser extends BaseParser
             return null;
         }
 
+        $status = MailStatus::idName($data->statusId);
+
         return [
             'id' => $data->id,
             'boat' => optional($data->boat)->only('id', 'name', 'routeFrom', 'routeTo'),
             'boatType' => optional($data->boatType)->only('id', 'name', 'currency'),
             'name' => $data->name,
+            'status' => $status,
             'email' => $data->email,
             'phone' => $data->phone,
             'ticketType' => $data->ticketType,
@@ -55,11 +59,14 @@ class BoatContactFormParser extends BaseParser
             return null;
         }
 
+        $status = MailStatus::idName($data->statusId);
+
         return [
             'id' => $data->id,
             'boat' => optional($data->boat)->only('id', 'name'),
             'boatType' => optional($data->boatType)->only('id', 'name'),
             'name' => $data->name,
+            'status' => $status,
             'email' => $data->email,
             'phone' => $data->phone,
             'ticketType' => $data->ticketType,

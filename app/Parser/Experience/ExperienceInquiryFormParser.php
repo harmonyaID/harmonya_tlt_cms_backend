@@ -2,6 +2,7 @@
 
 namespace App\Parser\Experience;
 
+use App\Services\Constant\Global\MailStatus;
 use Logia\Core\Parser\BaseParser;
 
 class ExperienceInquiryFormParser extends BaseParser
@@ -10,6 +11,7 @@ class ExperienceInquiryFormParser extends BaseParser
     {
         if (!$data) return null;
 
+        $status = MailStatus::idName($data->statusId);
         return [
             'id'                   => $data->id,
             'experienceId'         => $data->experienceId,
@@ -18,6 +20,7 @@ class ExperienceInquiryFormParser extends BaseParser
                 'name' => $data->experience->name,
             ] : null,
             'fullName'             => $data->fullName,
+            'status' => $status,
             'phone'                => $data->phone,
             'email'                => $data->email,
             'eventDate'            => optional($data->eventDate)->format('d/m/Y'),
@@ -37,6 +40,8 @@ class ExperienceInquiryFormParser extends BaseParser
     {
         if (!$data) return null;
 
+        $status = MailStatus::idName($data->statusId);
+        
         return [
             'id'                 => $data->id,
             'experienceId'       => $data->experienceId,
@@ -45,6 +50,7 @@ class ExperienceInquiryFormParser extends BaseParser
                 'name' => $data->experience->name,
             ] : null,
             'fullName'           => $data->fullName,
+            'status' => $status,
             'phone'              => $data->phone,
             'email'              => $data->email,
             'eventDate'          => optional($data->eventDate)->format('d/m/Y'),

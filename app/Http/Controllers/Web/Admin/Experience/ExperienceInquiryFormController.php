@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Experience;
 
 use App\Algorithms\Experience\ExperienceInquiryFormAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangeMailStatusRequest;
 use App\Http\Requests\Experience\ExperienceInquiryFormRequest;
 use App\Models\Experience\ExperienceInquiryForm;
 use App\Parser\Experience\ExperienceInquiryFormParser;
@@ -33,7 +34,6 @@ class ExperienceInquiryFormController extends Controller
                 has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_INQUIRY_FORM_DELETE);
                 return $next($request);
             })->only(['delete']);
-
         }
     }
 
@@ -59,5 +59,11 @@ class ExperienceInquiryFormController extends Controller
     public function delete($id)
     {
         return (new ExperienceInquiryFormAlgo((int)$id))->delete();
+    }
+
+    public function changeStatus($id, ChangeMailStatusRequest $request)
+    {
+        $algo = new ExperienceInquiryFormAlgo((int)$id);
+        return $algo->changeStatus($request);
     }
 }

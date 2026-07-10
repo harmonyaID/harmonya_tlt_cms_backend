@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Boat;
 
+use App\Http\Requests\ChangeMailStatusRequest;
 use App\Models\Boat\BoatContactForm;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
@@ -36,11 +37,9 @@ class BoatContactFormAlgo
                     ->setType(ActivityType::BOAT_CONTACT_FORM)
                     ->setAction(ActivityAction::CREATE)
                     ->log("New boat booking form submitted. Name: " . $this->contactForm->name);
-
             });
 
             return success($this->contactForm->load('boat', 'boatType'));
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -61,11 +60,9 @@ class BoatContactFormAlgo
                     ->setType(ActivityType::BOAT_CONTACT_FORM)
                     ->setAction(ActivityAction::DELETE)
                     ->log("Delete boat contact form. Name: " . $this->contactForm->name);
-
             });
 
             return success();
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -80,9 +77,17 @@ class BoatContactFormAlgo
             });
 
             return success($this->contactForm->fresh()->load('boat', 'boatType'));
-
         } catch (\Error $error) {
             exception($error);
         }
+    }
+
+    public function changeStatus(ChangeMailStatusRequest $request): BoatContactForm
+    {
+        $this->contactForm->update([
+            'statusId' => $request->statusId,
+        ]);
+
+        return success($this->contactForm->fresh()->load('boat', 'boatType'));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin\Boat;
 use App\Algorithms\Boat\BoatContactFormAlgo;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Boat\BoatContactFormRequest;
+use App\Http\Requests\ChangeMailStatusRequest;
 use App\Models\Boat\BoatContactForm;
 use App\Parser\Boat\BoatContactFormParser;
 use App\Services\Constant\Access\AccessPermissionName;
@@ -35,7 +36,6 @@ class BoatContactFormController extends Controller
                 has_permission_staff(AccessPermissionName::STAFF_BOAT_CONTACT_FORM_DELETE);
                 return $next($request);
             })->only(['delete']);
-
         }
     }
 
@@ -71,5 +71,11 @@ class BoatContactFormController extends Controller
     {
         $algo = new BoatContactFormAlgo((int)$id);
         return $algo->markAsRead();
+    }
+
+    public function changeStatus($id, ChangeMailStatusRequest $request)
+    {
+        $algo = new BoatContactFormAlgo((int)$id);
+        return $algo->changeStatus($request);
     }
 }
