@@ -4,6 +4,7 @@ namespace App\Http\Requests\Blog;
 
 use App\Http\Requests\Seo\SeoRequest;
 use App\Http\Requests\Seo\SeoRule;
+use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
 class BlogRequest extends FormRequest
@@ -15,10 +16,18 @@ class BlogRequest extends FormRequest
 
     public function rules()
     {
+        $blogId = $this->route('id');
+
         return array_merge([
             'categoryId' => 'nullable|integer|exists:blog_categories,id',
             'title' => 'required|string',
-            'slug' => 'required|string',
+
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('blogs', 'slug')->ignore($blogId),
+            ],
             'excerpt' => 'nullable|string',
             'content' => 'nullable|string',
             'author' => 'nullable|string',
