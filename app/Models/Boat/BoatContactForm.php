@@ -46,11 +46,6 @@ class BoatContactForm extends BaseModel
         return $this->belongsTo(Boat::class, 'boatId');
     }
 
-    public function boatType(): BelongsTo
-    {
-        return $this->belongsTo(BoatComponentType::class, 'boatTypeId');
-    }
-
     /*
      |--------------------------------------------------------------------------
      | Scopes
@@ -71,10 +66,6 @@ class BoatContactForm extends BaseModel
 
             if ($request->has('boatId') && $request->boatId) {
                 $query->where('boatId', $request->boatId);
-            }
-
-            if ($request->has('boatTypeId') && $request->boatTypeId) {
-                $query->where('boatTypeId', $request->boatTypeId);
             }
 
             if ($request->has('ticketType') && $request->ticketType) {

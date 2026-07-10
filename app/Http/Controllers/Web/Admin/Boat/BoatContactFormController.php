@@ -41,13 +41,13 @@ class BoatContactFormController extends Controller
 
     public function get(Request $request)
     {
-        $forms = BoatContactForm::filter($request)->with('boat', 'boatType')->getOrPaginate($request);
+        $forms = BoatContactForm::filter($request)->with('boat')->getOrPaginate($request);
         return success(BoatContactFormParser::briefs($forms), pagination: pagination($forms));
     }
 
     public function detail($id)
     {
-        $form = BoatContactForm::with('boat', 'boatType')->find($id);
+        $form = BoatContactForm::with('boat')->find($id);
         if (!$form) {
             errBoatContactFormGet();
         }

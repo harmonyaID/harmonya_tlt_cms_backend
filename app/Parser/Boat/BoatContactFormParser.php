@@ -15,11 +15,11 @@ class BoatContactFormParser extends BaseParser
         }
 
         $status = MailStatus::idName($data->statusId);
+        $boatParser = BoatParser::brief($data->boat);
 
         return [
             'id' => $data->id,
-            'boat' => optional($data->boat)->only('id', 'name', 'routeFrom', 'routeTo'),
-            'boatType' => optional($data->boatType)->only('id', 'name', 'currency'),
+            'boat' => $boatParser,
             'name' => $data->name,
             'status' => $status,
             'email' => $data->email,
@@ -61,10 +61,11 @@ class BoatContactFormParser extends BaseParser
 
         $status = MailStatus::idName($data->statusId);
 
+        $boatParser = BoatParser::brief($data->boat);
+
         return [
             'id' => $data->id,
-            'boat' => optional($data->boat)->only('id', 'name'),
-            'boatType' => optional($data->boatType)->only('id', 'name'),
+            'boat' => $boatParser,
             'name' => $data->name,
             'status' => $status,
             'email' => $data->email,
