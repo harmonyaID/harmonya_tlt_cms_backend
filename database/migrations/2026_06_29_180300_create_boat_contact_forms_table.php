@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('boat_contact_forms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('boatId')->nullable();
-            $table->foreignId('boatTypeId')->nullable();
-
+            
             // Customer Info
             $table->string('name');
             $table->string('email');

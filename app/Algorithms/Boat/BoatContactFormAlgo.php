@@ -39,7 +39,7 @@ class BoatContactFormAlgo
                     ->log("New boat booking form submitted. Name: " . $this->contactForm->name);
             });
 
-            return success($this->contactForm->load('boat', 'boatType'));
+            return success($this->contactForm->load('boat'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -76,7 +76,7 @@ class BoatContactFormAlgo
                 $this->contactForm->update(['isRead' => true]);
             });
 
-            return success($this->contactForm->fresh()->load('boat', 'boatType'));
+            return success($this->contactForm->fresh()->load('boat'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -88,6 +88,6 @@ class BoatContactFormAlgo
             'statusId' => $request->statusId,
         ]);
 
-        return success($this->contactForm->fresh()->load('boat', 'boatType'));
+        return success($this->contactForm->fresh()->load('boat'));
     }
 }

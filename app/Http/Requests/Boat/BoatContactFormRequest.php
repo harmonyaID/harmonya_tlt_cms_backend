@@ -15,8 +15,6 @@ class BoatContactFormRequest extends FormRequest
     {
         return [
             'boatId' => 'nullable|integer|exists:boats,id',
-            'boatTypeId' => 'nullable|integer|exists:boat_types,id',
-
             // Customer info
             'name' => 'required|string',
             'email' => 'required|email',
