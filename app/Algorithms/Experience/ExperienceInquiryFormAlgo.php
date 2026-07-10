@@ -60,8 +60,7 @@ class ExperienceInquiryFormAlgo
         }
     }
 
-    public function changeStatus(ChangeMailStatusRequest $request): ExperienceInquiryForm
-    {
+    public function changeStatus(ChangeMailStatusRequest $request){
         $this->form->update([
             'statusId' => $request->statusId,
         ]);

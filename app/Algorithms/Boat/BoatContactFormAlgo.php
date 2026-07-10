@@ -39,7 +39,7 @@ class BoatContactFormAlgo
                     ->log("New boat booking form submitted. Name: " . $this->contactForm->name);
             });
 
-            return success($this->contactForm->load('boat'));
+            return success($this->contactForm->fresh()->load('boat'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -82,8 +82,7 @@ class BoatContactFormAlgo
         }
     }
 
-    public function changeStatus(ChangeMailStatusRequest $request): BoatContactForm
-    {
+    public function changeStatus(ChangeMailStatusRequest $request){
         $this->contactForm->update([
             'statusId' => $request->statusId,
         ]);

@@ -18,6 +18,25 @@ return new class extends Migration
         Schema::create('contentseo', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('contentableId');
+            $table->string('contentableType');
+
+            $table->string('info')->nullable();
+
+            $table->string('title');
+            $table->string('slug')->nullable();
+
+            $table->text('description')->nullable();
+            $table->text('metaKeyword')->nullable();
+
+            $table->string('thumbnail')->nullable();
+            $table->string('canonicalUrl')->nullable();
+
+            $table->boolean('robotIndex')->default(true);
+            $table->boolean('robotFollow')->default(true);
+
+            $table->index(['contentableId', 'contentableType']);
+
             $this->getDefaultTimestamps($table);
         });
     }

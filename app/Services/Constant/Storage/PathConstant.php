@@ -59,6 +59,8 @@ class PathConstant
     const IMAGES_EXPERIENCE = 'images/experiences/';
     const PDF_EXPERIENCE = 'PDFs/experiences/';
 
+    const IMAGES_SEO = 'images/seo/';
+
     /*
      |--------------------------------------------------------------------------
      | IMAGES
@@ -98,6 +100,10 @@ class PathConstant
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT_PROMO);
     }
 
+    public static function IMAGES_SEO_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_SEO);
+    }
     public static function FILES_BOAT_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::FILES_BOAT);

@@ -128,7 +128,7 @@ class WebsiteContactFormAlgo
         }
     }
 
-    public function changeStatus(ChangeMailStatusRequest $request): WebsiteContactForm {
+    public function changeStatus(ChangeMailStatusRequest $request) {
         $this->contactForm->update([
             'statusId' => $request->statusId,
         ]);

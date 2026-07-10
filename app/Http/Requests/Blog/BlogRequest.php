@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Blog;
 
+use App\Http\Requests\Seo\SeoRequest;
+use App\Http\Requests\Seo\SeoRule;
 use Logia\Core\Validation\Support\FormRequest;
 
 class BlogRequest extends FormRequest
@@ -13,7 +15,7 @@ class BlogRequest extends FormRequest
 
     public function rules()
     {
-        return [
+        return array_merge([
             'categoryId' => 'nullable|integer|exists:blog_categories,id',
             'title' => 'required|string',
             'slug' => 'required|string',
@@ -22,10 +24,14 @@ class BlogRequest extends FormRequest
             'author' => 'nullable|string',
             'publishedAt' => 'nullable|date',
             'isActive' => 'required|boolean',
+
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deleteThumbnail' => 'nullable|boolean',
+
             'tagIds' => 'nullable|array',
             'tagIds.*' => 'integer|exists:blog_tags,id',
-        ];
+
+            'seo' => 'nullable|array',
+        ], SeoRule::rules());
     }
 }

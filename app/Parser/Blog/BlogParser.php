@@ -2,6 +2,7 @@
 
 namespace App\Parser\Blog;
 
+use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
 class BlogParser extends BaseParser
@@ -31,6 +32,8 @@ class BlogParser extends BaseParser
             'isActive' => $data->isActive,
             'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'seo' => SeoParser::first($data->seo),
+
         ];
     }
 

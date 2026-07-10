@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Blog;
 
+use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Blog\Blog;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
@@ -45,6 +46,8 @@ class BlogAlgo
                     $this->blog->tags()->sync($request->tagIds);
                 }
 
+                (new ContentSeoAlgo($this->blog))->save($request);
+                
                 activity()->setCausedBy()
                     ->setReference($this->blog)
                     ->setType(ActivityType::BLOG)
@@ -52,7 +55,7 @@ class BlogAlgo
                     ->log("Enter new blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags'));
+            return success($this->blog->load('category', 'tags','seo'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -90,6 +93,8 @@ class BlogAlgo
                     $this->blog->tags()->sync($request->tagIds);
                 }
 
+                (new ContentSeoAlgo($this->blog))->save($request);
+
                 activity()->setCausedBy()
                     ->setReference($this->blog)
                     ->setType(ActivityType::BLOG)
@@ -97,7 +102,7 @@ class BlogAlgo
                     ->log("Update blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags'));
+            return success($this->blog->load('category', 'tags','seo'));
         } catch (\Error $error) {
             exception($error);
         }
