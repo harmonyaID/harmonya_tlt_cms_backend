@@ -81,14 +81,23 @@ class BoatParser extends BaseParser
 
         $promoPhotos = [];
 
-        foreach ($data->promoPhotos ?? [] as $photo) {
-
-            $promoPhotos[] = [
-                'id'   => $photo['id'],
-                'file' => Storage::disk('public')->url(
-                    PathConstant::IMAGES_BOAT_PROMO . $photo['file']
-                ),
-            ];
+        foreach ($data->promoPhotos ?? [] as $key => $photo) {
+            if (is_array($photo)) {
+                $promoPhotos[] = [
+                    'id'   => $photo['id'] ?? $key,
+                    'file' => Storage::disk('public')->url(
+                        PathConstant::IMAGES_BOAT_PROMO . $photo['file']
+                    ),
+                ];
+            } else {
+                // $photo is just a filename string
+                $promoPhotos[] = [
+                    'id'   => $key,
+                    'file' => Storage::disk('public')->url(
+                        PathConstant::IMAGES_BOAT_PROMO . $photo
+                    ),
+                ];
+            }
         }
 
         return [
