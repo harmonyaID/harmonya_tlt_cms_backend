@@ -53,6 +53,7 @@ class BoatParser extends BaseParser
 
         return [
             'id'                  => $data->id,
+            'name'                  => $data->name,
             'boatComponentType'   => $boatComponentType,
             'description'         => $data->description,
             'promoPhotos'         => $promoPhotos,
@@ -102,6 +103,7 @@ class BoatParser extends BaseParser
 
         return [
             'id'                  => $data->id,
+            'name'                  => $data->name,
             'boatComponentTypeId'   => $data->boatComponentTypeId,
             'boatComponentTypeName' => optional($data->type)->name,
             'promoPhotos'         => $promoPhotos,
