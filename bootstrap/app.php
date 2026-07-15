@@ -16,6 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
             ->middleware(['web'])
             ->namespace("$namespace\\" . config('core.namespace.web.admin'))
             ->group(base_path('routes/web/admin.php'));
+
+        // PUBLIC
+        Route::prefix(config('core.prefix.public'))
+            ->middleware(['web'])
+            ->namespace("$namespace\\" . config('core.namespace.public'))
+            ->group(base_path('routes/public/public.php'));
     })
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens(["*"]);
@@ -27,11 +33,5 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
     })
     ->withSchedule(function (Schedule $schedule) {
-
-        // Member
-        $schedule->command('member:subscription-billing-generate')->dailyAt('00:30');
-
-        // Recommendation
-        $schedule->command('recommendation:partner')->dailyAt('01:30');
 
     })->create();
