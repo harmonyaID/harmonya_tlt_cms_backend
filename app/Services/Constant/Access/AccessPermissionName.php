@@ -142,11 +142,17 @@ class AccessPermissionName
     const STAFF_EXPERIENCE_INQUIRY_FORM_DELETE = AccessGroup::STAFF . '.experience-inquiry-form.delete';
 
     // Menu
-const STAFF_MENU = AccessGroup::STAFF . '.menu.*';
-const STAFF_MENU_VIEW = AccessGroup::STAFF . '.menu.view';
-const STAFF_MENU_CREATE = AccessGroup::STAFF . '.menu.create';
-const STAFF_MENU_UPDATE = AccessGroup::STAFF . '.menu.update';
-const STAFF_MENU_DELETE = AccessGroup::STAFF . '.menu.delete';
+    const STAFF_MENU = AccessGroup::STAFF . '.menu.*';
+    const STAFF_MENU_VIEW = AccessGroup::STAFF . '.menu.view';
+    const STAFF_MENU_CREATE = AccessGroup::STAFF . '.menu.create';
+    const STAFF_MENU_UPDATE = AccessGroup::STAFF . '.menu.update';
+    const STAFF_MENU_DELETE = AccessGroup::STAFF . '.menu.delete';
+
+    // Homepage
+    const STAFF_HOMEPAGE = AccessGroup::STAFF . '.homepage.*';
+    const STAFF_HOMEPAGE_VIEW = AccessGroup::STAFF . '.homepage.view';
+    const STAFF_HOMEPAGE_UPDATE = AccessGroup::STAFF . '.homepage.update';
+
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -259,6 +265,10 @@ const STAFF_MENU_DELETE = AccessGroup::STAFF . '.menu.delete';
         self::STAFF_MENU_VIEW,
         self::STAFF_MENU_CREATE,
         self::STAFF_MENU_UPDATE,
+
+        self::STAFF_HOMEPAGE,
+        self::STAFF_HOMEPAGE_VIEW,
+        self::STAFF_HOMEPAGE_UPDATE,
 
     ];
 

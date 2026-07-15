@@ -113,6 +113,11 @@ class PathConstant
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
     }
 
+    public static function IMAGES_HOMEPAGE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_HOMEPAGE);
+    }
+
 
     public static function IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH()
     {
