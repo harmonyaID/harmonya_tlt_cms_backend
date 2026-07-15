@@ -8,6 +8,7 @@ use App\Models\Configuration\WebsiteInformation;
 use Database\Seeders\Access\AccessPermissionSeeder;
 use Database\Seeders\Access\AccessRoleSeeder;
 use Database\Seeders\Configuration\WebsiteInformationSeeder;
+use Database\Seeders\Homepage\HomepageSeeder;
 use Database\Seeders\Language\LanguageGroupSeeder;
 use Database\Seeders\Language\LanguageSeeder;
 use Database\Seeders\Language\TranslatorSeeder;
@@ -23,15 +24,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            StaffSeeder::class,
-            AccessRoleSeeder::class,
-            AccessPermissionSeeder::class,
-            CountrySeeder::class,
-            LanguageGroupSeeder::class,
-            LanguageSeeder::class,
-            TranslatorSeeder::class,
-            WebsiteInformationSeeder::class,
-
+            // StaffSeeder::class,
+            // AccessRoleSeeder::class,
+            // AccessPermissionSeeder::class,
+            // CountrySeeder::class,
+            // LanguageGroupSeeder::class,
+            // LanguageSeeder::class,
+            // TranslatorSeeder::class,
+            // WebsiteInformationSeeder::class,
+            HomepageSeeder::class,
         ]);
     }
 }
