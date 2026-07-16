@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Parser\MediaPartner;
+namespace App\Parser\Amenity;
 
 use Logia\Core\Parser\BaseParser;
 
-class MediaPartnerParser extends BaseParser
+class AmenityCategoryParser extends BaseParser
 {
 
     /**
@@ -21,11 +21,9 @@ class MediaPartnerParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'description' => $data->description,
-            'featuredImage' => $data->featuredImageUrl(),
-            'logo' => $data->logoUrl(),
-            'url' => $data->url,
-            'isPublish' => $data->isPublish,
+            'icon' => $data->icon,
+            'order' => $data->order,
+            'amenities' => AmenityParser::briefs($data->amenities),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -44,12 +42,8 @@ class MediaPartnerParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'description' => $data->description,
-            'featuredImage' => $data->featuredImageUrl(),
-            'logo' => $data->logoUrl(),
-            'url' => $data->url,
-            'isPublish' => $data->isPublish,
-
+            'icon' => $data->icon,
+            'order' => $data->order,
         ];
     }
 }
