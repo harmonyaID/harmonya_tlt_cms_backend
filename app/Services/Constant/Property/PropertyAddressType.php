@@ -2,15 +2,17 @@
 
 namespace App\Services\Constant\Property;
 
-use App\Services\Constant\BaseCodeName;
+use App\Services\Constant\BaseIDName;
 
-class PropertyAddressType extends BaseCodeName
+class PropertyAddressType extends BaseIDName
 {
-    const FULL = 'full';
-    const PUBLISHED = 'published';
+    const FULL = 'Full';
+    const FULL_ID = 1;
+    const PUBLISHED = 'Published';
+    const PUBLISHED_ID = 2;
 
     const OPTION = [
-        self::FULL,
-        self::PUBLISHED,
+        self::FULL_ID => self::FULL,
+        self::PUBLISHED_ID => self::PUBLISHED,
     ];
 }

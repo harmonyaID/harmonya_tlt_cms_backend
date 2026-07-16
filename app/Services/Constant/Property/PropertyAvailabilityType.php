@@ -2,15 +2,17 @@
 
 namespace App\Services\Constant\Property;
 
-use App\Services\Constant\BaseCodeName;
+use App\Services\Constant\BaseIDName;
 
-class PropertyAvailabilityType extends BaseCodeName
+class PropertyAvailabilityType extends BaseIDName
 {
-    const ALWAYS = 'always';
-    const CUSTOM = 'custom';
+    const ALWAYS = 'Available always';
+    const ALWAYS_ID = 1;
+    const CUSTOM = 'Custom';
+    const CUSTOM_ID = 2;
 
     const OPTION = [
-        self::ALWAYS,
-        self::CUSTOM,
+        self::ALWAYS_ID => self::ALWAYS,
+        self::CUSTOM_ID => self::CUSTOM,
     ];
 }
