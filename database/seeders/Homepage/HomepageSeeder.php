@@ -22,6 +22,7 @@ class HomepageSeeder extends Seeder
                     'SECTION1' => [
                         "content" => "<h1>Your Nusa Lembongan<br/>Story Starts Here</h1>",
                         "backgroundVideo" => "PLACEHOLDER_hero_banner.mp4",
+                        "isVideo" => true,
                         "videoThumbnail" => "PLACEHOLDER_hero_banner_thumbnail.jpg",
                         "searchLabelDates" => "Dates",
                         "searchPlaceholderDates" => "Choose Date",
