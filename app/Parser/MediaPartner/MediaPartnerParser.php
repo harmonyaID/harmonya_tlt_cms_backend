@@ -2,7 +2,7 @@
 
 namespace App\Parser\MediaPartner;
 
-use App\Services\Constant\Global\MediaPartnerType;
+use App\Services\Constant\MediaPartner\MediaPartnerType;
 use Logia\Core\Parser\BaseParser;
 
 class MediaPartnerParser extends BaseParser

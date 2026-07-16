@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Component;
 
 use App\Http\Controllers\Controller;
 use App\Services\Constant\Global\MailStatus;
+use App\Services\Constant\MediaPartner\MediaPartnerType;
 use Illuminate\Http\Request;
 
 class ComponentStaticController extends Controller
@@ -18,6 +19,6 @@ class ComponentStaticController extends Controller
 
     public function getMediaPartnerType()
     {
-        return success(MailStatus::get());
+        return success(MediaPartnerType::get());
     }
 }
