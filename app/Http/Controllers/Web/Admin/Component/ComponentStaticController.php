@@ -16,4 +16,8 @@ class ComponentStaticController extends Controller
         return success(MailStatus::get());
     }
 
+    public function getMediaPartnerType()
+    {
+        return success(MailStatus::get());
+    }
 }

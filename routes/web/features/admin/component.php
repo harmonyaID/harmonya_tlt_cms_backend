@@ -12,6 +12,8 @@ Route::prefix("components")
         Route::prefix('statics')
             ->group(function () {
                 Route::get('status-form', [ComponentStaticController::class, 'getStatusForm']);
+                Route::get('media-partner-type', [ComponentStaticController::class, 'getMediaPartnerType']);
+
             });
 
         Route::prefix('contact-form-types')

@@ -2,6 +2,7 @@
 
 namespace App\Parser\MediaPartner;
 
+use App\Services\Constant\Global\MediaPartnerType;
 use Logia\Core\Parser\BaseParser;
 
 class MediaPartnerParser extends BaseParser
@@ -25,6 +26,7 @@ class MediaPartnerParser extends BaseParser
             'featuredImage' => $data->featuredImageUrl(),
             'logo' => $data->logoUrl(),
             'url' => $data->url,
+            'type' => MediaPartnerType::idName($data->typeId),
             'isPublish' => $data->isPublish,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
@@ -49,7 +51,7 @@ class MediaPartnerParser extends BaseParser
             'logo' => $data->logoUrl(),
             'url' => $data->url,
             'isPublish' => $data->isPublish,
-
+            'type' => MediaPartnerType::idName($data->typeId),
         ];
     }
 }

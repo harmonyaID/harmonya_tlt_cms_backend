@@ -30,6 +30,7 @@ class MediaPartnerRequest extends FormRequest
             'featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'isPublish' => 'required|boolean',
+            'typeId' => 'required|integer',
 
         ];
     }

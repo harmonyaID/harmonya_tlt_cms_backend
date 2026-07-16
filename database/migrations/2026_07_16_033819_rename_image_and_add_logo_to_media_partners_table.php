@@ -17,6 +17,8 @@ return new class extends Migration
 
         Schema::table('media_partners', function (Blueprint $table) {
             $table->string('logo')->nullable()->after('featuredImage');
+            $table->tinyInteger('typeId')->nullable()->after('logo');
+
         });
     }
 
