@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Constant\Global;
+namespace App\Services\Constant\MediaPartner;
 
 use App\Services\Constant\BaseIDName;
 
