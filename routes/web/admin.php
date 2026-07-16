@@ -21,3 +21,4 @@ require($base . "experience.php");
 require($base . "menu.php");
 require($base . "homepage.php");
 require($base . "setting.php");
+require($base . "property.php");

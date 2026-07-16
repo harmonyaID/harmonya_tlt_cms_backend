@@ -167,6 +167,27 @@ class AccessPermissionName
     const STAFF_AMENITY_UPDATE = AccessGroup::STAFF . '.amenity.update';
     const STAFF_AMENITY_DELETE = AccessGroup::STAFF . '.amenity.delete';
 
+    // Property Type
+    const STAFF_PROPERTY_TYPE = AccessGroup::STAFF . '.property-type.*';
+    const STAFF_PROPERTY_TYPE_VIEW = AccessGroup::STAFF . '.property-type.view';
+    const STAFF_PROPERTY_TYPE_CREATE = AccessGroup::STAFF . '.property-type.create';
+    const STAFF_PROPERTY_TYPE_UPDATE = AccessGroup::STAFF . '.property-type.update';
+    const STAFF_PROPERTY_TYPE_DELETE = AccessGroup::STAFF . '.property-type.delete';
+
+    // Property Room Type
+    const STAFF_PROPERTY_ROOM_TYPE = AccessGroup::STAFF . '.property-room-type.*';
+    const STAFF_PROPERTY_ROOM_TYPE_VIEW = AccessGroup::STAFF . '.property-room-type.view';
+    const STAFF_PROPERTY_ROOM_TYPE_CREATE = AccessGroup::STAFF . '.property-room-type.create';
+    const STAFF_PROPERTY_ROOM_TYPE_UPDATE = AccessGroup::STAFF . '.property-room-type.update';
+    const STAFF_PROPERTY_ROOM_TYPE_DELETE = AccessGroup::STAFF . '.property-room-type.delete';
+
+    // Property Bed Type
+    const STAFF_PROPERTY_BED_TYPE = AccessGroup::STAFF . '.property-bed-type.*';
+    const STAFF_PROPERTY_BED_TYPE_VIEW = AccessGroup::STAFF . '.property-bed-type.view';
+    const STAFF_PROPERTY_BED_TYPE_CREATE = AccessGroup::STAFF . '.property-bed-type.create';
+    const STAFF_PROPERTY_BED_TYPE_UPDATE = AccessGroup::STAFF . '.property-bed-type.update';
+    const STAFF_PROPERTY_BED_TYPE_DELETE = AccessGroup::STAFF . '.property-bed-type.delete';
+
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -295,6 +316,24 @@ class AccessPermissionName
         self::STAFF_AMENITY_CREATE,
         self::STAFF_AMENITY_UPDATE,
         self::STAFF_AMENITY_DELETE,
+
+        self::STAFF_PROPERTY_TYPE,
+        self::STAFF_PROPERTY_TYPE_VIEW,
+        self::STAFF_PROPERTY_TYPE_CREATE,
+        self::STAFF_PROPERTY_TYPE_UPDATE,
+        self::STAFF_PROPERTY_TYPE_DELETE,
+
+        self::STAFF_PROPERTY_ROOM_TYPE,
+        self::STAFF_PROPERTY_ROOM_TYPE_VIEW,
+        self::STAFF_PROPERTY_ROOM_TYPE_CREATE,
+        self::STAFF_PROPERTY_ROOM_TYPE_UPDATE,
+        self::STAFF_PROPERTY_ROOM_TYPE_DELETE,
+
+        self::STAFF_PROPERTY_BED_TYPE,
+        self::STAFF_PROPERTY_BED_TYPE_VIEW,
+        self::STAFF_PROPERTY_BED_TYPE_CREATE,
+        self::STAFF_PROPERTY_BED_TYPE_UPDATE,
+        self::STAFF_PROPERTY_BED_TYPE_DELETE,
 
     ];
 
