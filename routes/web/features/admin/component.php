@@ -20,6 +20,7 @@ Route::prefix("components")
                 Route::get('property-address-types', [ComponentStaticController::class, 'getPropertyAddressTypes']);
                 Route::get('property-availability-types', [ComponentStaticController::class, 'getPropertyAvailabilityTypes']);
                 Route::get('property-cleaning-fee-types', [ComponentStaticController::class, 'getPropertyCleaningFeeTypes']);
+                Route::get('property-cleaning-statuses', [ComponentStaticController::class, 'getPropertyCleaningStatuses']);
                 Route::get('property-advance-notice-units', [ComponentStaticController::class, 'getPropertyAdvanceNoticeUnits']);
                 Route::get('property-guesty-sync-statuses', [ComponentStaticController::class, 'getPropertyGuestySyncStatuses']);
             });

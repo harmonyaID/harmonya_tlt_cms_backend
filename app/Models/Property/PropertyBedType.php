@@ -3,14 +3,14 @@
 namespace App\Models\Property;
 
 use App\Models\BaseModel;
-use App\Parser\Property\PropertyRoomTypeParser;
+use App\Parser\Property\PropertyBedTypeParser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PropertyRoomType extends BaseModel
+class PropertyBedType extends BaseModel
 {
     use SoftDeletes;
 
-    protected $table = 'property_room_types';
+    protected $table = 'property_bed_types';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -23,7 +23,7 @@ class PropertyRoomType extends BaseModel
         self::DELETED_AT => 'datetime',
     ];
 
-    public $parserClass = PropertyRoomTypeParser::class;
+    public $parserClass = PropertyBedTypeParser::class;
 
     /*
      |--------------------------------------------------------------------------
