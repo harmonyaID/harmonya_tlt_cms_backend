@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('amenity_categories', function (Blueprint $table) {
+        Schema::create('setting_amenity_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('icon')->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('amenity_categories');
+        Schema::dropIfExists('setting_amenity_categories');
     }
 };

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models\Amenity;
+namespace App\Models\Setting;
 
 use App\Models\BaseModel;
-use App\Parser\Amenity\AmenityCategoryParser;
+use App\Parser\Setting\SettingAmenityCategoryParser;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AmenityCategory extends BaseModel
+class SettingAmenityCategory extends BaseModel
 {
     use SoftDeletes;
 
-    protected $table = 'amenity_categories';
+    protected $table = 'setting_amenity_categories';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -25,7 +25,7 @@ class AmenityCategory extends BaseModel
         self::DELETED_AT => 'datetime',
     ];
 
-    public $parserClass = AmenityCategoryParser::class;
+    public $parserClass = SettingAmenityCategoryParser::class;
 
     /*
      |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ class AmenityCategory extends BaseModel
 
     public function amenities(): HasMany
     {
-        return $this->hasMany(Amenity::class, 'categoryId')->orderBy('order');
+        return $this->hasMany(SettingAmenity::class, 'categoryId')->orderBy('order');
     }
 
     /*

@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Algorithms\Amenity;
+namespace App\Algorithms\Setting;
 
-use App\Models\Amenity\AmenityCategory;
+use App\Models\Setting\SettingAmenityCategory;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class AmenityCategoryAlgo
+class SettingAmenityCategoryAlgo
 {
     /**
-     * @param AmenityCategory|int|null $amenityCategory
+     * @param SettingAmenityCategory|int|null $amenityCategory
      */
-    public function __construct(protected AmenityCategory|int|null $amenityCategory = null)
+    public function __construct(protected SettingAmenityCategory|int|null $amenityCategory = null)
     {
         if (is_int($this->amenityCategory)) {
-            $this->amenityCategory = AmenityCategory::find($this->amenityCategory);
+            $this->amenityCategory = SettingAmenityCategory::find($this->amenityCategory);
             if (!$this->amenityCategory) {
                 errAmenityCategoryGet();
             }
@@ -35,7 +35,7 @@ class AmenityCategoryAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->amenityCategory = AmenityCategory::create($request->all() + created_by());
+                $this->amenityCategory = SettingAmenityCategory::create($request->all() + created_by());
                 if (!$this->amenityCategory) {
                     errAmenityCategorySave();
                 }

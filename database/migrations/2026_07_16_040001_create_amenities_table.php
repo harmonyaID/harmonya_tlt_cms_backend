@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('amenities', function (Blueprint $table) {
+        Schema::create('setting_amenities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('categoryId')->nullable();
             $table->string('name');

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models\Amenity;
+namespace App\Models\Setting;
 
 use App\Models\BaseModel;
-use App\Parser\Amenity\AmenityParser;
+use App\Parser\Setting\SettingAmenityParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Amenity extends BaseModel
+class SettingAmenity extends BaseModel
 {
     use SoftDeletes;
 
-    protected $table = 'amenities';
+    protected $table = 'setting_amenities';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -28,7 +28,7 @@ class Amenity extends BaseModel
         self::DELETED_AT => 'datetime',
     ];
 
-    public $parserClass = AmenityParser::class;
+    public $parserClass = SettingAmenityParser::class;
 
     /*
      |--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ class Amenity extends BaseModel
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(AmenityCategory::class, 'categoryId');
+        return $this->belongsTo(SettingAmenityCategory::class, 'categoryId');
     }
 
     /*

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Parser\Amenity;
+namespace App\Parser\Setting;
 
 use Logia\Core\Parser\BaseParser;
 
-class AmenityCategoryParser extends BaseParser
+class SettingAmenityParser extends BaseParser
 {
 
     /**
@@ -20,10 +20,13 @@ class AmenityCategoryParser extends BaseParser
 
         return [
             'id' => $data->id,
+            'categoryId' => $data->categoryId,
+            'category' => SettingAmenityCategoryParser::brief($data->category),
             'name' => $data->name,
             'icon' => $data->icon,
+            'isPopular' => $data->isPopular,
             'order' => $data->order,
-            'amenities' => AmenityParser::briefs($data->amenities),
+            'isPublish' => $data->isPublish,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -41,9 +44,12 @@ class AmenityCategoryParser extends BaseParser
 
         return [
             'id' => $data->id,
+            'categoryId' => $data->categoryId,
             'name' => $data->name,
             'icon' => $data->icon,
+            'isPopular' => $data->isPopular,
             'order' => $data->order,
+            'isPublish' => $data->isPublish,
         ];
     }
 }
