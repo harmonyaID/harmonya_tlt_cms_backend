@@ -83,3 +83,80 @@ if (!function_exists("errPropertyBedTypeDelete")) {
         error($status, "Unable to delete property bed type", $internalMsg);
     }
 }
+
+if (!function_exists("errPropertyTagGet")) {
+    function errPropertyTagGet($internalMsg = "")
+    {
+        error(404, "Property tag not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyTagSave")) {
+    function errPropertyTagSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property tag", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyTagUpdate")) {
+    function errPropertyTagUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property tag", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyTagDelete")) {
+    function errPropertyTagDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property tag", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyGet")) {
+    function errPropertyGet($internalMsg = "")
+    {
+        error(404, "Property not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertySave")) {
+    function errPropertySave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyUpdate")) {
+    function errPropertyUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyDelete")) {
+    function errPropertyDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyPhotoGet")) {
+    function errPropertyPhotoGet($internalMsg = "")
+    {
+        error(404, "Property photo not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyPhotoSave")) {
+    function errPropertyPhotoSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property photo", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyPhotoDelete")) {
+    function errPropertyPhotoDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property photo", $internalMsg);
+    }
+}

@@ -30,6 +30,8 @@ class ActivityType extends BaseCodeName
     const PROPERTY_TYPE = 'property_type';
     const PROPERTY_ROOM_TYPE = 'property_room_type';
     const PROPERTY_BED_TYPE = 'property_bed_type';
+    const PROPERTY_TAG = 'property_tag';
+    const PROPERTY = 'property';
 
     const OPTION = [
         self::ACCESS,
@@ -56,5 +58,7 @@ class ActivityType extends BaseCodeName
         self::PROPERTY_TYPE,
         self::PROPERTY_ROOM_TYPE,
         self::PROPERTY_BED_TYPE,
+        self::PROPERTY_TAG,
+        self::PROPERTY,
     ];
 }

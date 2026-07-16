@@ -1,13 +1,19 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\Property\PropertyBedTypeController;
+use App\Http\Controllers\Web\Admin\Property\PropertyController;
+use App\Http\Controllers\Web\Admin\Property\PropertyPhotoController;
 use App\Http\Controllers\Web\Admin\Property\PropertyRoomTypeController;
+use App\Http\Controllers\Web\Admin\Property\PropertyTagController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("properties")
     ->middleware('auth.web.admin')
     ->group(function () {
+
+        Route::get('', [PropertyController::class, 'get']);
+        Route::post('', [PropertyController::class, 'create']);
 
         Route::prefix('types')
             ->group(function () {
@@ -35,4 +41,20 @@ Route::prefix("properties")
                 Route::put('{id}', [PropertyBedTypeController::class, 'update']);
                 Route::delete('{id}', [PropertyBedTypeController::class, 'delete']);
             });
+
+        Route::prefix('tags')
+            ->group(function () {
+                Route::get('', [PropertyTagController::class, 'get']);
+                Route::post('', [PropertyTagController::class, 'create']);
+                Route::get('{id}', [PropertyTagController::class, 'detail']);
+                Route::put('{id}', [PropertyTagController::class, 'update']);
+                Route::delete('{id}', [PropertyTagController::class, 'delete']);
+            });
+
+        Route::post('{propertyId}/photos', [PropertyPhotoController::class, 'upload']);
+        Route::delete('{propertyId}/photos/{photoId}', [PropertyPhotoController::class, 'delete']);
+
+        Route::get('{id}', [PropertyController::class, 'detail']);
+        Route::post('{id}', [PropertyController::class, 'update']);
+        Route::delete('{id}', [PropertyController::class, 'delete']);
     });
