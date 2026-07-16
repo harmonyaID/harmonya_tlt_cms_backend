@@ -27,6 +27,9 @@ class ActivityType extends BaseCodeName
     const HOMEPAGE = 'homepage';
     const AMENITY_CATEGORY = 'amenity_category';
     const AMENITY = 'amenity';
+    const PROPERTY_TYPE = 'property_type';
+    const PROPERTY_ROOM_TYPE = 'property_room_type';
+    const PROPERTY_BED_TYPE = 'property_bed_type';
 
     const OPTION = [
         self::ACCESS,
@@ -50,5 +53,8 @@ class ActivityType extends BaseCodeName
         self::HOMEPAGE,
         self::AMENITY_CATEGORY,
         self::AMENITY,
+        self::PROPERTY_TYPE,
+        self::PROPERTY_ROOM_TYPE,
+        self::PROPERTY_BED_TYPE,
     ];
 }
