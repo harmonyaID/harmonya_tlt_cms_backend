@@ -52,12 +52,21 @@ class MediaPartner extends BaseModel
      |-------------------------------------------------------------------------
      */
 
-    public function imageUrl()
+    public function featuredImageUrl()
     {
-        if (!$this->image) {
+        if (!$this->featuredImage) {
             return null;
         }
 
-        return Storage::disk('public')->url(PathConstant::IMAGES_MEDIA_PARTNER . $this->image);
+        return Storage::disk('public')->url(PathConstant::IMAGES_MEDIA_PARTNER . $this->featuredImage);
+    }
+
+    public function logoUrl()
+    {
+        if (!$this->logo) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_MEDIA_PARTNER . $this->logo);
     }
 }

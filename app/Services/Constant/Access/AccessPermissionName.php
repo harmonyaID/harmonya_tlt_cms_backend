@@ -153,6 +153,20 @@ class AccessPermissionName
     const STAFF_HOMEPAGE_VIEW = AccessGroup::STAFF . '.homepage.view';
     const STAFF_HOMEPAGE_UPDATE = AccessGroup::STAFF . '.homepage.update';
 
+    // Amenity Category
+    const STAFF_AMENITY_CATEGORY = AccessGroup::STAFF . '.amenity-category.*';
+    const STAFF_AMENITY_CATEGORY_VIEW = AccessGroup::STAFF . '.amenity-category.view';
+    const STAFF_AMENITY_CATEGORY_CREATE = AccessGroup::STAFF . '.amenity-category.create';
+    const STAFF_AMENITY_CATEGORY_UPDATE = AccessGroup::STAFF . '.amenity-category.update';
+    const STAFF_AMENITY_CATEGORY_DELETE = AccessGroup::STAFF . '.amenity-category.delete';
+
+    // Amenity
+    const STAFF_AMENITY = AccessGroup::STAFF . '.amenity.*';
+    const STAFF_AMENITY_VIEW = AccessGroup::STAFF . '.amenity.view';
+    const STAFF_AMENITY_CREATE = AccessGroup::STAFF . '.amenity.create';
+    const STAFF_AMENITY_UPDATE = AccessGroup::STAFF . '.amenity.update';
+    const STAFF_AMENITY_DELETE = AccessGroup::STAFF . '.amenity.delete';
+
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -269,6 +283,18 @@ class AccessPermissionName
         self::STAFF_HOMEPAGE,
         self::STAFF_HOMEPAGE_VIEW,
         self::STAFF_HOMEPAGE_UPDATE,
+
+        self::STAFF_AMENITY_CATEGORY,
+        self::STAFF_AMENITY_CATEGORY_VIEW,
+        self::STAFF_AMENITY_CATEGORY_CREATE,
+        self::STAFF_AMENITY_CATEGORY_UPDATE,
+        self::STAFF_AMENITY_CATEGORY_DELETE,
+
+        self::STAFF_AMENITY,
+        self::STAFF_AMENITY_VIEW,
+        self::STAFF_AMENITY_CREATE,
+        self::STAFF_AMENITY_UPDATE,
+        self::STAFF_AMENITY_DELETE,
 
     ];
 

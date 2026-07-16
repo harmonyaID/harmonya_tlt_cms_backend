@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\MediaPartner;
+namespace App\Http\Requests\Amenity;
 
 use Logia\Core\Validation\Support\FormRequest;
 
-class MediaPartnerRequest extends FormRequest
+class AmenityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +24,12 @@ class MediaPartnerRequest extends FormRequest
     public function rules()
     {
         return [
+            'categoryId' => 'nullable|integer|exists:amenity_categories,id',
             'name' => 'required|string',
-            'description' => 'nullable|string',
-            'url' => 'nullable|string|url',
-            'featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'icon' => 'nullable|string',
+            'isPopular' => 'nullable|boolean',
+            'order' => 'nullable|integer',
             'isPublish' => 'required|boolean',
-
         ];
     }
 }

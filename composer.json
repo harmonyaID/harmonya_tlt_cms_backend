@@ -58,7 +58,8 @@
             "app/Services/Helpers/Status/boatContactForm.php",
             "app/Services/Helpers/Status/blog.php",
             "app/Services/Helpers/Status/menu.php",
-            "app/Services/Helpers/Status/homepage.php"
+            "app/Services/Helpers/Status/homepage.php",
+            "app/Services/Helpers/Status/amenity.php"
 
         ]
     },
