@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Amenity;
+namespace App\Http\Requests\Setting;
 
 use Logia\Core\Validation\Support\FormRequest;
 
-class AmenityRequest extends FormRequest
+class SettingAmenityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class AmenityRequest extends FormRequest
     public function rules()
     {
         return [
-            'categoryId' => 'nullable|integer|exists:amenity_categories,id',
+            'categoryId' => 'nullable|integer|exists:setting_amenity_categories,id',
             'name' => 'required|string',
             'icon' => 'nullable|string',
             'isPopular' => 'nullable|boolean',

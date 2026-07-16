@@ -20,4 +20,4 @@ require($base . "blog.php");
 require($base . "experience.php");
 require($base . "menu.php");
 require($base . "homepage.php");
-require($base . "amenity.php");
+require($base . "setting.php");

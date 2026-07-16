@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Web\Admin\Amenity;
+namespace App\Http\Controllers\Web\Admin\Setting;
 
-use App\Algorithms\Amenity\AmenityAlgo;
+use App\Algorithms\Setting\SettingAmenityCategoryAlgo;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Amenity\AmenityRequest;
-use App\Models\Amenity\Amenity;
-use App\Parser\Amenity\AmenityParser;
+use App\Http\Requests\Setting\SettingAmenityCategoryRequest;
+use App\Models\Setting\SettingAmenityCategory;
+use App\Parser\Setting\SettingAmenityCategoryParser;
 use App\Services\Constant\Access\AccessPermissionName;
 use Illuminate\Http\Request;
 
-class AmenityController extends Controller
+class SettingAmenityCategoryController extends Controller
 {
     public function __construct()
     {
@@ -18,25 +18,25 @@ class AmenityController extends Controller
 
             // VIEW
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_AMENITY_VIEW);
+                has_permission_staff(AccessPermissionName::STAFF_AMENITY_CATEGORY_VIEW);
                 return $next($request);
             })->only(['get', 'detail']);
 
             // CREATE
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_AMENITY_CREATE);
+                has_permission_staff(AccessPermissionName::STAFF_AMENITY_CATEGORY_CREATE);
                 return $next($request);
             })->only(['create']);
 
             // UPDATE
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_AMENITY_UPDATE);
+                has_permission_staff(AccessPermissionName::STAFF_AMENITY_CATEGORY_UPDATE);
                 return $next($request);
             })->only(['update']);
 
             // DELETE
             $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_AMENITY_DELETE);
+                has_permission_staff(AccessPermissionName::STAFF_AMENITY_CATEGORY_DELETE);
                 return $next($request);
             })->only(['delete']);
 
@@ -50,8 +50,8 @@ class AmenityController extends Controller
      */
     public function get(Request $request)
     {
-        $amenities = Amenity::filter($request)->getOrPaginate($request);
-        return success(AmenityParser::briefs($amenities), pagination: pagination($amenities));
+        $categories = SettingAmenityCategory::filter($request)->getOrPaginate($request);
+        return success(SettingAmenityCategoryParser::briefs($categories), pagination: pagination($categories));
     }
 
     /**
@@ -61,36 +61,36 @@ class AmenityController extends Controller
      */
     public function detail($id)
     {
-        $amenity = Amenity::find($id);
-        if (!$amenity) {
-            errAmenityGet();
+        $category = SettingAmenityCategory::find($id);
+        if (!$category) {
+            errAmenityCategoryGet();
         }
 
-        return success(AmenityParser::first($amenity));
+        return success(SettingAmenityCategoryParser::first($category));
     }
 
     /**
-     * @param AmenityRequest $request
+     * @param SettingAmenityCategoryRequest $request
      *
      * @return \Illuminate\Http\JsonResponse|mixed|null
      * @throws \Logia\Core\Exception\ErrorException
      */
-    public function create(AmenityRequest $request)
+    public function create(SettingAmenityCategoryRequest $request)
     {
-        $algo = new AmenityAlgo();
+        $algo = new SettingAmenityCategoryAlgo();
         return $algo->create($request);
     }
 
     /**
      * @param $id
-     * @param AmenityRequest $request
+     * @param SettingAmenityCategoryRequest $request
      *
      * @return \Illuminate\Http\JsonResponse|mixed|null
      * @throws \Logia\Core\Exception\ErrorException
      */
-    public function update($id, AmenityRequest $request)
+    public function update($id, SettingAmenityCategoryRequest $request)
     {
-        $algo = new AmenityAlgo((int)$id);
+        $algo = new SettingAmenityCategoryAlgo((int)$id);
         return $algo->update($request);
     }
 
@@ -102,7 +102,7 @@ class AmenityController extends Controller
      */
     public function delete($id)
     {
-        $algo = new AmenityAlgo((int)$id);
+        $algo = new SettingAmenityCategoryAlgo((int)$id);
         return $algo->delete();
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Amenity;
+namespace App\Http\Requests\Setting;
 
 use Logia\Core\Validation\Support\FormRequest;
 
-class AmenityCategoryRequest extends FormRequest
+class SettingAmenityCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
