@@ -188,6 +188,20 @@ class AccessPermissionName
     const STAFF_PROPERTY_BED_TYPE_UPDATE = AccessGroup::STAFF . '.property-bed-type.update';
     const STAFF_PROPERTY_BED_TYPE_DELETE = AccessGroup::STAFF . '.property-bed-type.delete';
 
+    // Property Tag
+    const STAFF_PROPERTY_TAG = AccessGroup::STAFF . '.property-tag.*';
+    const STAFF_PROPERTY_TAG_VIEW = AccessGroup::STAFF . '.property-tag.view';
+    const STAFF_PROPERTY_TAG_CREATE = AccessGroup::STAFF . '.property-tag.create';
+    const STAFF_PROPERTY_TAG_UPDATE = AccessGroup::STAFF . '.property-tag.update';
+    const STAFF_PROPERTY_TAG_DELETE = AccessGroup::STAFF . '.property-tag.delete';
+
+    // Property
+    const STAFF_PROPERTY = AccessGroup::STAFF . '.property.*';
+    const STAFF_PROPERTY_VIEW = AccessGroup::STAFF . '.property.view';
+    const STAFF_PROPERTY_CREATE = AccessGroup::STAFF . '.property.create';
+    const STAFF_PROPERTY_UPDATE = AccessGroup::STAFF . '.property.update';
+    const STAFF_PROPERTY_DELETE = AccessGroup::STAFF . '.property.delete';
+
     const STAFF_OPTION = [
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
@@ -334,6 +348,18 @@ class AccessPermissionName
         self::STAFF_PROPERTY_BED_TYPE_CREATE,
         self::STAFF_PROPERTY_BED_TYPE_UPDATE,
         self::STAFF_PROPERTY_BED_TYPE_DELETE,
+
+        self::STAFF_PROPERTY_TAG,
+        self::STAFF_PROPERTY_TAG_VIEW,
+        self::STAFF_PROPERTY_TAG_CREATE,
+        self::STAFF_PROPERTY_TAG_UPDATE,
+        self::STAFF_PROPERTY_TAG_DELETE,
+
+        self::STAFF_PROPERTY,
+        self::STAFF_PROPERTY_VIEW,
+        self::STAFF_PROPERTY_CREATE,
+        self::STAFF_PROPERTY_UPDATE,
+        self::STAFF_PROPERTY_DELETE,
 
     ];
 
