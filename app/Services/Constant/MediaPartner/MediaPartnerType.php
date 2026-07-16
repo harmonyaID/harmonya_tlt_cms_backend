@@ -12,7 +12,7 @@ class MediaPartnerType extends BaseIDName
     const MEDIA_PARTNER_TYPE_PRESS_ID= 2;
 
     const OPTION = [
-        self::MEDIA_PARTNER_TYPE_BASIC => self::MEDIA_PARTNER_TYPE_BASIC_ID,
-        self::MEDIA_PARTNER_TYPE_PRESS => self::MEDIA_PARTNER_TYPE_PRESS_ID,
+        self::MEDIA_PARTNER_TYPE_BASIC_ID => self::MEDIA_PARTNER_TYPE_BASIC,
+        self::MEDIA_PARTNER_TYPE_PRESS_ID => self::MEDIA_PARTNER_TYPE_PRESS,
     ];
 }
