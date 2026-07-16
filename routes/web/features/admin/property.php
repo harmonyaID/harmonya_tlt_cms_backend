@@ -55,6 +55,6 @@ Route::prefix("properties")
         Route::delete('{propertyId}/photos/{photoId}', [PropertyPhotoController::class, 'delete']);
 
         Route::get('{id}', [PropertyController::class, 'detail']);
-        Route::post('{id}', [PropertyController::class, 'update']);
+        Route::put('{id}', [PropertyController::class, 'update']);
         Route::delete('{id}', [PropertyController::class, 'delete']);
     });
