@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Web\Public\Homepage\HomepageController;
+use App\Http\Controllers\Public\Homepage\HomepageController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("homepages")

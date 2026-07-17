@@ -2,12 +2,15 @@
 
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityCategoryController;
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityController;
+use App\Http\Controllers\Web\Admin\Setting\SettingController;
 
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("settings")
     ->middleware('auth.web.admin')
     ->group(function () {
+
+        Route::get('', [SettingController::class, 'get']);
 
         Route::prefix("amenities")
         ->middleware('auth.web.admin')
@@ -29,4 +32,7 @@ Route::prefix("settings")
             Route::put('{id}', [SettingAmenityController::class, 'update']);
             Route::delete('{id}', [SettingAmenityController::class, 'delete']);
         });
+
+        Route::get('{id}', [SettingController::class, 'detail']);
+        Route::put('{id}', [SettingController::class, 'update']);
     });

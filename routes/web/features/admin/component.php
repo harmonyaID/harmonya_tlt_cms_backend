@@ -17,6 +17,7 @@ Route::prefix("components")
                 Route::get('property-unit-types', [ComponentStaticController::class, 'getPropertyUnitTypes']);
                 Route::get('property-listing-types', [ComponentStaticController::class, 'getPropertyListingTypes']);
                 Route::get('property-statuses', [ComponentStaticController::class, 'getPropertyStatuses']);
+                Route::get('property-source-types', [ComponentStaticController::class, 'getPropertySourceTypes']);
                 Route::get('property-address-types', [ComponentStaticController::class, 'getPropertyAddressTypes']);
                 Route::get('property-availability-types', [ComponentStaticController::class, 'getPropertyAvailabilityTypes']);
                 Route::get('property-cleaning-fee-types', [ComponentStaticController::class, 'getPropertyCleaningFeeTypes']);

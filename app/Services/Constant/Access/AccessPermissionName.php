@@ -15,6 +15,10 @@ class AccessPermissionName
     const STAFF_SETTING_UPDATE = AccessGroup::STAFF . '.setting.update';
     const STAFF_SETTING_DELETE = AccessGroup::STAFF . '.setting.delete';
 
+    // Dashboard
+    const STAFF_DASHBOARD = AccessGroup::STAFF . '.dashboard.*';
+    const STAFF_DASHBOARD_VIEW = AccessGroup::STAFF . '.dashboard.view';
+
     // Staff
     const STAFF_STAFF = AccessGroup::STAFF . '.staff.*';
     const STAFF_STAFF_VIEW = AccessGroup::STAFF . '.staff.view';
@@ -202,7 +206,17 @@ class AccessPermissionName
     const STAFF_PROPERTY_UPDATE = AccessGroup::STAFF . '.property.update';
     const STAFF_PROPERTY_DELETE = AccessGroup::STAFF . '.property.delete';
 
+    // Property Review
+    const STAFF_PROPERTY_REVIEW = AccessGroup::STAFF . '.property-review.*';
+    const STAFF_PROPERTY_REVIEW_VIEW = AccessGroup::STAFF . '.property-review.view';
+    const STAFF_PROPERTY_REVIEW_CREATE = AccessGroup::STAFF . '.property-review.create';
+    const STAFF_PROPERTY_REVIEW_UPDATE = AccessGroup::STAFF . '.property-review.update';
+    const STAFF_PROPERTY_REVIEW_DELETE = AccessGroup::STAFF . '.property-review.delete';
+
     const STAFF_OPTION = [
+        self::STAFF_DASHBOARD,
+        self::STAFF_DASHBOARD_VIEW,
+
         self::STAFF_SETTING,
         self::STAFF_SETTING_VIEW,
         self::STAFF_SETTING_CREATE,
@@ -360,6 +374,12 @@ class AccessPermissionName
         self::STAFF_PROPERTY_CREATE,
         self::STAFF_PROPERTY_UPDATE,
         self::STAFF_PROPERTY_DELETE,
+
+        self::STAFF_PROPERTY_REVIEW,
+        self::STAFF_PROPERTY_REVIEW_VIEW,
+        self::STAFF_PROPERTY_REVIEW_CREATE,
+        self::STAFF_PROPERTY_REVIEW_UPDATE,
+        self::STAFF_PROPERTY_REVIEW_DELETE,
 
     ];
 

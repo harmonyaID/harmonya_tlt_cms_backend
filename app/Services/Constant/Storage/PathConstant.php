@@ -62,6 +62,7 @@ class PathConstant
     const IMAGES_SEO = 'images/seo/';
 
     const IMAGES_PROPERTY_PHOTO = 'images/property-listings/photos/';
+    const IMAGES_PROPERTY_REVIEW = 'images/property-listings/reviews/';
 
     /*
      |--------------------------------------------------------------------------
@@ -100,6 +101,11 @@ class PathConstant
     public static function IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_PHOTO);
+    }
+
+    public static function IMAGES_PROPERTY_REVIEW_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_REVIEW);
     }
 
     public static function IMAGES_BOAT_PROMO_STORAGE_PUBLIC_PATH()

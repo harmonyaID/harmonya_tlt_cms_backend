@@ -31,6 +31,8 @@ class Property extends BaseModel
         'propertySize' => 'decimal:2',
         'statusId' => 'integer',
         'cleaningStatusId' => 'integer',
+        'sourceTypeId' => 'integer',
+        'guestyImportedAt' => 'datetime',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
