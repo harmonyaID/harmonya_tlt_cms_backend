@@ -160,3 +160,31 @@ if (!function_exists("errPropertyPhotoDelete")) {
         error($status, "Unable to delete property photo", $internalMsg);
     }
 }
+
+if (!function_exists("errPropertyReviewGet")) {
+    function errPropertyReviewGet($internalMsg = "")
+    {
+        error(404, "Property review not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyReviewSave")) {
+    function errPropertyReviewSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property review", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyReviewUpdate")) {
+    function errPropertyReviewUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property review", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyReviewDelete")) {
+    function errPropertyReviewDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property review", $internalMsg);
+    }
+}

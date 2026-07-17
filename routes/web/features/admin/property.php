@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\Admin\Property\PropertyBedTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyController;
 use App\Http\Controllers\Web\Admin\Property\PropertyPhotoController;
+use App\Http\Controllers\Web\Admin\Property\PropertyReviewController;
 use App\Http\Controllers\Web\Admin\Property\PropertyRoomTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTagController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTypeController;
@@ -54,7 +55,16 @@ Route::prefix("properties")
         Route::post('{propertyId}/photos', [PropertyPhotoController::class, 'upload']);
         Route::delete('{propertyId}/photos/{photoId}', [PropertyPhotoController::class, 'delete']);
 
+        Route::prefix('reviews')
+            ->group(function () {
+                Route::get('', [PropertyReviewController::class, 'get']);
+                Route::post('', [PropertyReviewController::class, 'create']);
+                Route::get('{id}', [PropertyReviewController::class, 'detail']);
+                Route::post('{id}', [PropertyReviewController::class, 'update']);
+                Route::delete('{id}', [PropertyReviewController::class, 'delete']);
+            });
+
         Route::get('{id}', [PropertyController::class, 'detail']);
-        Route::put('{id}', [PropertyController::class, 'update']);
+        Route::post('{id}', [PropertyController::class, 'update']);
         Route::delete('{id}', [PropertyController::class, 'delete']);
     });

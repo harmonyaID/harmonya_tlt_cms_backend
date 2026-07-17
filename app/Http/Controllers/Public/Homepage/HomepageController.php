@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Web\Public\Homepage;
+namespace App\Http\Controllers\Public\Homepage;
 
-use App\Algorithms\Homepage\HomepageAlgo;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Homepage\HomepageRequest;
 use App\Models\Homepage\Homepage;
 use App\Parser\Homepage\HomepageParser;
-use App\Services\Constant\Access\AccessPermissionName;
 use Illuminate\Http\Request;
 
 class HomepageController extends Controller

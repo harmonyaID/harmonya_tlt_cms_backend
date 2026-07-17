@@ -8,6 +8,7 @@ class ActivityType extends BaseCodeName
 {
     const ACCESS = 'access';
     const STAFF = 'staff';
+    const SETTING = 'setting';
     const C_CONTACT_FORM_TYPE = 'component_contact_form_type';
     const MEDIA_PARTNER = 'media_partner';
     const WEBSITE_CONTACT_FORM = 'website_contact_form';
@@ -32,10 +33,12 @@ class ActivityType extends BaseCodeName
     const PROPERTY_BED_TYPE = 'property_bed_type';
     const PROPERTY_TAG = 'property_tag';
     const PROPERTY = 'property';
+    const PROPERTY_REVIEW = 'property_review';
 
     const OPTION = [
         self::ACCESS,
         self::STAFF,
+        self::SETTING,
         self::C_CONTACT_FORM_TYPE,
         self::MEDIA_PARTNER,
         self::WEBSITE_CONTACT_FORM,
@@ -60,5 +63,6 @@ class ActivityType extends BaseCodeName
         self::PROPERTY_BED_TYPE,
         self::PROPERTY_TAG,
         self::PROPERTY,
+        self::PROPERTY_REVIEW,
     ];
 }

@@ -20,7 +20,7 @@ class PageParser extends BaseParser
         }
 
         $photos = [];
-        foreach ($data->photos as $photo) {
+        foreach ($data->photos ?? [] as $photo) {
             $photos[] = [
                 'id' => $photo->id,
                 'photo' => $photo->photoUrl(),
@@ -29,7 +29,7 @@ class PageParser extends BaseParser
         }
 
         $acf = [];
-        foreach ($data->acf as $key => $acfValue) {
+        foreach ($data->acf ?? [] as $key => $acfValue) {
             $acf[$key] = unserialize($acfValue->value);
         }
 

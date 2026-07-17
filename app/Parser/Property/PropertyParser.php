@@ -8,6 +8,7 @@ use App\Services\Constant\Property\PropertyAvailabilityType;
 use App\Services\Constant\Property\PropertyCleaningFeeType;
 use App\Services\Constant\Property\PropertyCleaningStatus;
 use App\Services\Constant\Property\PropertyListingType;
+use App\Services\Constant\Property\PropertySourceType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Property\PropertyAddressType;
@@ -33,6 +34,7 @@ class PropertyParser extends BaseParser
             'propertySize' => $data->propertySize,
             'status' => PropertyStatus::idName($data->statusId),
             'cleaningStatus' => PropertyCleaningStatus::idName($data->cleaningStatusId),
+            'sourceType' => PropertySourceType::idName($data->sourceTypeId),
             'currency' => $data->currency,
 
             'addresses' => $data->addresses->map(function ($address) {
@@ -142,6 +144,7 @@ class PropertyParser extends BaseParser
             'occupancy' => $data->occupancy,
             'status' => PropertyStatus::idName($data->statusId),
             'cleaningStatus' => PropertyCleaningStatus::idName($data->cleaningStatusId),
+            'sourceType' => PropertySourceType::idName($data->sourceTypeId),
             'coverPhoto' => $cover ? $cover->pathUrl() : null,
             'address' => optional($data->addresses->first())->address,
         ];
