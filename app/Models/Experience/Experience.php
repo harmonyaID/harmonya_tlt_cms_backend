@@ -3,6 +3,7 @@
 namespace App\Models\Experience;
 
 use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
 use App\Parser\Experience\ExperienceParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,9 +44,14 @@ class Experience extends BaseModel
         return $this->belongsTo(ExperienceType::class, 'experienceTypeId');
     }
 
-    public function category(): BelongsTo
+    public function area(): BelongsTo
     {
-        return $this->belongsTo(ExperienceCategory::class, 'experienceCategoryId');
+        return $this->belongsTo(ExperienceArea::class, 'experienceAreaId');
+    }
+
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
 
     public function photos(): HasMany
@@ -74,8 +80,8 @@ class Experience extends BaseModel
                 $query->where('experienceTypeId', $request->experienceTypeId);
             }
 
-            if ($request->has('experienceCategoryId') && $request->experienceCategoryId) {
-                $query->where('experienceCategoryId', $request->experienceCategoryId);
+            if ($request->has('experienceAreaId') && $request->experienceAreaId) {
+                $query->where('experienceAreaId', $request->experienceAreaId);
             }
 
             if ($request->has('isActive') && $request->isActive !== null) {

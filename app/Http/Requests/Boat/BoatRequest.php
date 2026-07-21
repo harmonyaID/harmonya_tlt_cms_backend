@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Boat;
 
+use App\Http\Requests\Seo\SeoRule;
 use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -48,6 +49,8 @@ class BoatRequest extends FormRequest
             'customInformations.*.name'   => 'required_with:customInformations|string',
             'customInformations.*.value'  => 'required_with:customInformations|string',
             'customInformations.*.order'  => 'nullable|integer',
-        ];
+
+            'seo' => 'nullable|array',
+        ] + SeoRule::rules();
     }
 }

@@ -127,11 +127,11 @@ class AccessPermissionName
     const STAFF_EXPERIENCE_TYPE_DELETE = AccessGroup::STAFF . '.experience-type.delete';
 
     // Experience Category
-    const STAFF_EXPERIENCE_CATEGORY = AccessGroup::STAFF . '.experience-category.*';
-    const STAFF_EXPERIENCE_CATEGORY_VIEW = AccessGroup::STAFF . '.experience-category.view';
-    const STAFF_EXPERIENCE_CATEGORY_CREATE = AccessGroup::STAFF . '.experience-category.create';
-    const STAFF_EXPERIENCE_CATEGORY_UPDATE = AccessGroup::STAFF . '.experience-category.update';
-    const STAFF_EXPERIENCE_CATEGORY_DELETE = AccessGroup::STAFF . '.experience-category.delete';
+    const STAFF_EXPERIENCE_AREA = AccessGroup::STAFF . '.experience-area.*';
+    const STAFF_EXPERIENCE_AREA_VIEW = AccessGroup::STAFF . '.experience-area.view';
+    const STAFF_EXPERIENCE_AREA_CREATE = AccessGroup::STAFF . '.experience-area.create';
+    const STAFF_EXPERIENCE_AREA_UPDATE = AccessGroup::STAFF . '.experience-area.update';
+    const STAFF_EXPERIENCE_AREA_DELETE = AccessGroup::STAFF . '.experience-area.delete';
 
     // Experience
     const STAFF_EXPERIENCE = AccessGroup::STAFF . '.experience.*';
@@ -307,11 +307,11 @@ class AccessPermissionName
         self::STAFF_EXPERIENCE_TYPE_UPDATE,
         self::STAFF_EXPERIENCE_TYPE_DELETE,
 
-        self::STAFF_EXPERIENCE_CATEGORY,
-        self::STAFF_EXPERIENCE_CATEGORY_VIEW,
-        self::STAFF_EXPERIENCE_CATEGORY_CREATE,
-        self::STAFF_EXPERIENCE_CATEGORY_UPDATE,
-        self::STAFF_EXPERIENCE_CATEGORY_DELETE,
+        self::STAFF_EXPERIENCE_AREA,
+        self::STAFF_EXPERIENCE_AREA_VIEW,
+        self::STAFF_EXPERIENCE_AREA_CREATE,
+        self::STAFF_EXPERIENCE_AREA_UPDATE,
+        self::STAFF_EXPERIENCE_AREA_DELETE,
 
         self::STAFF_EXPERIENCE,
         self::STAFF_EXPERIENCE_VIEW,

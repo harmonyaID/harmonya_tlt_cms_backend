@@ -4,7 +4,9 @@ namespace App\Models\Experience;
 
 use App\Models\BaseModel;
 use App\Parser\Experience\ExperienceTypeParser;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class ExperienceType extends BaseModel
 {
@@ -34,5 +36,29 @@ class ExperienceType extends BaseModel
             }
 
         })->orderBy('id', 'ASC');
+    }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
+
+    public function featuredImageUrl()
+    {
+        if (!$this->featuredImage) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_TYPE . $this->featuredImage);
+    }
+
+    public function bannerUrl()
+    {
+        if (!$this->banner) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_TYPE . $this->banner);
     }
 }

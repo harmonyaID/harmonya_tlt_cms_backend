@@ -21,7 +21,7 @@ class ActivityType extends BaseCodeName
     const BLOG_TAG = 'blog_tag';
     const BLOG = 'blog';
     const EXPERIENCE_TYPE = 'experience_type';
-    const EXPERIENCE_CATEGORY = 'experience_category';
+    const EXPERIENCE_AREA = 'experience_area';
     const EXPERIENCE = 'experience';
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
     const MENU = 'menu';
@@ -51,7 +51,7 @@ class ActivityType extends BaseCodeName
         self::BLOG_TAG,
         self::BLOG,
         self::EXPERIENCE_TYPE,
-        self::EXPERIENCE_CATEGORY,
+        self::EXPERIENCE_AREA,
         self::EXPERIENCE,
         self::EXPERIENCE_INQUIRY_FORM,
         self::MENU,

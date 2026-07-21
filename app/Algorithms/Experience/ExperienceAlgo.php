@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Experience;
 
+use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Experience\Experience;
 use App\Models\Experience\ExperiencePhoto;
 use App\Services\Constant\Activity\ActivityAction;
@@ -56,12 +57,14 @@ class ExperienceAlgo
                     $this->experience->save();
                 }
 
+                (new ContentSeoAlgo($this->experience))->save($request);
+
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::CREATE)
                     ->log("Enter new experience: " . $this->experience->name);
             });
 
-            return success($this->experience->load('type', 'category', 'photos'));
+            return success($this->experience->load('type', 'category', 'photos', 'seo'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -107,12 +110,14 @@ class ExperienceAlgo
                     $this->experience->save();
                 }
 
+                (new ContentSeoAlgo($this->experience))->save($request);
+
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::UPDATE)
                     ->log("Update experience: " . $this->experience->name);
             });
 
-            return success($this->experience->load('type', 'category', 'photos'));
+            return success($this->experience->load('type', 'category', 'photos', 'seo'));
         } catch (\Error $error) {
             exception($error);
         }

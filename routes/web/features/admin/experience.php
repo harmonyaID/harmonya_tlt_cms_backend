@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\Web\Admin\Blog\BlogController;
-use App\Http\Controllers\Web\Admin\Experience\ExperienceCategoryController;
+use App\Http\Controllers\Web\Admin\Experience\ExperienceAreaController;
 use App\Http\Controllers\Web\Admin\Experience\ExperienceController;
 use App\Http\Controllers\Web\Admin\Experience\ExperienceInquiryFormController;
 use App\Http\Controllers\Web\Admin\Experience\ExperienceTypeController;
@@ -18,16 +17,16 @@ Route::prefix("experiences")
             Route::get('', [ExperienceTypeController::class, 'get']);
             Route::post('', [ExperienceTypeController::class, 'create']);
             Route::get('{id}', [ExperienceTypeController::class, 'detail']);
-            Route::put('{id}', [ExperienceTypeController::class, 'update']);
+            Route::post('{id}', [ExperienceTypeController::class, 'update']);
             Route::delete('{id}', [ExperienceTypeController::class, 'delete']);
         });
 
-        Route::prefix("categories")->middleware('auth.web.admin')->group(function () {
-            Route::get('', [ExperienceCategoryController::class, 'get']);
-            Route::post('', [ExperienceCategoryController::class, 'create']);
-            Route::get('{id}', [ExperienceCategoryController::class, 'detail']);
-            Route::put('{id}', [ExperienceCategoryController::class, 'update']);
-            Route::delete('{id}', [ExperienceCategoryController::class, 'delete']);
+        Route::prefix("areas")->middleware('auth.web.admin')->group(function () {
+            Route::get('', [ExperienceAreaController::class, 'get']);
+            Route::post('', [ExperienceAreaController::class, 'create']);
+            Route::get('{id}', [ExperienceAreaController::class, 'detail']);
+            Route::post('{id}', [ExperienceAreaController::class, 'update']);
+            Route::delete('{id}', [ExperienceAreaController::class, 'delete']);
         });
 
         Route::prefix("inquiry-forms")

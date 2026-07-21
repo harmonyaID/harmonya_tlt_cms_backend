@@ -17,6 +17,8 @@ class SeoRule
             "{$prefix}robotIndex" => 'nullable|boolean',
             "{$prefix}robotFollow" => 'nullable|boolean',
 
+            "{$prefix}structuredData" => 'nullable|array',
+
             "{$prefix}thumbnail" => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             "{$prefix}deleteThumbnail" => 'nullable|boolean',
         ];

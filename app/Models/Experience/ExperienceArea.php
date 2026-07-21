@@ -3,15 +3,17 @@
 namespace App\Models\Experience;
 
 use App\Models\BaseModel;
-use App\Parser\Experience\ExperienceCategoryParser;
+use App\Parser\Experience\ExperienceAreaParser;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
-class ExperienceCategory extends BaseModel
+class ExperienceArea extends BaseModel
 {
     use SoftDeletes;
 
-    protected $table = 'experience_categories';
+    protected $table = 'experience_areas';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -24,7 +26,7 @@ class ExperienceCategory extends BaseModel
         self::DELETED_AT => 'datetime',
     ];
 
-    public $parserClass = ExperienceCategoryParser::class;
+    public $parserClass = ExperienceAreaParser::class;
 
     /*
      |--------------------------------------------------------------------------
@@ -56,5 +58,29 @@ class ExperienceCategory extends BaseModel
             }
 
         })->orderBy('id', 'ASC');
+    }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
+
+    public function featuredImageUrl()
+    {
+        if (!$this->featuredImage) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_AREA . $this->featuredImage);
+    }
+
+    public function bannerUrl()
+    {
+        if (!$this->banner) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_AREA . $this->banner);
     }
 }

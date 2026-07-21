@@ -28,29 +28,29 @@ if (!function_exists("errExperienceDelete")) {
     }
 }
 
-if (!function_exists("errExperienceCategoryGet")) {
-    function errExperienceCategoryGet($internalMsg = "")
+if (!function_exists("errExperienceAreaGet")) {
+    function errExperienceAreaGet($internalMsg = "")
     {
-        error(404, "Experience category not found", $internalMsg);
+        error(404, "Experience area not found", $internalMsg);
     }
 }
 
-if (!function_exists("errExperienceCategorySave")) {
-    function errExperienceCategorySave($internalMsg = "", $status = 500)
+if (!function_exists("errExperienceAreaSave")) {
+    function errExperienceAreaSave($internalMsg = "", $status = 500)
     {
         error($status, "Unable to save experience category", $internalMsg);
     }
 }
 
-if (!function_exists("errExperienceCategoryUpdate")) {
-    function errExperienceCategoryUpdate($internalMsg = "", $status = 500)
+if (!function_exists("errExperienceAreaUpdate")) {
+    function errExperienceAreaUpdate($internalMsg = "", $status = 500)
     {
         error($status, "Unable to update experience category", $internalMsg);
     }
 }
 
-if (!function_exists("errExperienceCategoryDelete")) {
-    function errExperienceCategoryDelete($internalMsg = "", $status = 500)
+if (!function_exists("errExperienceAreaDelete")) {
+    function errExperienceAreaDelete($internalMsg = "", $status = 500)
     {
         error($status, "Unable to delete experience category", $internalMsg);
     }
