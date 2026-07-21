@@ -39,13 +39,13 @@ class ExperienceController extends Controller
 
     public function get(Request $request)
     {
-        $experiences = Experience::filter($request)->with('type', 'category', 'photos')->getOrPaginate($request);
+        $experiences = Experience::filter($request)->with('type', 'area', 'photos', 'seo')->getOrPaginate($request);
         return success(ExperienceParser::briefs($experiences), pagination: pagination($experiences));
     }
 
     public function detail($id)
     {
-        $experience = Experience::with('type', 'category', 'photos')->find($id);
+        $experience = Experience::with('type', 'area', 'photos', 'seo')->find($id);
         if (!$experience) errExperienceGet();
         return success(ExperienceParser::first($experience));
     }

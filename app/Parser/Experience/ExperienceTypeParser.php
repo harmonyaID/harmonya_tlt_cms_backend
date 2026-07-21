@@ -13,6 +13,9 @@ class ExperienceTypeParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'description' => $data->description,
+            'featuredImage' => $data->featuredImageUrl(),
+            'banner' => $data->bannerUrl(),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -24,6 +27,9 @@ class ExperienceTypeParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'description' => $data->description,
+            'featuredImage' => $data->featuredImageUrl(),
+            'banner' => $data->bannerUrl(),
         ];
     }
 }

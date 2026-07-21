@@ -2,6 +2,7 @@
 
 namespace App\Parser\Experience;
 
+use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
 class ExperienceParser extends BaseParser
@@ -22,7 +23,7 @@ class ExperienceParser extends BaseParser
         return [
             'id' => $data->id,
             'type' => optional($data->type)->only('id', 'name'),
-            'category' => optional($data->category)->only('id', 'name'),
+            'area' => optional($data->area)->only('id', 'name'),
             'name' => $data->name,
             'openHours' => $data->openHours,
             'description' => $data->description,
@@ -36,6 +37,7 @@ class ExperienceParser extends BaseParser
             'isActive' => $data->isActive,
             'showInquiry' => $data->showInquiry,
             'photos' => $photos,
+            'seo' => SeoParser::first($data->seo),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -47,7 +49,7 @@ class ExperienceParser extends BaseParser
         return [
             'id' => $data->id,
             'type' => optional($data->type)->only('id', 'name'),
-            'category' => optional($data->category)->only('id', 'name'),
+            'area' => optional($data->area)->only('id', 'name'),
             'name' => $data->name,
             'openHours' => $data->openHours,
             'thumbnail' => $data->thumbnailUrl(),

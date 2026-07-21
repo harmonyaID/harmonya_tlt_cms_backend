@@ -4,13 +4,14 @@ namespace App\Http\Requests\Experience;
 
 use Logia\Core\Validation\Support\FormRequest;
 
-class ExperienceTypeRequest extends FormRequest
+class ExperienceAreaRequest extends FormRequest
 {
     public function authorize() { return true; }
 
     public function rules()
     {
         return [
+            'experienceTypeId' => 'required|integer|exists:experience_types,id',
             'name' => 'required|string',
             'description' => 'nullable|string',
 

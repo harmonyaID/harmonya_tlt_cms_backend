@@ -28,6 +28,7 @@ class ContentSeoAlgo
             'canonicalUrl' => $seo['canonicalUrl'] ?? null,
             'robotIndex' => $seo['robotIndex'] ?? true,
             'robotFollow' => $seo['robotFollow'] ?? true,
+            'structuredData' => $seo['structuredData'] ?? null,
         ]);
 
         if ($request->boolean('seo.deleteThumbnail')) {

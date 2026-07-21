@@ -3,11 +3,13 @@
 namespace App\Algorithms\Experience;
 
 use App\Http\Requests\ChangeMailStatusRequest;
+use App\Mail\Experience\ExperienceInquiryFormMail;
 use App\Models\Experience\ExperienceInquiryForm;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ExperienceInquiryFormAlgo
 {
@@ -33,6 +35,15 @@ class ExperienceInquiryFormAlgo
                     ->setAction(ActivityAction::CREATE)
                     ->log("New inquiry form submitted. Name: " . $this->form->fullName);
             });
+
+            if (config('mail.notification_to')) {
+                try {
+                    Mail::to(config('mail.notification_to'))
+                        ->queue(new ExperienceInquiryFormMail($this->form));
+                } catch (\Throwable $e) {
+                    logger()->error('Failed to send ExperienceInquiryFormMail: ' . $e->getMessage());
+                }
+            }
 
             return success($this->form->load('experience'));
         } catch (\Error $error) {

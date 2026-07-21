@@ -4,17 +4,16 @@ namespace App\Algorithms\WebsiteContactForm;
 
 use App\Http\Requests\ChangeMailStatusRequest;
 use App\Http\Requests\Website\WebsiteContactFormChangeStatusRequest;
+use App\Mail\WebsiteContactForm\WebsiteContactFormMail;
 use App\Models\WebsiteContactForm\WebsiteContactForm;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class WebsiteContactFormAlgo
 {
-    /**
-     * @param WebsiteContactForm|int|null $contactForm
-     */
     public function __construct(protected WebsiteContactForm|int|null $contactForm = null)
     {
         if (is_int($this->contactForm)) {
@@ -25,13 +24,6 @@ class WebsiteContactFormAlgo
         }
     }
 
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed|void
-     * @throws \Logia\Core\Exception\ErrorException
-     */
     public function create(Request $request)
     {
         try {
@@ -50,18 +42,21 @@ class WebsiteContactFormAlgo
                     ->log("Enter new contact form. Name: " . $this->contactForm->name);
             });
 
+            if (config('mail.notification_to')) {
+                try {
+                    Mail::to(config('mail.notification_to'))
+                        ->queue(new WebsiteContactFormMail($this->contactForm));
+                } catch (\Throwable $e) {
+                    logger()->error('Failed to send WebsiteContactFormMail: ' . $e->getMessage());
+                }
+            }
+
             return success($this->contactForm);
         } catch (\Error $error) {
             exception($error);
         }
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed|void
-     * @throws \Logia\Core\Exception\ErrorException
-     */
     public function update(Request $request)
     {
         try {
@@ -83,10 +78,6 @@ class WebsiteContactFormAlgo
         }
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse|mixed|void
-     * @throws \Logia\Core\Exception\ErrorException
-     */
     public function delete()
     {
         try {
@@ -110,10 +101,6 @@ class WebsiteContactFormAlgo
         }
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse|mixed|void
-     * @throws \Logia\Core\Exception\ErrorException
-     */
     public function markAsRead()
     {
         try {

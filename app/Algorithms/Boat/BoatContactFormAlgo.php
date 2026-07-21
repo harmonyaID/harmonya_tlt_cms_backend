@@ -3,11 +3,13 @@
 namespace App\Algorithms\Boat;
 
 use App\Http\Requests\ChangeMailStatusRequest;
+use App\Mail\Boat\BoatContactFormMail;
 use App\Models\Boat\BoatContactForm;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class BoatContactFormAlgo
 {
@@ -38,6 +40,15 @@ class BoatContactFormAlgo
                     ->setAction(ActivityAction::CREATE)
                     ->log("New boat booking form submitted. Name: " . $this->contactForm->name);
             });
+
+            if (config('mail.notification_to')) {
+                try {
+                    Mail::to(config('mail.notification_to'))
+                        ->queue(new BoatContactFormMail($this->contactForm));
+                } catch (\Throwable $e) {
+                    logger()->error('Failed to send BoatContactFormMail: ' . $e->getMessage());
+                }
+            }
 
             return success($this->contactForm->fresh()->load('boat'));
         } catch (\Error $error) {

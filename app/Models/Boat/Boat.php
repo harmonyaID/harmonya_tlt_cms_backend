@@ -3,6 +3,7 @@
 namespace App\Models\Boat;
 
 use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
 use App\Parser\Boat\BoatParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -45,6 +46,11 @@ class Boat extends BaseModel
     public function customInformations(): HasMany
     {
         return $this->hasMany(BoatCustomInformation::class, 'boatId')->orderBy('order');
+    }
+
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
     
     public function type(): BelongsTo

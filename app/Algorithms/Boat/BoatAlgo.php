@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Boat;
 
+use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Boat\Boat;
 use App\Models\Boat\BoatPhoto;
 use App\Parser\Boat\BoatParser;
@@ -52,6 +53,8 @@ class BoatAlgo
                     $this->syncCustomInformations($request);
                 }
 
+                (new ContentSeoAlgo($this->boat))->save($request);
+
                 activity()->setCausedBy()
                     ->setReference($this->boat)
                     ->setType(ActivityType::BOAT)
@@ -59,7 +62,7 @@ class BoatAlgo
                     ->log("Create new Boat. ID: " . $this->boat->id);
             });
 
-            return success($this->boat->load(['photos', 'customInformations']));
+            return success($this->boat->load(['photos', 'customInformations', 'seo']));
         } catch (\Error $error) {
             exception($error);
         }
@@ -150,6 +153,8 @@ class BoatAlgo
                 $this->syncCustomInformations($request);
             }
 
+            (new ContentSeoAlgo($this->boat))->save($request);
+
             DB::commit();
 
             return success(BoatParser::first(
@@ -157,6 +162,7 @@ class BoatAlgo
                         'photos',
                         'customInformations',
                         'type',
+                        'seo',
                     ])
                 )
             );

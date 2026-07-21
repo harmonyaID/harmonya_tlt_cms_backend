@@ -22,6 +22,7 @@ class SeoParser extends BaseParser
             'thumbnail' => $data->thumbnailUrl(),
             'robotIndex' => $data->robotIndex,
             'robotFollow' => $data->robotFollow,
+            'structuredData' => $data->structuredData,
         ];
     }
 }

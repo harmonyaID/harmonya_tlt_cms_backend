@@ -44,13 +44,13 @@ class BoatController extends Controller
 
     public function get(Request $request)
     {
-        $boats = Boat::filter($request)->with(['type', 'photos', 'customInformations'])->getOrPaginate($request);
+        $boats = Boat::filter($request)->with(['type', 'photos', 'customInformations', 'seo'])->getOrPaginate($request);
         return success(BoatParser::briefs($boats), pagination: pagination($boats));
     }
 
     public function detail($id)
     {
-        $boat = Boat::with(['type', 'photos', 'customInformations'])->find($id);
+        $boat = Boat::with(['type', 'photos', 'customInformations', 'seo'])->find($id);
         if (!$boat) errBoatGet();
 
         return success(BoatParser::first($boat));

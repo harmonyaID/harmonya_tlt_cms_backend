@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Experience;
 
+use App\Http\Requests\Seo\SeoRule;
 use Logia\Core\Validation\Support\FormRequest;
 
 class ExperienceRequest extends FormRequest
@@ -15,7 +16,7 @@ class ExperienceRequest extends FormRequest
     {
         return [
             'experienceTypeId' => 'required|integer|exists:experience_types,id',
-            'experienceCategoryId' => 'nullable|integer|exists:experience_categories,id',
+            'experienceAreaId' => 'nullable|integer|exists:experience_areas,id',
             'name' => 'required|string',
             'openHours' => 'nullable|string',
             'description' => 'nullable|string',
@@ -41,6 +42,8 @@ class ExperienceRequest extends FormRequest
 
             'deleteCatalogIds' => 'nullable|array',
             'deleteCatalogIds.*' => 'integer',
-        ];
+
+            'seo' => 'nullable|array',
+        ] + SeoRule::rules();
     }
 }

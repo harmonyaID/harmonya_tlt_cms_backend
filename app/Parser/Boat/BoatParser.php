@@ -2,6 +2,7 @@
 
 namespace App\Parser\Boat;
 
+use App\Parser\Seo\SeoParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Support\Facades\Storage;
 use Logia\Core\Parser\BaseParser;
@@ -63,6 +64,7 @@ class BoatParser extends BaseParser
             'photos'              => $photos,
             'customInformations'  => $customInformations,
             'isActive'            => $data->isActive,
+            'seo'                 => SeoParser::first($data->seo),
             'createdAt'           => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
