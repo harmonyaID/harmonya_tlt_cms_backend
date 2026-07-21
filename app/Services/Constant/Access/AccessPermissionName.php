@@ -213,6 +213,13 @@ class AccessPermissionName
     const STAFF_PROPERTY_REVIEW_UPDATE = AccessGroup::STAFF . '.property-review.update';
     const STAFF_PROPERTY_REVIEW_DELETE = AccessGroup::STAFF . '.property-review.delete';
 
+    // Lembongan Area
+    const STAFF_LEMBONGAN_AREA = AccessGroup::STAFF . '.lembongan-area.*';
+    const STAFF_LEMBONGAN_AREA_VIEW = AccessGroup::STAFF . '.lembongan-area.view';
+    const STAFF_LEMBONGAN_AREA_CREATE = AccessGroup::STAFF . '.lembongan-area.create';
+    const STAFF_LEMBONGAN_AREA_UPDATE = AccessGroup::STAFF . '.lembongan-area.update';
+    const STAFF_LEMBONGAN_AREA_DELETE = AccessGroup::STAFF . '.lembongan-area.delete';
+
     const STAFF_OPTION = [
         self::STAFF_DASHBOARD,
         self::STAFF_DASHBOARD_VIEW,
@@ -380,6 +387,12 @@ class AccessPermissionName
         self::STAFF_PROPERTY_REVIEW_CREATE,
         self::STAFF_PROPERTY_REVIEW_UPDATE,
         self::STAFF_PROPERTY_REVIEW_DELETE,
+
+        self::STAFF_LEMBONGAN_AREA,
+        self::STAFF_LEMBONGAN_AREA_VIEW,
+        self::STAFF_LEMBONGAN_AREA_CREATE,
+        self::STAFF_LEMBONGAN_AREA_UPDATE,
+        self::STAFF_LEMBONGAN_AREA_DELETE,
 
     ];
 

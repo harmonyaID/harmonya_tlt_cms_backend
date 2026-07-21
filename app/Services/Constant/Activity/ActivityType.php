@@ -34,6 +34,7 @@ class ActivityType extends BaseCodeName
     const PROPERTY_TAG = 'property_tag';
     const PROPERTY = 'property';
     const PROPERTY_REVIEW = 'property_review';
+    const LEMBONGAN_AREA = 'lembongan_area';
 
     const OPTION = [
         self::ACCESS,
@@ -64,5 +65,6 @@ class ActivityType extends BaseCodeName
         self::PROPERTY_TAG,
         self::PROPERTY,
         self::PROPERTY_REVIEW,
+        self::LEMBONGAN_AREA,
     ];
 }

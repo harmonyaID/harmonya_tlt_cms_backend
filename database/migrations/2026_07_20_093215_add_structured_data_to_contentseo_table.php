@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contentseo', function (Blueprint $table) {
-            $table->json('structuredData')->nullable()->after('robotFollow');
+            $table->json('metaData')->nullable()->after('robotFollow');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('contentseo', function (Blueprint $table) {
-            $table->dropColumn('structuredData');
+            $table->dropColumn('metaData');
         });
     }
 };
