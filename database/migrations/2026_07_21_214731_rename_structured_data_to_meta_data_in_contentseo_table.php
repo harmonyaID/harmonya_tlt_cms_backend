@@ -6,23 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('contentseo', function (Blueprint $table) {
-            $table->json('structuredData')->nullable()->after('robotFollow');
+            $table->renameColumn('structuredData', 'metaData');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('contentseo', function (Blueprint $table) {
-            $table->dropColumn('structuredData');
+            $table->renameColumn('metaData', 'structuredData');
         });
     }
 };
