@@ -27,13 +27,13 @@ class ContentSeo extends Model
         'canonicalUrl',
         'robotIndex',
         'robotFollow',
-        'metaData',
+        'schemaMarkup',
     ];
 
     protected $casts = [
         'robotIndex' => 'boolean',
         'robotFollow' => 'boolean',
-        'metaData' => 'array',
+        'schemaMarkup' => 'array',
     ];
 
     public function contentable()
