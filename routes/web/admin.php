@@ -23,3 +23,4 @@ require($base . "homepage.php");
 require($base . "setting.php");
 require($base . "property.php");
 require($base . "dashboard.php");
+require($base . "lembongan-area.php");
