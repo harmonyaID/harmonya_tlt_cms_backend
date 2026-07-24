@@ -188,3 +188,52 @@ if (!function_exists("errPropertyReviewDelete")) {
         error($status, "Unable to delete property review", $internalMsg);
     }
 }
+
+if (!function_exists("errPropertyContactFormGet")) {
+    function errPropertyContactFormGet($internalMsg = "")
+    {
+        error(404, "Property contact form not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyContactFormSave")) {
+    function errPropertyContactFormSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property contact form", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyContactFormDelete")) {
+    function errPropertyContactFormDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property contact form", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyFeatureGet")) {
+    function errPropertyFeatureGet($internalMsg = "")
+    {
+        error(404, "Property feature not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyFeatureSave")) {
+    function errPropertyFeatureSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property feature", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyFeatureUpdate")) {
+    function errPropertyFeatureUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property feature", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyFeatureDelete")) {
+    function errPropertyFeatureDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property feature", $internalMsg);
+    }
+}

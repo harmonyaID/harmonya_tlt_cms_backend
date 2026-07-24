@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityCategoryController;
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityController;
 use App\Http\Controllers\Web\Admin\Setting\SettingController;
+use App\Http\Controllers\Web\Admin\Setting\SettingPropertyFeatureController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,15 @@ Route::prefix("settings")
             Route::put('{id}', [SettingAmenityController::class, 'update']);
             Route::delete('{id}', [SettingAmenityController::class, 'delete']);
         });
+
+        Route::prefix("property-features")
+            ->group(function () {
+                Route::get('', [SettingPropertyFeatureController::class, 'get']);
+                Route::post('', [SettingPropertyFeatureController::class, 'create']);
+                Route::get('{id}', [SettingPropertyFeatureController::class, 'detail']);
+                Route::put('{id}', [SettingPropertyFeatureController::class, 'update']);
+                Route::delete('{id}', [SettingPropertyFeatureController::class, 'delete']);
+            });
 
         Route::get('{id}', [SettingController::class, 'detail']);
         Route::put('{id}', [SettingController::class, 'update']);

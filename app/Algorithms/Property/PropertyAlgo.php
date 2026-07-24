@@ -20,7 +20,7 @@ class PropertyAlgo
 {
     protected array $nestedKeys = [
         'addresses', 'guestInfo', 'rooms', 'availability', 'pricing',
-        'descriptions', 'amenityIds', 'tagIds', 'seo',
+        'descriptions', 'amenityIds', 'tagIds', 'features', 'seo',
     ];
 
     public function __construct(protected Property|int|null $property = null)
@@ -143,7 +143,7 @@ class PropertyAlgo
     {
         return [
             'type', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo',
+            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'features', 'seo',
         ];
     }
 
@@ -197,6 +197,14 @@ class PropertyAlgo
 
         if ($request->has('tagIds') && is_array($request->tagIds)) {
             $this->property->tags()->sync($request->tagIds);
+        }
+
+        if ($request->has('features') && is_array($request->features)) {
+            $syncData = [];
+            foreach ($request->features as $feature) {
+                $syncData[$feature['featureId']] = ['value' => $feature['value'] ?? null];
+            }
+            $this->property->features()->sync($syncData);
         }
     }
 }

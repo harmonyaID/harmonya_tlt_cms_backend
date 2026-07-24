@@ -76,6 +76,78 @@ class GuestyClient
     }
 
     /**
+     * Generic authenticated GET request to the Guesty Open API, with one retry on 401.
+     *
+     * @param string $path e.g. '/properties-api/amenities/supported'
+     * @param array $query
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function get(string $path, array $query = []): array
+    {
+        $response = Http::withToken($this->getAccessToken())
+            ->get(config('guesty.base_url') . $path, $query);
+
+        if ($response->status() === 401) {
+            Cache::forget(self::TOKEN_CACHE_KEY);
+
+            $response = Http::withToken($this->getAccessToken())
+                ->get(config('guesty.base_url') . $path, $query);
+        }
+
+        if (!$response->successful()) {
+            throw new \Exception("Unable to fetch Guesty $path: " . $response->body());
+        }
+
+        return $response->json();
+    }
+
+    /**
+     * All amenities supported by Guesty, with their names, groups and channel mappings.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getSupportedAmenities(): array
+    {
+        return $this->get('/properties-api/amenities/supported');
+    }
+
+    /**
+     * All amenity groups/categories supported by Guesty.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getAmenityGroups(): array
+    {
+        return $this->get('/properties-api/amenities/groups');
+    }
+
+    /**
+     * All room/space types supported by Guesty (e.g. Living room, Kitchen, Bedroom).
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getRoomTypes(): array
+    {
+        return $this->get('/properties/spaces/room-types');
+    }
+
+    /**
+     * All bed types supported by Guesty (e.g. KING_BED, QUEEN_BED, SOFA_BED).
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getBedTypes(): array
+    {
+        return $this->get('/properties/spaces/bed-types');
+    }
+
+    /**
      * Download a remote image's raw bytes (used for listing pictures).
      *
      * @param string $url

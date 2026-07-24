@@ -15,6 +15,7 @@ use App\Models\Property\PropertyRoomType;
 use App\Models\Property\PropertyTag;
 use App\Models\Property\PropertyType;
 use App\Models\Setting\SettingAmenity;
+use App\Models\Setting\SettingPropertyFeature;
 use App\Services\Constant\Property\PropertyAddressType;
 use App\Services\Constant\Property\PropertyAdvanceNoticeUnit;
 use App\Services\Constant\Property\PropertyAvailabilityType;
@@ -63,6 +64,7 @@ class GuestyPropertyImporter
             $this->syncRooms($property, $listing);
             $this->syncAmenities($property, $listing);
             $this->syncTags($property, $listing);
+            $this->syncFeatures($property, $listing);
             $this->syncPhotos($property, $listing);
 
             return $property;
@@ -224,6 +226,28 @@ class GuestyPropertyImporter
         });
 
         $property->tags()->sync($ids);
+    }
+
+    private function syncFeatures(Property $property, array $listing): void
+    {
+        $values = [
+            'Bedroom' => $listing['bedrooms'] ?? null,
+            'Bathroom' => $listing['bathrooms'] ?? null,
+        ];
+
+        $syncData = [];
+        foreach ($values as $name => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            $feature = SettingPropertyFeature::firstOrCreate(['name' => $name], ['hasValue' => true]);
+            $syncData[$feature->id] = ['value' => $value];
+        }
+
+        if ($syncData) {
+            $property->features()->syncWithoutDetaching($syncData);
+        }
     }
 
     private function syncPhotos(Property $property, array $listing): void
