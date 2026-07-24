@@ -213,6 +213,20 @@ class AccessPermissionName
     const STAFF_PROPERTY_REVIEW_UPDATE = AccessGroup::STAFF . '.property-review.update';
     const STAFF_PROPERTY_REVIEW_DELETE = AccessGroup::STAFF . '.property-review.delete';
 
+    // Property Contact Form
+    const STAFF_PROPERTY_CONTACT_FORM = AccessGroup::STAFF . '.property-contact-form.*';
+    const STAFF_PROPERTY_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.property-contact-form.view';
+    const STAFF_PROPERTY_CONTACT_FORM_CREATE = AccessGroup::STAFF . '.property-contact-form.create';
+    const STAFF_PROPERTY_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.property-contact-form.update';
+    const STAFF_PROPERTY_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.property-contact-form.delete';
+
+    // Property Feature
+    const STAFF_PROPERTY_FEATURE = AccessGroup::STAFF . '.property-feature.*';
+    const STAFF_PROPERTY_FEATURE_VIEW = AccessGroup::STAFF . '.property-feature.view';
+    const STAFF_PROPERTY_FEATURE_CREATE = AccessGroup::STAFF . '.property-feature.create';
+    const STAFF_PROPERTY_FEATURE_UPDATE = AccessGroup::STAFF . '.property-feature.update';
+    const STAFF_PROPERTY_FEATURE_DELETE = AccessGroup::STAFF . '.property-feature.delete';
+
     // Lembongan Area
     const STAFF_LEMBONGAN_AREA = AccessGroup::STAFF . '.lembongan-area.*';
     const STAFF_LEMBONGAN_AREA_VIEW = AccessGroup::STAFF . '.lembongan-area.view';
@@ -387,6 +401,18 @@ class AccessPermissionName
         self::STAFF_PROPERTY_REVIEW_CREATE,
         self::STAFF_PROPERTY_REVIEW_UPDATE,
         self::STAFF_PROPERTY_REVIEW_DELETE,
+
+        self::STAFF_PROPERTY_CONTACT_FORM,
+        self::STAFF_PROPERTY_CONTACT_FORM_VIEW,
+        self::STAFF_PROPERTY_CONTACT_FORM_CREATE,
+        self::STAFF_PROPERTY_CONTACT_FORM_UPDATE,
+        self::STAFF_PROPERTY_CONTACT_FORM_DELETE,
+
+        self::STAFF_PROPERTY_FEATURE,
+        self::STAFF_PROPERTY_FEATURE_VIEW,
+        self::STAFF_PROPERTY_FEATURE_CREATE,
+        self::STAFF_PROPERTY_FEATURE_UPDATE,
+        self::STAFF_PROPERTY_FEATURE_DELETE,
 
         self::STAFF_LEMBONGAN_AREA,
         self::STAFF_LEMBONGAN_AREA_VIEW,

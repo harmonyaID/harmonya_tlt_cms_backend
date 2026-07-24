@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Configuration\WebsiteInformation;
 use Database\Seeders\Access\AccessPermissionSeeder;
@@ -12,7 +11,9 @@ use Database\Seeders\Homepage\HomepageSeeder;
 use Database\Seeders\Language\LanguageGroupSeeder;
 use Database\Seeders\Language\LanguageSeeder;
 use Database\Seeders\Language\TranslatorSeeder;
+use Database\Seeders\Property\PropertyFeatureSeeder;
 use Database\Seeders\Setting\CountrySeeder;
+use Database\Seeders\Setting\PropertyNearbySettingSeeder;
 use Database\Seeders\Staff\StaffSeeder;
 use Illuminate\Database\Seeder;;
 
@@ -33,6 +34,8 @@ class DatabaseSeeder extends Seeder
             TranslatorSeeder::class,
             WebsiteInformationSeeder::class,
             HomepageSeeder::class,
+            PropertyNearbySettingSeeder::class,
+            PropertyFeatureSeeder::class,
         ]);
     }
 }

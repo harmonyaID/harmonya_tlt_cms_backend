@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Services\Guesty;
+
+use App\Models\Setting\SettingAmenity;
+use App\Models\Setting\SettingAmenityCategory;
+
+class GuestyAmenityImporter
+{
+    public function __construct(protected GuestyClient $client)
+    {
+    }
+
+    /**
+     * @return array{categories: int, amenities: int}
+     * @throws \Exception
+     */
+    public function import(): array
+    {
+        $categoryCount = $this->importCategories();
+        $amenityCount = $this->importAmenities();
+
+        return ['categories' => $categoryCount, 'amenities' => $amenityCount];
+    }
+
+    private function importCategories(): int
+    {
+        $response = $this->client->getAmenityGroups();
+        $groups = $this->extractList($response);
+
+        $count = 0;
+        foreach ($groups as $group) {
+            $name = $this->pick($group, ['name', 'title', 'group', 'label']);
+            if (!$name) {
+                continue;
+            }
+
+            SettingAmenityCategory::firstOrCreate(['name' => $name]);
+            $count++;
+        }
+
+        return $count;
+    }
+
+    private function importAmenities(): int
+    {
+        $response = $this->client->getSupportedAmenities();
+        $amenities = $this->extractList($response);
+
+        $count = 0;
+        foreach ($amenities as $amenity) {
+            $name = $this->pick($amenity, ['name', 'title', 'label']);
+            if (!$name) {
+                continue;
+            }
+
+            $groupName = $this->pick($amenity, ['group', 'groupName', 'category']);
+            $categoryId = null;
+            if ($groupName) {
+                $categoryId = SettingAmenityCategory::firstOrCreate(['name' => $groupName])->id;
+            }
+
+            SettingAmenity::updateOrCreate(
+                ['name' => $name],
+                ['categoryId' => $categoryId, 'isPublish' => true]
+            );
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Guesty responses may come back as a raw array, or wrapped in {results:[]} / {data:[]}.
+     */
+    private function extractList(array $response): array
+    {
+        if (array_is_list($response)) {
+            return $response;
+        }
+
+        return $response['results'] ?? $response['data'] ?? $response['amenities'] ?? $response['groups'] ?? [];
+    }
+
+    private function pick(array $item, array $keys): ?string
+    {
+        foreach ($keys as $key) {
+            if (!empty($item[$key]) && is_string($item[$key])) {
+                return $item[$key];
+            }
+        }
+
+        return null;
+    }
+}

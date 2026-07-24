@@ -92,6 +92,10 @@ class PropertyRequest extends FormRequest
             'tagIds' => 'nullable|array',
             'tagIds.*' => 'integer|exists:property_tags,id',
 
+            'features' => 'nullable|array',
+            'features.*.featureId' => 'required_with:features|integer|exists:setting_property_features,id',
+            'features.*.value' => 'nullable|string',
+
             'seo' => 'nullable|array',
         ], SeoRule::rules());
     }

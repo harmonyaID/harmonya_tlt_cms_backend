@@ -5,6 +5,7 @@ namespace App\Models\Property;
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Setting\SettingAmenity;
+use App\Models\Setting\SettingPropertyFeature;
 use App\Parser\Property\PropertyParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,6 +29,8 @@ class Property extends BaseModel
         'unitTypeId' => 'integer',
         'listingTypeId' => 'integer',
         'occupancy' => 'integer',
+        'bedroomCount' => 'integer',
+        'bathroomCount' => 'integer',
         'propertySize' => 'decimal:2',
         'statusId' => 'integer',
         'cleaningStatusId' => 'integer',
@@ -88,6 +91,20 @@ class Property extends BaseModel
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(PropertyTag::class, 'property_tag', 'propertyId', 'tagId');
+    }
+
+    public function features(): BelongsToMany
+    {
+        return $this->belongsToMany(SettingPropertyFeature::class, 'property_feature', 'propertyId', 'featureId')
+            ->withPivot('value')
+            ->orderBy('setting_property_features.order');
+    }
+
+    public function relatedProperties(): BelongsToMany
+    {
+        return $this->belongsToMany(Property::class, 'property_related', 'propertyId', 'relatedPropertyId')
+            ->withPivot('order')
+            ->orderBy('property_related.order');
     }
 
     public function seo()
