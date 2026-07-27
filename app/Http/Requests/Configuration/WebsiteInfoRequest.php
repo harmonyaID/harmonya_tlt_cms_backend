@@ -36,9 +36,21 @@ class WebsiteInfoRequest extends FormRequest
             }
         }
 
+        $emails = $this->input('emails');
+
+        $emailsRules = [];
+        if ($emails && is_array($emails)) {
+            if (count($emails) > 0) {
+                $emailsRules = [
+                    'emails.*.title' => 'required|string',
+                    'emails.*.email' => 'required|email',
+                ];
+            }
+        }
+
         return [
                 'title' => 'required|string',
-                'email' => 'required|string',
+                'emails' => 'array|nullable',
                 'phone' => 'nullable',
                 'fax' => 'nullable',
                 'whatsapp' => 'nullable',
@@ -47,6 +59,6 @@ class WebsiteInfoRequest extends FormRequest
                 'address' => 'required|string',
                 'mapEmbed' => 'string|nullable',
                 'socialMedia' => 'array|nullable'
-            ] + $socialMediaRules;
+            ] + $emailsRules + $socialMediaRules;
     }
 }

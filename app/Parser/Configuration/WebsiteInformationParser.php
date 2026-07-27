@@ -21,7 +21,7 @@ class WebsiteInformationParser extends BaseParser
         return [
             'id' => $data->id,
             'title' => $data->title,
-            'email' => $data->email,
+            'emails' => $data->emails,
             'phone' => $data->phone,
             'fax' => $data->fax,
             'whatsapp' => $data->whatsapp,
@@ -47,7 +47,7 @@ class WebsiteInformationParser extends BaseParser
         return [
             'id' => $data->id,
             'title' => $data->title,
-            'email' => $data->email,
+            'emails' => $data->emails,
             'phone' => $data->phone,
             'fax' => $data->fax,
             'whatsapp' => $data->whatsapp,
