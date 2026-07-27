@@ -19,7 +19,9 @@ class WebsiteInformationSeeder extends Seeder
             'emails' => [
                 ['title' => 'Email', 'email' => ''],
             ],
-            'phone' => '',
+            'phones' => [
+                ['title' => 'Phone', 'phone' => ''],
+            ],
             'fax' => '',
             'whatsapp' => '',
             'country' => 'id',
