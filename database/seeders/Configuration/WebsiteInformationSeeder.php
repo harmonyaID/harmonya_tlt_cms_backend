@@ -16,7 +16,9 @@ class WebsiteInformationSeeder extends Seeder
 
         WebsiteInformation::create([
             'title' => 'TLT Property',
-            'email' => '',
+            'emails' => [
+                ['title' => 'Email', 'email' => ''],
+            ],
             'phone' => '',
             'fax' => '',
             'whatsapp' => '',

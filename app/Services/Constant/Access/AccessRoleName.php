@@ -9,7 +9,11 @@ class AccessRoleName
 {
     // Staff
     const STAFF_ADMIN = AccessGroup::STAFF . '.admin';
+    const STAFF_ADMINISTRATOR = AccessGroup::STAFF . '.administrator';
+    const STAFF_MANAGER = AccessGroup::STAFF . '.manager';
     const STAFF_SUPERVISOR = AccessGroup::STAFF . '.supervisor';
+    const STAFF_EDITOR = AccessGroup::STAFF . '.editor';
+    const STAFF_SUBS = AccessGroup::STAFF . '.subs';
 
     // Partner
     const PARTNER_ADMIN = AccessGroup::PARTNER . '.admin';
@@ -21,7 +25,11 @@ class AccessRoleName
 
     const STAFF_OPTION = [
         self::STAFF_ADMIN,
+        self::STAFF_ADMINISTRATOR,
+        self::STAFF_MANAGER,
         self::STAFF_SUPERVISOR,
+        self::STAFF_EDITOR,
+        self::STAFF_SUBS,
     ];
 
     const PARTNER_OPTION = [
