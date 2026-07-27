@@ -48,10 +48,22 @@ class WebsiteInfoRequest extends FormRequest
             }
         }
 
+        $phones = $this->input('phones');
+
+        $phonesRules = [];
+        if ($phones && is_array($phones)) {
+            if (count($phones) > 0) {
+                $phonesRules = [
+                    'phones.*.title' => 'required|string',
+                    'phones.*.phone' => 'required|string',
+                ];
+            }
+        }
+
         return [
                 'title' => 'required|string',
                 'emails' => 'array|nullable',
-                'phone' => 'nullable',
+                'phones' => 'array|nullable',
                 'fax' => 'nullable',
                 'whatsapp' => 'nullable',
                 'country' => 'required|string',
@@ -59,6 +71,6 @@ class WebsiteInfoRequest extends FormRequest
                 'address' => 'required|string',
                 'mapEmbed' => 'string|nullable',
                 'socialMedia' => 'array|nullable'
-            ] + $emailsRules + $socialMediaRules;
+            ] + $emailsRules + $phonesRules + $socialMediaRules;
     }
 }

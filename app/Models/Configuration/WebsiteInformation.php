@@ -21,6 +21,7 @@ class WebsiteInformation extends BaseModel
 
     protected $casts = [
         'emails' => 'array',
+        'phones' => 'array',
         'socialMedia' => 'array',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
