@@ -8,6 +8,7 @@ use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -31,6 +32,7 @@ class BlogAlgo
 
                 $data = $request->except('thumbnail', 'tagIds');
                 $data['slug'] = Str::slug($request->slug ?: $request->title);
+                $data['publishedAt'] = $this->parsePublishedAt($request->publishedAt) ?? now();
 
                 $this->blog = Blog::create($data + created_by());
                 if (!$this->blog) {
@@ -70,6 +72,9 @@ class BlogAlgo
                 $data = $request->except('thumbnail', 'tagIds');
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
+                }
+                if ($request->has('publishedAt')) {
+                    $data['publishedAt'] = $this->parsePublishedAt($request->publishedAt);
                 }
 
                 $this->blog->update($data);
@@ -143,6 +148,24 @@ class BlogAlgo
      | Functions
      |-------------------------------------------------------------------------
      */
+
+    /**
+     * Parse a 'd/m/Y H:i' formatted string into a Carbon instance.
+     * Carbon's automatic parser assumes American m/d/Y order for slash-separated
+     * dates, so a value like "27/07/2026 01:23" must be parsed explicitly.
+     */
+    private function parsePublishedAt(?string $value): ?Carbon
+    {
+        if (!$value) {
+            return null;
+        }
+
+        try {
+            return Carbon::createFromFormat('d/m/Y H:i', $value);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 
     private function uploadThumbnail(Request $request)
     {
