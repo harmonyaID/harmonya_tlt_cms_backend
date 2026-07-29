@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Experience;
 
+use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Experience\ExperienceArea;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
@@ -38,12 +39,14 @@ class ExperienceAreaAlgo
                     $this->experienceArea->save();
                 }
 
+                (new ContentSeoAlgo($this->experienceArea))->save($request);
+
                 activity()->setCausedBy()->setReference($this->experienceArea)
                     ->setType(ActivityType::EXPERIENCE_AREA)->setAction(ActivityAction::CREATE)
                     ->log("Enter new experience area: " . $this->experienceArea->name);
             });
 
-            return success($this->experienceArea->load('type'));
+            return success($this->experienceArea->load('type', 'seo'));
         } catch (\Error $error) { exception($error); }
     }
 
@@ -79,12 +82,14 @@ class ExperienceAreaAlgo
                     $this->experienceArea->save();
                 }
 
+                (new ContentSeoAlgo($this->experienceArea))->save($request);
+
                 activity()->setCausedBy()->setReference($this->experienceArea)
                     ->setType(ActivityType::EXPERIENCE_AREA)->setAction(ActivityAction::UPDATE)
                     ->log("Update experience area: " . $this->experienceArea->name);
             });
 
-            return success($this->experienceArea->load('type'));
+            return success($this->experienceArea->load('type', 'seo'));
         } catch (\Error $error) { exception($error); }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Parser\Experience;
 
+use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
 class ExperienceAreaParser extends BaseParser
@@ -17,6 +18,7 @@ class ExperienceAreaParser extends BaseParser
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
+            'seo' => SeoParser::first($data->seo),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
