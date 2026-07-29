@@ -4,6 +4,7 @@ namespace App\Models\Experience;
 
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
+use App\Models\Traits\HasDateRangeFilter;
 use App\Parser\Experience\ExperienceParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class Experience extends BaseModel
 {
     use SoftDeletes;
+    use HasDateRangeFilter;
 
     protected $table = 'experiences';
     protected $guarded = ['id'];
@@ -32,12 +34,6 @@ class Experience extends BaseModel
     ];
 
     public $parserClass = ExperienceParser::class;
-
-    /*
-     |--------------------------------------------------------------------------
-     | Relationships
-     |-------------------------------------------------------------------------
-     */
 
     public function type(): BelongsTo
     {
@@ -58,12 +54,6 @@ class Experience extends BaseModel
     {
         return $this->hasMany(ExperiencePhoto::class, 'experienceId')->orderBy('order');
     }
-
-    /*
-     |--------------------------------------------------------------------------
-     | Scopes
-     |-------------------------------------------------------------------------
-     */
 
     public function scopeFilter($query, $request)
     {
@@ -87,14 +77,14 @@ class Experience extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
+
+            if ($request->has('locale') && $request->locale) {
+                $query->where('locale', $request->locale);
+            }
+
+            $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
     }
-
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
 
     public function thumbnailUrl()
     {

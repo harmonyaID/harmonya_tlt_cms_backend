@@ -63,6 +63,7 @@ class BoatParser extends BaseParser
                 : null,
             'photos'              => $photos,
             'customInformations'  => $customInformations,
+            'locale'              => $data->locale,
             'isActive'            => $data->isActive,
             'seo'                 => SeoParser::first($data->seo),
             'createdAt'           => optional($data->createdAt)->format('d/m/Y H:i'),
@@ -93,7 +94,6 @@ class BoatParser extends BaseParser
                     ),
                 ];
             } else {
-                // $photo is just a filename string
                 $promoPhotos[] = [
                     'id'   => $key,
                     'file' => Storage::disk('public')->url(
@@ -110,6 +110,7 @@ class BoatParser extends BaseParser
             'boatComponentTypeName' => optional($data->type)->name,
             'promoPhotos'         => $promoPhotos,
             'photos'              => $photos,
+            'locale'              => $data->locale,
             'isActive'            => $data->isActive,
             'createdAt'           => optional($data->createdAt)->format('d/m/Y H:i'),
         ];

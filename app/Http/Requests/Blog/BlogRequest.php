@@ -33,6 +33,7 @@ class BlogRequest extends FormRequest
             'author' => 'nullable|string',
             'publishedAt' => 'nullable|date_format:d/m/Y H:i',
             'isActive' => 'required|boolean',
+            'locale' => 'nullable|string|exists:languages,code',
 
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deleteThumbnail' => 'nullable|boolean',

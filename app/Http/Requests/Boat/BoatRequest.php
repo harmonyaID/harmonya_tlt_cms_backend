@@ -24,26 +24,22 @@ class BoatRequest extends FormRequest
             'name'          => 'required|string',
             'description'          => 'nullable|string',
             'isActive'             => 'required|boolean',
+            'locale'               => 'nullable|string|exists:languages,code',
 
-            // price file
             'priceFile'            => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
             'deletePriceFile'  => 'nullable|boolean',
 
-            // promo photos (json) — kirim ulang semua saat ganti
             'promoPhotos'          => 'nullable|array',
             'promoPhotos.*'        => 'image|mimes:jpg,jpeg,png,webp|max:5120',
             'deletePromoPhotoIds'   => 'nullable|array',
             'deletePromoPhotoIds.*' => 'integer',
 
-            // photos
             'photos'               => 'nullable|array',
             'photos.*'             => 'image|mimes:jpg,jpeg,png,webp|max:5120',
 
-            // hapus foto tertentu saat update
             'deletePhotoIds'       => 'nullable|array',
             'deletePhotoIds.*'     => 'integer|exists:boat_photos,id',
 
-            // custom informations
             'customInformations'          => 'nullable|array',
             'customInformations.*.id'     => 'nullable|integer',
             'customInformations.*.name'   => 'required_with:customInformations|string',
