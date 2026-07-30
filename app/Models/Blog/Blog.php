@@ -4,6 +4,7 @@ namespace App\Models\Blog;
 
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
+use App\Models\Traits\HasDateRangeFilter;
 use App\Parser\Blog\BlogParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class Blog extends BaseModel
 {
     use SoftDeletes;
+    use HasDateRangeFilter;
 
     protected $table = 'blogs';
     protected $guarded = ['id'];
@@ -32,12 +34,6 @@ class Blog extends BaseModel
 
     public $parserClass = BlogParser::class;
 
-    /*
-     |--------------------------------------------------------------------------
-     | Relationships
-     |-------------------------------------------------------------------------
-     */
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(BlogCategory::class, 'categoryId');
@@ -51,11 +47,6 @@ class Blog extends BaseModel
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
-    /*
-     |--------------------------------------------------------------------------
-     | Scopes
-     |-------------------------------------------------------------------------
-     */
 
     public function scopeFilter($query, $request)
     {
@@ -72,17 +63,24 @@ class Blog extends BaseModel
                 $query->where('categoryId', $request->categoryId);
             }
 
+            if ($request->has('tagId') && $request->tagId) {
+                $query->whereHas('tags', function ($tag) use ($request) {
+                    $tag->where('blog_tags.id', $request->tagId);
+                });
+            }
+
+            if ($request->has('locale') && $request->locale) {
+                $query->where('locale', $request->locale);
+            }
+
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
+
+            $this->applyDateRangeFilter($query, $request, 'publishedAt');
+
         })->orderBy('id', 'DESC');
     }
-
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
 
     public function thumbnailUrl()
     {

@@ -3,6 +3,7 @@
 namespace App\Models\Experience;
 
 use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
 use App\Parser\Experience\ExperienceTypeParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -60,5 +61,10 @@ class ExperienceType extends BaseModel
         }
 
         return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_TYPE . $this->banner);
+    }
+
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
 }

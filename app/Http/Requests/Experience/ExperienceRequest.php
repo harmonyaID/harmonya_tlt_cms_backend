@@ -25,6 +25,7 @@ class ExperienceRequest extends FormRequest
             'instagram' => 'nullable|string',
             'website' => 'nullable|string',
             'isActive' => 'required|boolean',
+            'locale' => 'nullable|string|exists:languages,code',
             'showInquiry' => 'required|boolean',
 
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',

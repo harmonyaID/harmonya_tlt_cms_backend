@@ -6,6 +6,7 @@ use App\Models\Access\Traits\HasAccession;
 use App\Models\BaseModel;
 use App\Models\HasActivation;
 use App\Models\Setting\SettingCountry;
+use App\Models\Traits\HasDateRangeFilter;
 use App\Parser\Page\PageParser;
 use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Storage\PathConstant;
@@ -17,6 +18,7 @@ class Page extends BaseModel
 {
     use HasActivation;
     use HasAccession;
+    use HasDateRangeFilter;
 
     protected $table = 'pages';
     protected $guarded = ['id'];
@@ -31,37 +33,6 @@ class Page extends BaseModel
 
     public $parserClass = PageParser::class;
 
-
-    /** --- RELATIONSHIPS --- */
-    // public function getLanguage()
-    // {
-    //     return $this->belongsTo(Language::class, 'language', 'code');
-    // }
-
-    // public function createdBy()
-    // {
-    //     return $this->belongsTo(Staff::class, 'createdBy');
-    // }
-
-    // public function seo()
-    // {
-    //     return $this->morphOne(ContentSEO::class, 'contentseoable','contentableType','contentableId');
-    // }
-
-    // public function photos()
-    // {
-    //     return $this->hasMany(PagePhoto::class, 'pageId');
-    // }
-
-    // public function acf()
-    // {
-    //     return $this->morphMany(ContentAcf::class, 'contentacfable','contentableType','contentableId');
-    // }
-
-
-
-    /** --- SCOPES --- */
-
     public function scopeFilter($query, $request)
     {
         return $query->orderBy('groupId', 'ASC')->groupBy('groupId')->where(function ($query) use ($request) {
@@ -75,6 +46,16 @@ class Page extends BaseModel
                 });
             }
 
+            if ($request->has('status') && $request->status) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->has('locale') && $request->locale) {
+                $query->where('locale', $request->locale);
+            }
+
+            $this->applyDateRangeFilter($query, $request);
+
         });
     }
 
@@ -82,12 +63,6 @@ class Page extends BaseModel
     {
         return $query->where('groupId', $request->groupId)->where('locale', $request->locale);
     }
-
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
 
     // public function photoUrl($photo)
     // {

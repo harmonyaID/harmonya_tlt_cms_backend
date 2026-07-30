@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
+use App\Models\Traits\HasDateRangeFilter;
 use App\Parser\Property\PropertyParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Property extends BaseModel
 {
     use SoftDeletes;
+    use HasDateRangeFilter;
 
     protected $table = 'properties';
     protected $guarded = ['id'];
@@ -127,6 +129,40 @@ class Property extends BaseModel
             if ($request->has('propertyTypeId') && $request->propertyTypeId) {
                 $query->where('propertyTypeId', $request->propertyTypeId);
             }
+
+            if ($request->has('tagId') && $request->tagId) {
+                $query->whereHas('tags', function ($tag) use ($request) {
+                    $tag->where('property_tags.id', $request->tagId);
+                });
+            }
+
+            if ($request->has('sourceTypeId') && $request->sourceTypeId) {
+                $query->where('sourceTypeId', $request->sourceTypeId);
+            }
+
+            // "Area" = free-text search against the property's address (e.g. "Jungutbatu")
+            if ($request->has('area') && strlen($request->area) > 1) {
+                $query->whereHas('addresses', function ($address) use ($request) {
+                    $address->where('address', 'LIKE', "%$request->area%");
+                });
+            }
+
+            if ($request->has('occupancyMin') && $request->occupancyMin) {
+                $query->where('occupancy', '>=', $request->occupancyMin);
+            }
+
+            if ($request->has('occupancyMax') && $request->occupancyMax) {
+                $query->where('occupancy', '<=', $request->occupancyMax);
+            }
+
+            // "Language" = filter by which language a property's description was written in
+            if ($request->has('language') && $request->language) {
+                $query->whereHas('descriptions', function ($description) use ($request) {
+                    $description->where('language', $request->language);
+                });
+            }
+
+            $this->applyDateRangeFilter($query, $request);
 
         })->orderBy('id', 'DESC');
     }

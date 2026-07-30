@@ -17,7 +17,7 @@ class ExperienceTypeController extends Controller
 
     public function detail($id)
     {
-        $type = ExperienceType::find($id);
+        $type = ExperienceType::with('seo')->find($id);
         if (!$type) {
             errExperienceTypeGet();
         }
