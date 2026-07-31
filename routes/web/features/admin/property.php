@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\Property\PropertyBedTypeController;
-use App\Http\Controllers\Web\Admin\Property\PropertyContactFormController;
 use App\Http\Controllers\Web\Admin\Property\PropertyController;
+use App\Http\Controllers\Web\Admin\Property\PropertyGuestyConfigurationController;
 use App\Http\Controllers\Web\Admin\Property\PropertyPhotoController;
-use App\Http\Controllers\Web\Admin\Property\PropertyRelatedController;
 use App\Http\Controllers\Web\Admin\Property\PropertyReviewController;
 use App\Http\Controllers\Web\Admin\Property\PropertyRoomTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTagController;
@@ -54,6 +53,9 @@ Route::prefix("properties")
                 Route::delete('{id}', [PropertyTagController::class, 'delete']);
             });
 
+        Route::post('{propertyId}/photos', [PropertyPhotoController::class, 'upload']);
+        Route::delete('{propertyId}/photos/{photoId}', [PropertyPhotoController::class, 'delete']);
+
         Route::prefix('reviews')
             ->group(function () {
                 Route::get('', [PropertyReviewController::class, 'get']);
@@ -63,21 +65,13 @@ Route::prefix("properties")
                 Route::delete('{id}', [PropertyReviewController::class, 'delete']);
             });
 
-        Route::prefix('contact-forms')
+        // Guesty API Configuration (Property Management Module)
+        Route::prefix('guesty-configuration')
             ->group(function () {
-                Route::get('', [PropertyContactFormController::class, 'get']);
-                Route::post('', [PropertyContactFormController::class, 'create']);
-                Route::get('{id}', [PropertyContactFormController::class, 'detail']);
-                Route::delete('{id}', [PropertyContactFormController::class, 'delete']);
-                Route::patch('{id}/read', [PropertyContactFormController::class, 'markAsRead']);
-                Route::patch('{id}/status', [PropertyContactFormController::class, 'changeStatus']);
+                Route::get('', [PropertyGuestyConfigurationController::class, 'get']);
+                Route::put('', [PropertyGuestyConfigurationController::class, 'update']);
+                Route::post('test', [PropertyGuestyConfigurationController::class, 'test']);
             });
-
-        Route::post('{propertyId}/photos', [PropertyPhotoController::class, 'upload']);
-        Route::delete('{propertyId}/photos/{photoId}', [PropertyPhotoController::class, 'delete']);
-
-        Route::get('{propertyId}/related', [PropertyRelatedController::class, 'get']);
-        Route::put('{propertyId}/related', [PropertyRelatedController::class, 'sync']);
 
         Route::get('{id}', [PropertyController::class, 'detail']);
         Route::post('{id}', [PropertyController::class, 'update']);

@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityCategoryController;
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityController;
+use App\Http\Controllers\Web\Admin\Setting\SettingApiConfigurationController;
 use App\Http\Controllers\Web\Admin\Setting\SettingController;
-use App\Http\Controllers\Web\Admin\Setting\SettingPropertyFeatureController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -34,13 +34,14 @@ Route::prefix("settings")
             Route::delete('{id}', [SettingAmenityController::class, 'delete']);
         });
 
-        Route::prefix("property-features")
+        // Open API Features - generic 3rd-party API credential management
+        Route::prefix("api-configurations")
             ->group(function () {
-                Route::get('', [SettingPropertyFeatureController::class, 'get']);
-                Route::post('', [SettingPropertyFeatureController::class, 'create']);
-                Route::get('{id}', [SettingPropertyFeatureController::class, 'detail']);
-                Route::put('{id}', [SettingPropertyFeatureController::class, 'update']);
-                Route::delete('{id}', [SettingPropertyFeatureController::class, 'delete']);
+                Route::get('', [SettingApiConfigurationController::class, 'get']);
+                Route::post('', [SettingApiConfigurationController::class, 'create']);
+                Route::get('{id}', [SettingApiConfigurationController::class, 'detail']);
+                Route::put('{id}', [SettingApiConfigurationController::class, 'update']);
+                Route::delete('{id}', [SettingApiConfigurationController::class, 'delete']);
             });
 
         Route::get('{id}', [SettingController::class, 'detail']);
