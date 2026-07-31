@@ -61,7 +61,9 @@
             "app/Services/Helpers/Status/homepage.php",
             "app/Services/Helpers/Status/amenity.php",
             "app/Services/Helpers/Status/property.php",
-            "app/Services/Helpers/Status/lembonganArea.php"
+            "app/Services/Helpers/Status/lembonganArea.php",
+                        "app/Services/Helpers/Status/apiConfiguration.php"
+
 
         ]
     },

@@ -2,12 +2,38 @@
 
 namespace App\Services\Guesty;
 
+use App\Models\Setting\ApiConfiguration;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class GuestyClient
 {
     const TOKEN_CACHE_KEY = 'guesty_access_token';
+    const CONFIG_CACHE_KEY = 'guesty_api_configuration';
+    const CONFIG_KEY = 'guesty';
+
+    /**
+     * Resolve a Guesty credential/setting, preferring the DB-stored configuration
+     * (managed via Property > Guesty Configuration in the admin panel) and
+     * falling back to .env / config/guesty.php when it hasn't been set up yet.
+     *
+     * @param string $field one of: client_id, client_secret, auth_url, base_url
+     * @param string|null $envFallback
+     *
+     * @return string|null
+     */
+    protected function credential(string $field, ?string $envFallback = null): ?string
+    {
+        $config = Cache::remember(self::CONFIG_CACHE_KEY, 300, function () {
+            return ApiConfiguration::where('key', self::CONFIG_KEY)
+                ->where('isActive', true)
+                ->first();
+        });
+
+        $value = $config?->credential($field);
+
+        return $value ?: $envFallback;
+    }
 
     /**
      * Exchange client credentials for an access token (cached until near-expiry).
@@ -19,11 +45,13 @@ class GuestyClient
     {
         return Cache::remember(self::TOKEN_CACHE_KEY, 3600 * 23, function () {
 
-            $response = Http::asForm()->post(config('guesty.auth_url'), [
+            $authUrl = $this->credential('auth_url', config('guesty.auth_url'));
+
+            $response = Http::asForm()->post($authUrl, [
                 'grant_type' => 'client_credentials',
                 'scope' => 'open-api',
-                'client_id' => config('guesty.client_id'),
-                'client_secret' => config('guesty.client_secret'),
+                'client_id' => $this->credential('client_id', config('guesty.client_id')),
+                'client_secret' => $this->credential('client_secret', config('guesty.client_secret')),
             ]);
 
             if (!$response->successful()) {
@@ -41,6 +69,14 @@ class GuestyClient
     }
 
     /**
+     * @return string
+     */
+    protected function baseUrl(): string
+    {
+        return $this->credential('base_url', config('guesty.base_url'));
+    }
+
+    /**
      * Fetch a page of listings from Guesty.
      *
      * @param int $limit
@@ -52,7 +88,7 @@ class GuestyClient
     public function getListings(int $limit = 25, int $skip = 0): array
     {
         $response = Http::withToken($this->getAccessToken())
-            ->get(config('guesty.base_url') . '/listings', [
+            ->get($this->baseUrl() . '/listings', [
                 'limit' => $limit,
                 'skip' => $skip,
             ]);
@@ -62,7 +98,7 @@ class GuestyClient
             Cache::forget(self::TOKEN_CACHE_KEY);
 
             $response = Http::withToken($this->getAccessToken())
-                ->get(config('guesty.base_url') . '/listings', [
+                ->get($this->baseUrl() . '/listings', [
                     'limit' => $limit,
                     'skip' => $skip,
                 ]);
@@ -87,13 +123,13 @@ class GuestyClient
     public function get(string $path, array $query = []): array
     {
         $response = Http::withToken($this->getAccessToken())
-            ->get(config('guesty.base_url') . $path, $query);
+            ->get($this->baseUrl() . $path, $query);
 
         if ($response->status() === 401) {
             Cache::forget(self::TOKEN_CACHE_KEY);
 
             $response = Http::withToken($this->getAccessToken())
-                ->get(config('guesty.base_url') . $path, $query);
+                ->get($this->baseUrl() . $path, $query);
         }
 
         if (!$response->successful()) {
@@ -101,50 +137,6 @@ class GuestyClient
         }
 
         return $response->json();
-    }
-
-    /**
-     * All amenities supported by Guesty, with their names, groups and channel mappings.
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function getSupportedAmenities(): array
-    {
-        return $this->get('/properties-api/amenities/supported');
-    }
-
-    /**
-     * All amenity groups/categories supported by Guesty.
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function getAmenityGroups(): array
-    {
-        return $this->get('/properties-api/amenities/groups');
-    }
-
-    /**
-     * All room/space types supported by Guesty (e.g. Living room, Kitchen, Bedroom).
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function getRoomTypes(): array
-    {
-        return $this->get('/properties/spaces/room-types');
-    }
-
-    /**
-     * All bed types supported by Guesty (e.g. KING_BED, QUEEN_BED, SOFA_BED).
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function getBedTypes(): array
-    {
-        return $this->get('/properties/spaces/bed-types');
     }
 
     /**

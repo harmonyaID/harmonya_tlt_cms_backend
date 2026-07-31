@@ -213,26 +213,18 @@ class AccessPermissionName
     const STAFF_PROPERTY_REVIEW_UPDATE = AccessGroup::STAFF . '.property-review.update';
     const STAFF_PROPERTY_REVIEW_DELETE = AccessGroup::STAFF . '.property-review.delete';
 
-    // Property Contact Form
-    const STAFF_PROPERTY_CONTACT_FORM = AccessGroup::STAFF . '.property-contact-form.*';
-    const STAFF_PROPERTY_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.property-contact-form.view';
-    const STAFF_PROPERTY_CONTACT_FORM_CREATE = AccessGroup::STAFF . '.property-contact-form.create';
-    const STAFF_PROPERTY_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.property-contact-form.update';
-    const STAFF_PROPERTY_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.property-contact-form.delete';
+    // API Configuration (Open API Features)
+    const STAFF_API_CONFIGURATION = AccessGroup::STAFF . '.api-configuration.*';
+    const STAFF_API_CONFIGURATION_VIEW = AccessGroup::STAFF . '.api-configuration.view';
+    const STAFF_API_CONFIGURATION_CREATE = AccessGroup::STAFF . '.api-configuration.create';
+    const STAFF_API_CONFIGURATION_UPDATE = AccessGroup::STAFF . '.api-configuration.update';
+    const STAFF_API_CONFIGURATION_DELETE = AccessGroup::STAFF . '.api-configuration.delete';
 
-    // Property Feature
-    const STAFF_PROPERTY_FEATURE = AccessGroup::STAFF . '.property-feature.*';
-    const STAFF_PROPERTY_FEATURE_VIEW = AccessGroup::STAFF . '.property-feature.view';
-    const STAFF_PROPERTY_FEATURE_CREATE = AccessGroup::STAFF . '.property-feature.create';
-    const STAFF_PROPERTY_FEATURE_UPDATE = AccessGroup::STAFF . '.property-feature.update';
-    const STAFF_PROPERTY_FEATURE_DELETE = AccessGroup::STAFF . '.property-feature.delete';
+    // System Information
+    const STAFF_SYSTEM_INFORMATION_VIEW = AccessGroup::STAFF . '.system-information.view';
 
-    // Lembongan Area
-    const STAFF_LEMBONGAN_AREA = AccessGroup::STAFF . '.lembongan-area.*';
-    const STAFF_LEMBONGAN_AREA_VIEW = AccessGroup::STAFF . '.lembongan-area.view';
-    const STAFF_LEMBONGAN_AREA_CREATE = AccessGroup::STAFF . '.lembongan-area.create';
-    const STAFF_LEMBONGAN_AREA_UPDATE = AccessGroup::STAFF . '.lembongan-area.update';
-    const STAFF_LEMBONGAN_AREA_DELETE = AccessGroup::STAFF . '.lembongan-area.delete';
+    // System Cache
+    const STAFF_SYSTEM_CACHE_RUN = AccessGroup::STAFF . '.system-cache.run';
 
     const STAFF_OPTION = [
         self::STAFF_DASHBOARD,
@@ -402,23 +394,15 @@ class AccessPermissionName
         self::STAFF_PROPERTY_REVIEW_UPDATE,
         self::STAFF_PROPERTY_REVIEW_DELETE,
 
-        self::STAFF_PROPERTY_CONTACT_FORM,
-        self::STAFF_PROPERTY_CONTACT_FORM_VIEW,
-        self::STAFF_PROPERTY_CONTACT_FORM_CREATE,
-        self::STAFF_PROPERTY_CONTACT_FORM_UPDATE,
-        self::STAFF_PROPERTY_CONTACT_FORM_DELETE,
+        self::STAFF_API_CONFIGURATION,
+        self::STAFF_API_CONFIGURATION_VIEW,
+        self::STAFF_API_CONFIGURATION_CREATE,
+        self::STAFF_API_CONFIGURATION_UPDATE,
+        self::STAFF_API_CONFIGURATION_DELETE,
 
-        self::STAFF_PROPERTY_FEATURE,
-        self::STAFF_PROPERTY_FEATURE_VIEW,
-        self::STAFF_PROPERTY_FEATURE_CREATE,
-        self::STAFF_PROPERTY_FEATURE_UPDATE,
-        self::STAFF_PROPERTY_FEATURE_DELETE,
+        self::STAFF_SYSTEM_INFORMATION_VIEW,
 
-        self::STAFF_LEMBONGAN_AREA,
-        self::STAFF_LEMBONGAN_AREA_VIEW,
-        self::STAFF_LEMBONGAN_AREA_CREATE,
-        self::STAFF_LEMBONGAN_AREA_UPDATE,
-        self::STAFF_LEMBONGAN_AREA_DELETE,
+        self::STAFF_SYSTEM_CACHE_RUN,
 
     ];
 
