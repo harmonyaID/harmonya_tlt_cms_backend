@@ -73,9 +73,6 @@ class BlogAlgo
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
                 }
-                if ($request->has('publishedAt')) {
-                    $data['publishedAt'] = $this->parsePublishedAt($request->publishedAt);
-                }
 
                 $this->blog->update($data);
 

@@ -57,6 +57,7 @@ class WebsiteContactFormParser extends BaseParser
             'phone' => $data->phone,
             'subject' => $data->subject,
             'isRead' => $data->isRead,
+            'message' => $data->message,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
