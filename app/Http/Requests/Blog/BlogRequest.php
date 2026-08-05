@@ -31,7 +31,6 @@ class BlogRequest extends FormRequest
             'excerpt' => 'nullable|string',
             'content' => 'nullable|string',
             'author' => 'nullable|string',
-            'publishedAt' => 'nullable|date_format:d/m/Y H:i',
             'isActive' => 'required|boolean',
             'locale' => 'nullable|string|exists:languages,code',
 
