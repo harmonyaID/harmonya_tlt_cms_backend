@@ -253,6 +253,242 @@ class HomepageSeeder extends Seeder
                 ],
                 'locale' => 'en',
             ],
+            [
+                'value' => [
+                    'SECTION1' => [
+                        "content" => "<h1>Kisah Nusa Lembongan-mu<br/>Dimulai Di Sini</h1>",
+                        "backgroundVideo" => "PLACEHOLDER_hero_banner.mp4",
+                        "isVideo" => true,
+                        "videoThumbnail" => "PLACEHOLDER_hero_banner_thumbnail.jpg",
+                        "searchLabelDates" => "Tanggal",
+                        "searchPlaceholderDates" => "Pilih Tanggal",
+                        "searchLabelGuest" => "Tamu",
+                        "searchPlaceholderGuest" => "2 Dewasa, 0 Anak",
+                        "searchLabelCollection" => "Koleksi",
+                        "searchPlaceholderCollection" => "Villa / Resort",
+                        "buttonText" => "Cari",
+                        "buttonLink" => "#",
+                    ],
+                    'SECTION2' => [
+                        "content" => "<h2>Nusa Lembongan, Pelarianmu Tanpa Alas Kaki Dari Rutinitas</h2>\r\n<p>Dikelilingi air laut tosca yang jernih dan hanya 30 menit dari Bali. Bangun dengan suara ombak, kehangatan sinar matahari tropis di kulitmu, dan deru motor dari kejauhan yang melintas dari desa terdekat, pengingat lembut bahwa kehidupan nyata di sini berjalan seirama dengan ritme yang unik ini.</p>",
+                        "image" => "PLACEHOLDER_about_image.jpg",
+                        "mapImage" => "PLACEHOLDER_bali_lembongan_map.jpg",
+                        "sideContent" => "<p>The Lembongan Traveller adalah panduan lengkap dan terpercaya milik Australia untuk Nusa Lembongan dan Nusa Ceningan. Lebih dari sekadar tempat beristirahat, koleksi villa, resort, dan bungalow pilihan kami membawamu langsung ke jantung kehidupan pulau. Kami memudahkanmu menemukan tempat menginap yang sempurna.</p>",
+                        "buttonText" => "Jelajahi Lebih Lanjut",
+                        "buttonLink" => "#",
+                    ],
+                    'SECTION3' => [
+                        "content" => "<h2 style=\"text-align: center;\">Temukan Ritmemu, Rasakan Hidup Ala Pulau</h2>",
+                        "tabs" => [
+                            [
+                                "tabName" => "Hal Yang Bisa Dilakukan",
+                                "items" => [
+                                    [
+                                        'image' => 'PLACEHOLDER_surfing.jpg',
+                                        'title' => 'Spot Surfing Kelas Dunia',
+                                        'description' => 'Taklukkan ombak Shipwreck, Lacerations, dan Playgrounds, beberapa ombak paling ikonik di Bali untuk semua level.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_manta.jpg',
+                                        'title' => 'Snorkeling di Manta Point',
+                                        'description' => 'Berenang bersama pari manta raksasa yang lembut di stasiun pembersihan alami mereka, tepat di lepas pantai Nusa Penida.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_mangrove.jpg',
+                                        'title' => 'Tur Hutan Mangrove',
+                                        'description' => 'Susuri hutan mangrove yang tenang dengan perahu tradisional dan temukan ekosistem tersembunyi pulau ini.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_jetski.jpg',
+                                        'title' => 'Jetski Menembus Gua Karang',
+                                        'description' => 'Jelajahi teluk tersembunyi dan gua karang di sekitar pulau dengan petualangan jetski berpemandu.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                ],
+                            ],
+                            [
+                                "tabName" => "Tips Wisata Pulau",
+                                "items" => [
+                                    [
+                                        'image' => 'PLACEHOLDER_tips1.jpg',
+                                        'title' => 'Waktu Terbaik Berkunjung',
+                                        'description' => 'Teks placeholder, edit dengan informasi musim dan cuaca ideal untuk mengunjungi pulau.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_tips2.jpg',
+                                        'title' => 'Cara Berkeliling',
+                                        'description' => 'Teks placeholder, edit dengan tips transportasi seperti sewa motor dan jadwal kapal.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_tips3.jpg',
+                                        'title' => 'Barang Yang Perlu Dibawa',
+                                        'description' => 'Teks placeholder, edit dengan rekomendasi barang bawaan untuk pulau ini.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_tips4.jpg',
+                                        'title' => 'Etika Lokal',
+                                        'description' => 'Teks placeholder, edit dengan tips budaya untuk pengunjung.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                ],
+                            ],
+                            [
+                                "tabName" => "Akomodasi",
+                                "items" => [
+                                    [
+                                        'image' => 'PLACEHOLDER_accom1.jpg',
+                                        'title' => 'Villa Tepi Pantai',
+                                        'description' => 'Teks placeholder, edit dengan deskripsi pilihan villa tepi pantai.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_accom2.jpg',
+                                        'title' => 'Resort Butik',
+                                        'description' => 'Teks placeholder, edit dengan deskripsi pilihan resort butik.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_accom3.jpg',
+                                        'title' => 'Penginapan Hemat',
+                                        'description' => 'Teks placeholder, edit dengan deskripsi pilihan homestay.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                    [
+                                        'image' => 'PLACEHOLDER_accom4.jpg',
+                                        'title' => 'Retreat Mewah',
+                                        'description' => 'Teks placeholder, edit dengan deskripsi pilihan retreat mewah.',
+                                        'buttonText' => 'Jelajahi',
+                                        'buttonLink' => '#',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
+                    'SECTION4' => [
+                        "content" => "<h2 style=\"text-align: center;\">Jelajahi Lembongan</h2>",
+                        "items" => [
+                            [
+                                'image' => 'PLACEHOLDER_mushroom_bay.jpg',
+                                'title' => 'Mushroom & Sandy Bay',
+                                'description' => 'Teks placeholder, edit dengan deskripsi singkat Mushroom & Sandy Bay.',
+                                'buttonText' => 'Jelajahi',
+                                'buttonLink' => '#',
+                            ],
+                            [
+                                'image' => 'PLACEHOLDER_jungutbatu.jpg',
+                                'title' => 'Jungutbatu',
+                                'description' => 'Teks placeholder, edit dengan deskripsi singkat desa dan pantai Jungutbatu.',
+                                'buttonText' => 'Jelajahi',
+                                'buttonLink' => '#',
+                            ],
+                            [
+                                'image' => 'PLACEHOLDER_nusa_ceningan.jpg',
+                                'title' => 'Nusa Ceningan',
+                                'description' => 'Teks placeholder, edit dengan deskripsi singkat Nusa Ceningan.',
+                                'buttonText' => 'Jelajahi',
+                                'buttonLink' => '#',
+                            ],
+                        ],
+                    ],
+                    'SECTION5' => [
+                        "label" => "Penawaran Terbatas",
+                        "content" => "<h2>Pesan Lebih Awal</h2>\r\n<p>Pesan lebih awal dan hemat untuk masa menginapmu di Nusa Lembongan.</p>",
+                        "background" => "PLACEHOLDER_book_in_advance_bg.jpg",
+                        "buttonText" => "Pesan Sekarang",
+                        "buttonLink" => "#",
+                    ],
+                    'SECTION6' => [
+                        "content" => "<h2>Penginapan Eksklusif</h2>\r\n<p>Dikelilingi air laut tosca yang jernih dan hanya 30 menit dari Bali. Bangun dengan suara ombak, kehangatan sinar matahari tropis di kulitmu, dan deru motor dari kejauhan yang melintas dari desa terdekat.</p>",
+                        "buttonText" => "Semua Properti",
+                        "buttonLink" => "#",
+                    ],
+                    'SECTION7' => [
+                        "content" => "<h2 style=\"text-align: center; color:white;\">Kenapa Pesan Bersama Kami?</h2>",
+                        "items" => [
+                            [
+                                'icon' => 'PLACEHOLDER_icon_experience.svg',
+                                'title' => 'Pengalaman Pemesanan Lengkap',
+                                'description' => 'Teks placeholder, edit dengan detail tentang pengalaman pemesanan.',
+                            ],
+                            [
+                                'icon' => 'PLACEHOLDER_icon_price.svg',
+                                'title' => 'Harga Sesuai Semua Agen Online',
+                                'description' => 'Teks placeholder, edit dengan detail tentang jaminan kesesuaian harga.',
+                            ],
+                            [
+                                'icon' => 'PLACEHOLDER_icon_budget.svg',
+                                'title' => 'Akomodasi Untuk Semua Anggaran',
+                                'description' => 'Teks placeholder, edit dengan detail tentang pilihan akomodasi.',
+                            ],
+                            [
+                                'icon' => 'PLACEHOLDER_icon_office.svg',
+                                'title' => 'Kantor Lembongan Buka 7 Hari',
+                                'description' => 'Teks placeholder, edit dengan jam operasional kantor dan detail kontak.',
+                            ],
+                        ],
+                    ],
+
+                    'SECTION8' => [
+                        "content" => "<h2 style=\"text-align: center;\">Liputan Media</h2>",
+                        "buttonText" => "Lihat Lebih Banyak",
+                        "buttonLink" => "#",
+                    ],
+                    'SECTION9' => [
+                        "logo" => "PLACEHOLDER_love_lembongan_logo.png",
+                        "content" => "<h2 style=\"color:white;\">Dedikasi Kami Dari Pulau, Untuk Pulau</h2>\r\n<p style=\"color:white;\">Teks placeholder, edit dengan deskripsi inisiatif komunitas dan bagaimana pemesanan membantu mendukung komunitas lokal pulau serta layanan kesehatan.</p>",
+                        "buttonText" => "Jadi Sukarelawan Untuk Lembongan",
+                        "buttonLink" => "#",
+                        "backgroundImage" => "PLACEHOLDER_dedication_bg.jpg",
+                        "images" => [
+                            ['image' => 'PLACEHOLDER_dedication1.jpg'],
+                            ['image' => 'PLACEHOLDER_dedication2.jpg'],
+                        ],
+                    ],
+
+                    'SECTION10' => [
+                        "content" => "<h2>Ikuti Kami</h2>",
+                        "buttonText" => "Lihat Lebih Banyak",
+                        "buttonLink" => "#",
+                    ],
+
+                    'SECTION11' => [
+                        "content" => "<h2>Cara Menuju Lembongan</h2>\r\n<p>Teks placeholder, edit dengan petunjuk arah menuju Lembongan (fast boat, pelabuhan, jadwal, dll).</p>",
+                        "address" => "Alamat placeholder, edit dengan alamat kantor.",
+                        "phone" => "+62 000 0000 0000",
+                        "gmapsEmbed" => "https://www.google.com/maps/embed?pb=PLACEHOLDER_EMBED_CODE",
+                    ],
+                    'SECTION12' => [
+                        "content" => "<h2 style=\"text-align: center;\">Pertanyaan yang Sering Diajukan</h2>",
+                    ],
+
+                    'SECTION13' => [
+                        "label" => "Buletin",
+                        "content" => "<h2 style=\"text-align: center; color:white;\">Tetap Dapatkan Info Terbaru</h2>\r\n<p style=\"text-align: center; color:white;\">Teks placeholder, edit dengan ajakan singkat untuk berlangganan buletin.</p>",
+                        "background" => "PLACEHOLDER_newsletter_bg.jpg",
+                        "inputPlaceholder" => "Masukkan email Anda",
+                        "buttonText" => "Berlangganan",
+                    ],
+                ],
+                'locale' => 'id',
+            ],
         );
 
         foreach ($contents as $content) {
