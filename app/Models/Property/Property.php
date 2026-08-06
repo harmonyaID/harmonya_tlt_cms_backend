@@ -19,6 +19,7 @@ class Property extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
 
+
     protected $table = 'properties';
     protected $guarded = ['id'];
 
@@ -112,6 +113,11 @@ class Property extends BaseModel
     public function seo()
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
     }
 
     public function scopeFilter($query, $request)

@@ -2,8 +2,11 @@
 
 namespace App\Parser\Page;
 
+use App\Parser\Acf\AcfParser;
+use App\Parser\Seo\SeoParser;
 use App\Parser\Staff\StaffParser;
-use App\Services\Constant\Setting\Gender;
+use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Support\Facades\Storage;
 use Logia\Core\Parser\BaseParser;
 
 class PageParser extends BaseParser
@@ -19,37 +22,21 @@ class PageParser extends BaseParser
             return null;
         }
 
-        $photos = [];
-        foreach ($data->photos ?? [] as $photo) {
-            $photos[] = [
-                'id' => $photo->id,
-                'photo' => $photo->photoUrl(),
-                'url' => $photo->photoUrl(),
-            ];
-        }
-
-        $acf = [];
-        foreach ($data->acf ?? [] as $key => $acfValue) {
-            $acf[$key] = unserialize($acfValue->value);
-        }
-
         return [
             'id' => $data->id,
             'title' => $data->title,
             'shortDescription' => $data->shortDescription,
             'content' => $data->content,
-            'featuredImage' => $data->featuredImage,
+            'featuredImage' => self::featuredImageUrl($data),
             'locale' => $data->locale,
             'groupId' => $data->groupId,
             'template' => $data->template,
-            'createdBy' => StaffParser::brief($data->createdBy),
-            'createdAt' => optional($data->created_at)->format('M d, Y h:i a'),
-            'seo' => $data->seo,
-            'seoImage' => $data->seoImage,
             'status' => $data->status,
             'gallery' => $data->galleryType,
-            'photos' => $photos,
-            'acf' => $acf,
+            'createdBy' => optional($data->createdBy)->only('id', 'fullName'),
+            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'seo' => SeoParser::first($data->seo),
+            'acf' => AcfParser::forContent($data->acf),
         ];
     }
 
@@ -67,10 +54,22 @@ class PageParser extends BaseParser
         return [
             'id' => $data->id,
             'title' => $data->title,
-            'description' => $data->description,
-            'createdBy' => StaffParser::brief($data->createdBy),
-            'createdAt' => optional($data->created_at)->format('d/m/Y H:i'),
+            'shortDescription' => $data->shortDescription,
+            'featuredImage' => self::featuredImageUrl($data),
+            'status' => $data->status,
+            'locale' => $data->locale,
+            'groupId' => $data->groupId,
+            'createdBy' => optional($data->createdBy)->only('id', 'fullName'),
+            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
 
+    private static function featuredImageUrl($data): ?string
+    {
+        if (!$data->featuredImage) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_PAGE . $data->featuredImage);
+    }
 }

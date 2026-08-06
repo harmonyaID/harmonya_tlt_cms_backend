@@ -26,6 +26,7 @@ class ActivityType extends BaseCodeName
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
     const MENU = 'menu';
     const HOMEPAGE = 'homepage';
+    const PAGE = 'page';
     const AMENITY_CATEGORY = 'amenity_category';
     const AMENITY = 'amenity';
     const PROPERTY_TYPE = 'property_type';
@@ -58,6 +59,7 @@ class ActivityType extends BaseCodeName
         self::EXPERIENCE_INQUIRY_FORM,
         self::MENU,
         self::HOMEPAGE,
+        self::PAGE,
         self::AMENITY_CATEGORY,
         self::AMENITY,
         self::PROPERTY_TYPE,

@@ -33,6 +33,37 @@ class Page extends BaseModel
 
     public $parserClass = PageParser::class;
 
+
+    /** --- RELATIONSHIPS --- */
+    // public function getLanguage()
+    // {
+    //     return $this->belongsTo(Language::class, 'language', 'code');
+    // }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(\App\Models\Staff\Staff::class, 'createdBy');
+    }
+
+    public function seo()
+    {
+        return $this->morphOne(\App\Models\SEO\ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    // public function photos()
+    // {
+    //     return $this->hasMany(PagePhoto::class, 'pageId');
+    // }
+
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+
+
+    /** --- SCOPES --- */
+
     public function scopeFilter($query, $request)
     {
         return $query->orderBy('groupId', 'ASC')->groupBy('groupId')->where(function ($query) use ($request) {
@@ -63,6 +94,12 @@ class Page extends BaseModel
     {
         return $query->where('groupId', $request->groupId)->where('locale', $request->locale);
     }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
 
     // public function photoUrl($photo)
     // {

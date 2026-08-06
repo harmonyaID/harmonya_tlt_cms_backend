@@ -2,6 +2,7 @@
 
 namespace App\Parser\Experience;
 
+use App\Parser\Acf\AcfParser;
 use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
@@ -39,6 +40,7 @@ class ExperienceParser extends BaseParser
             'showInquiry' => $data->showInquiry,
             'photos' => $photos,
             'seo' => SeoParser::first($data->seo),
+            'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }

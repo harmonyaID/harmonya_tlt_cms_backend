@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Experience;
 
+use App\Algorithms\Acf\ContentAcfAlgo;
 use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Experience\Experience;
 use App\Models\Experience\ExperiencePhoto;
@@ -33,7 +34,9 @@ class ExperienceAlgo
                         'photos',
                         'deletePhotoIds',
                         'catalogs',
-                        'deleteCatalogIds'
+                        'deleteCatalogIds',
+                        'seo',
+                        'acf'
                     )
                 );
                 if (!$this->experience) errExperienceSave();
@@ -58,13 +61,14 @@ class ExperienceAlgo
                 }
 
                 (new ContentSeoAlgo($this->experience))->save($request);
+                (new ContentAcfAlgo($this->experience))->save($request);
 
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::CREATE)
                     ->log("Enter new experience: " . $this->experience->name);
             });
 
-            return success($this->experience->load('type', 'category', 'photos', 'seo'));
+            return success($this->experience->load('type', 'area', 'photos', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -82,7 +86,9 @@ class ExperienceAlgo
                         'photos',
                         'deletePhotoIds',
                         'catalogs',
-                        'deleteCatalogIds'
+                        'deleteCatalogIds',
+                        'seo',
+                        'acf'
                     )
                 );
 
@@ -111,13 +117,14 @@ class ExperienceAlgo
                 }
 
                 (new ContentSeoAlgo($this->experience))->save($request);
+                (new ContentAcfAlgo($this->experience))->save($request);
 
                 activity()->setCausedBy()->setReference($this->experience)
                     ->setType(ActivityType::EXPERIENCE)->setAction(ActivityAction::UPDATE)
                     ->log("Update experience: " . $this->experience->name);
             });
 
-            return success($this->experience->load('type', 'category', 'photos', 'seo'));
+            return success($this->experience->load('type', 'area', 'photos', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -127,6 +134,8 @@ class ExperienceAlgo
     {
         try {
             DB::transaction(function () {
+
+                $this->experience->acf()->delete();
 
                 $imgPath = PathConstant::IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH();
                 $pdfPath = PathConstant::PDF_EXPERIENCE_STORAGE_PUBLIC_PATH();

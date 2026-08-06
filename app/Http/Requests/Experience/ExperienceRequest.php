@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Experience;
 
+use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -45,6 +46,6 @@ class ExperienceRequest extends FormRequest
             'deleteCatalogIds.*' => 'integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules();
+        ] + SeoRule::rules() + AcfRule::rules();
     }
 }

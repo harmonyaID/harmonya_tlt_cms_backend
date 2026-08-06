@@ -19,7 +19,7 @@ class BoatController extends Controller
 
     public function detail($id)
     {
-        $boat = Boat::where('isActive', true)->with(['photos', 'type', 'customInformations'])->find($id);
+        $boat = Boat::where('isActive', true)->with(['photos', 'type', 'customInformations', 'acf'])->find($id);
         if (!$boat) {
             errBoatGet();
         }

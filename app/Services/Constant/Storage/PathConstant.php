@@ -48,7 +48,6 @@ class PathConstant
     const IMAGES_BLOG = 'images/blogs/';
     const IMAGES_PAGE = 'images/pages/';
     const IMAGES_HOMEPAGE = 'images/homepages/';
-    const IMAGES_LEMBONGAN_AREA = 'images/lembongan-areas/';
     const IMAGES_PIPELINE = 'images/pipelines/';
 
     const IMAGES_MEDIA_PARTNER = 'images/media-partners/';
@@ -134,9 +133,9 @@ class PathConstant
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_HOMEPAGE);
     }
 
-    public static function IMAGES_LEMBONGAN_AREA_STORAGE_PUBLIC_PATH()
+    public static function IMAGES_PAGE_STORAGE_PUBLIC_PATH()
     {
-        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_LEMBONGAN_AREA);
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PAGE);
     }
 
 

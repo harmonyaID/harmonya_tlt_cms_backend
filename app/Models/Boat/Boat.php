@@ -34,6 +34,12 @@ class Boat extends BaseModel
 
     public $parserClass = BoatParser::class;
 
+    /*
+     |--------------------------------------------------------------------------
+     | Relationships
+     |-------------------------------------------------------------------------
+     */
+
     public function photos(): HasMany
     {
         return $this->hasMany(BoatPhoto::class, 'boatId')->orderBy('order');
@@ -48,11 +54,22 @@ class Boat extends BaseModel
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
-    
+
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(BoatComponentType::class, 'boatComponentTypeId');
     }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Scopes
+     |-------------------------------------------------------------------------
+     */
 
     public function scopeFilter($query, $request)
     {
@@ -68,7 +85,6 @@ class Boat extends BaseModel
             if ($request->has('boatComponentTypeId') && $request->boatComponentTypeId) {
                 $query->where('boatComponentTypeId', $request->boatComponentTypeId);
             }
-
             if ($request->has('locale') && $request->locale) {
                 $query->where('locale', $request->locale);
             }
@@ -76,7 +92,6 @@ class Boat extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null) {
                 $query->where('isActive', $request->isActive);
             }
-
             $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
     }

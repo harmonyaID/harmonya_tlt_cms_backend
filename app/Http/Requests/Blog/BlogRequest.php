@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Blog;
 
+use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRequest;
 use App\Http\Requests\Seo\SeoRule;
 use Illuminate\Validation\Rule;
@@ -31,6 +32,7 @@ class BlogRequest extends FormRequest
             'excerpt' => 'nullable|string',
             'content' => 'nullable|string',
             'author' => 'nullable|string',
+            'publishedAt' => 'nullable|date',
             'isActive' => 'required|boolean',
             'locale' => 'nullable|string|exists:languages,code',
 
@@ -41,6 +43,6 @@ class BlogRequest extends FormRequest
             'tagIds.*' => 'integer|exists:blog_tags,id',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules());
+        ], SeoRule::rules(), AcfRule::rules());
     }
 }

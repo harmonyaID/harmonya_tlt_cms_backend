@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Property;
 
+use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -97,6 +98,6 @@ class PropertyRequest extends FormRequest
             'features.*.value' => 'nullable|string',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules());
+        ], SeoRule::rules(), AcfRule::rules());
     }
 }

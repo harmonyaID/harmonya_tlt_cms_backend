@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Property;
 
+use App\Algorithms\Acf\ContentAcfAlgo;
 use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Property\Property;
 use App\Models\Property\PropertyAddress;
@@ -19,8 +20,17 @@ use Illuminate\Support\Facades\DB;
 class PropertyAlgo
 {
     protected array $nestedKeys = [
-        'addresses', 'guestInfo', 'rooms', 'availability', 'pricing',
-        'descriptions', 'amenityIds', 'tagIds', 'features', 'seo',
+        'addresses',
+        'guestInfo',
+        'rooms',
+        'availability',
+        'pricing',
+        'descriptions',
+        'amenityIds',
+        'tagIds',
+        'features',
+        'seo',
+        'acf',
     ];
 
     public function __construct(protected Property|int|null $property = null)
@@ -49,17 +59,16 @@ class PropertyAlgo
                 $this->syncNested($request);
 
                 (new ContentSeoAlgo($this->property))->save($request);
+                (new ContentAcfAlgo($this->property))->save($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->property)
                     ->setType(ActivityType::PROPERTY)
                     ->setAction(ActivityAction::CREATE)
                     ->log("Enter new property: " . $this->property->nickname);
-
             });
 
             return success($this->property->load($this->relations()));
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -77,17 +86,16 @@ class PropertyAlgo
                 $this->syncNested($request);
 
                 (new ContentSeoAlgo($this->property))->save($request);
+                (new ContentAcfAlgo($this->property))->save($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->property)
                     ->setType(ActivityType::PROPERTY)
                     ->setAction(ActivityAction::UPDATE)
                     ->log("Update property: " . $this->property->nickname);
-
             });
 
             return success($this->property->load($this->relations()));
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -120,6 +128,8 @@ class PropertyAlgo
                     $this->property->seo()->delete();
                 }
 
+                $this->property->acf()->delete();
+
                 if (!$this->property->delete()) {
                     errPropertyDelete();
                 }
@@ -129,11 +139,9 @@ class PropertyAlgo
                     ->setType(ActivityType::PROPERTY)
                     ->setAction(ActivityAction::DELETE)
                     ->log("Delete property: " . $this->property->nickname);
-
             });
 
             return success();
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -142,8 +150,20 @@ class PropertyAlgo
     private function relations(): array
     {
         return [
-            'type', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'features', 'seo',
+            'type',
+            'addresses',
+            'guestInfo',
+            'rooms.roomType',
+            'rooms.bedType',
+            'availability',
+            'pricing',
+            'descriptions',
+            'photos',
+            'amenities',
+            'tags',
+            'seo',
+            'features',
+            'acf',
         ];
     }
 

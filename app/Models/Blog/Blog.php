@@ -17,6 +17,7 @@ class Blog extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
 
+
     protected $table = 'blogs';
     protected $guarded = ['id'];
 
@@ -34,6 +35,12 @@ class Blog extends BaseModel
 
     public $parserClass = BlogParser::class;
 
+    /*
+     |--------------------------------------------------------------------------
+     | Relationships
+     |-------------------------------------------------------------------------
+     */
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(BlogCategory::class, 'categoryId');
@@ -47,6 +54,15 @@ class Blog extends BaseModel
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
+    /*
+     |--------------------------------------------------------------------------
+     | Scopes
+     |-------------------------------------------------------------------------
+     */
 
     public function scopeFilter($query, $request)
     {
@@ -81,6 +97,12 @@ class Blog extends BaseModel
 
         })->orderBy('id', 'DESC');
     }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
 
     public function thumbnailUrl()
     {

@@ -2,6 +2,7 @@
 
 namespace App\Parser\Boat;
 
+use App\Parser\Acf\AcfParser;
 use App\Parser\Seo\SeoParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Support\Facades\Storage;
@@ -66,6 +67,7 @@ class BoatParser extends BaseParser
             'locale'              => $data->locale,
             'isActive'            => $data->isActive,
             'seo'                 => SeoParser::first($data->seo),
+            'acf'                 => AcfParser::forContent($data->acf),
             'createdAt'           => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -94,6 +96,7 @@ class BoatParser extends BaseParser
                     ),
                 ];
             } else {
+                // $photo is just a filename string
                 $promoPhotos[] = [
                     'id'   => $key,
                     'file' => Storage::disk('public')->url(

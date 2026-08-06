@@ -19,7 +19,7 @@ class ExperienceController extends Controller
 
     public function detail($id)
     {
-        $experience = Experience::where('isActive', true)->with(['type', 'area', 'photos'])->find($id);
+        $experience = Experience::where('isActive', true)->with(['type', 'area', 'photos', 'acf'])->find($id);
         if (!$experience) {
             errExperienceGet();
         }
