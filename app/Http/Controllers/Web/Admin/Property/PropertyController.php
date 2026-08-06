@@ -52,7 +52,7 @@ class PropertyController extends Controller
     {
         $property = Property::with([
             'type', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo',
+            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
         ])->find($id);
 
         if (!$property) {

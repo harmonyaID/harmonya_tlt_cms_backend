@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Blog;
 
+use App\Algorithms\Acf\ContentAcfAlgo;
 use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Blog\Blog;
 use App\Services\Constant\Activity\ActivityAction;
@@ -30,9 +31,10 @@ class BlogAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'tagIds');
+                $data = $request->except('thumbnail', 'tagIds', 'seo', 'acf');
                 $data['slug'] = Str::slug($request->slug ?: $request->title);
                 $data['publishedAt'] = $this->parsePublishedAt($request->publishedAt) ?? now();
+
 
                 $this->blog = Blog::create($data + created_by());
                 if (!$this->blog) {
@@ -49,7 +51,8 @@ class BlogAlgo
                 }
 
                 (new ContentSeoAlgo($this->blog))->save($request);
-                
+                (new ContentAcfAlgo($this->blog))->save($request);
+
                 activity()->setCausedBy()
                     ->setReference($this->blog)
                     ->setType(ActivityType::BLOG)
@@ -57,7 +60,7 @@ class BlogAlgo
                     ->log("Enter new blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags','seo'));
+            return success($this->blog->load('category', 'tags', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -69,7 +72,7 @@ class BlogAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'tagIds');
+                $data = $request->except('thumbnail', 'tagIds', 'seo', 'acf');
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
                 }
@@ -96,6 +99,7 @@ class BlogAlgo
                 }
 
                 (new ContentSeoAlgo($this->blog))->save($request);
+                (new ContentAcfAlgo($this->blog))->save($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->blog)
@@ -104,7 +108,7 @@ class BlogAlgo
                     ->log("Update blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags','seo'));
+            return success($this->blog->load('category', 'tags', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -146,11 +150,6 @@ class BlogAlgo
      |-------------------------------------------------------------------------
      */
 
-    /**
-     * Parse a 'd/m/Y H:i' formatted string into a Carbon instance.
-     * Carbon's automatic parser assumes American m/d/Y order for slash-separated
-     * dates, so a value like "27/07/2026 01:23" must be parsed explicitly.
-     */
     private function parsePublishedAt(?string $value): ?Carbon
     {
         if (!$value) {

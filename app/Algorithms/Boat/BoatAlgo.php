@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\Boat;
 
+use App\Algorithms\Acf\ContentAcfAlgo;
 use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Boat\Boat;
 use App\Models\Boat\BoatPhoto;
@@ -30,7 +31,7 @@ class BoatAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->boat = Boat::create($request->except(['photos', 'promoPhotos', 'priceFile', 'deletePhotoIds', 'customInformations']));
+                $this->boat = Boat::create($request->except(['photos', 'promoPhotos', 'priceFile', 'deletePhotoIds', 'customInformations', 'seo', 'acf']));
                 if (!$this->boat) {
                     errBoatSave();
                 }
@@ -54,6 +55,7 @@ class BoatAlgo
                 }
 
                 (new ContentSeoAlgo($this->boat))->save($request);
+                (new ContentAcfAlgo($this->boat))->save($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->boat)
@@ -62,7 +64,7 @@ class BoatAlgo
                     ->log("Create new Boat. ID: " . $this->boat->id);
             });
 
-            return success($this->boat->load(['photos', 'customInformations', 'seo']));
+            return success($this->boat->load(['photos', 'customInformations', 'seo', 'acf']));
         } catch (\Error $error) {
             exception($error);
         }
@@ -83,6 +85,8 @@ class BoatAlgo
                     'deletePromoPhotoIds',
                     'deletePriceFile',
                     'customInformations',
+                    'seo',
+                    'acf',
                 ])
             );
 
@@ -154,6 +158,7 @@ class BoatAlgo
             }
 
             (new ContentSeoAlgo($this->boat))->save($request);
+            (new ContentAcfAlgo($this->boat))->save($request);
 
             DB::commit();
 
@@ -163,6 +168,7 @@ class BoatAlgo
                         'customInformations',
                         'type',
                         'seo',
+                        'acf',
                     ])
                 )
             );
@@ -178,6 +184,8 @@ class BoatAlgo
         try {
 
             DB::transaction(function () {
+
+                $this->boat->acf()->delete();
 
                 $dirPath = PathConstant::IMAGES_BOAT_STORAGE_PUBLIC_PATH();
                 foreach ($this->boat->photos as $photo) {

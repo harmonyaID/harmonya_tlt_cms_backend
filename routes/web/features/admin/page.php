@@ -12,6 +12,6 @@ Route::prefix("pages")
         Route::get('/', [PageController::class, 'get']);
         Route::post('/', [PageController::class, 'create']);
         Route::get('{id}', [PageController::class, 'detail']);
-        Route::put('{id}', [PageController::class, 'update']);
+        Route::post('{id}', [PageController::class, 'update']);
         Route::delete('{id}', [PageController::class, 'delete']);
     });

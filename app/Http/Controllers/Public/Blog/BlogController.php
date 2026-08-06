@@ -19,7 +19,7 @@ class BlogController extends Controller
 
     public function detail($id)
     {
-        $blog = Blog::where('isActive', true)->with(['category', 'tags', 'seo'])->find($id);
+        $blog = Blog::where('isActive', true)->with(['category', 'tags', 'seo', 'acf'])->find($id);
         if (!$blog) {
             errBlogGet();
         }

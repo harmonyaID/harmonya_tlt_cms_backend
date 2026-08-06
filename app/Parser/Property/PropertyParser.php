@@ -2,6 +2,7 @@
 
 namespace App\Parser\Property;
 
+use App\Parser\Acf\AcfParser;
 use App\Parser\Seo\SeoParser;
 use App\Services\Constant\Property\PropertyAdvanceNoticeUnit;
 use App\Services\Constant\Property\PropertyAvailabilityType;
@@ -122,17 +123,8 @@ class PropertyParser extends BaseParser
                 return ['id' => $tag->id, 'name' => $tag->name];
             }),
 
-            'features' => $data->features->map(function ($feature) {
-                return [
-                    'id' => $feature->id,
-                    'name' => $feature->name,
-                    'icon' => $feature->icon,
-                    'hasValue' => $feature->hasValue,
-                    'value' => $feature->pivot->value,
-                ];
-            }),
-
             'seo' => SeoParser::first($data->seo),
+            'acf' => AcfParser::forContent($data->acf),
 
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];

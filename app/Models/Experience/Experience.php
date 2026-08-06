@@ -35,6 +35,12 @@ class Experience extends BaseModel
 
     public $parserClass = ExperienceParser::class;
 
+    /*
+     |--------------------------------------------------------------------------
+     | Relationships
+     |-------------------------------------------------------------------------
+     */
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(ExperienceType::class, 'experienceTypeId');
@@ -50,10 +56,21 @@ class Experience extends BaseModel
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
 
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
     public function photos(): HasMany
     {
         return $this->hasMany(ExperiencePhoto::class, 'experienceId')->orderBy('order');
     }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Scopes
+     |-------------------------------------------------------------------------
+     */
 
     public function scopeFilter($query, $request)
     {
@@ -81,10 +98,15 @@ class Experience extends BaseModel
             if ($request->has('locale') && $request->locale) {
                 $query->where('locale', $request->locale);
             }
-
             $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
     }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
 
     public function thumbnailUrl()
     {

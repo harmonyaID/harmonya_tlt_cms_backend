@@ -31,6 +31,13 @@ Route::prefix("blogs")
                 Route::delete('{id}', [BlogTagController::class, 'delete']);
             });
 
+        Route::prefix('trash')
+            ->group(function () {
+                Route::get('', [BlogController::class, 'trash']);
+                Route::post('{id}/restore', [BlogController::class, 'restore']);
+                Route::delete('{id}', [BlogController::class, 'forceDelete']);
+            });
+
         Route::get('{id}', [BlogController::class, 'detail']);
         Route::post('{id}', [BlogController::class, 'update']);
         Route::delete('{id}', [BlogController::class, 'delete']);

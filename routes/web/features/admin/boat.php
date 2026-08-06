@@ -10,6 +10,14 @@ Route::prefix("boats")
 
         Route::get('', [BoatController::class, 'get']);
         Route::post('', [BoatController::class, 'create']);
+
+        Route::prefix('trash')
+            ->group(function () {
+                Route::get('', [BoatController::class, 'trash']);
+                Route::post('{id}/restore', [BoatController::class, 'restore']);
+                Route::delete('{id}', [BoatController::class, 'forceDelete']);
+            });
+
         Route::get('{id}', [BoatController::class, 'detail']);
         Route::post('{id}', [BoatController::class, 'update']);
         Route::delete('{id}', [BoatController::class, 'delete']);

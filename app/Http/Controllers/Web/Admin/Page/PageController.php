@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers\Web\Admin\Page;
 
-use App\Algorithms\Staff\StaffAlgo;
+use App\Algorithms\Page\PageAlgo;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ActivationRequest;
-use App\Http\Requests\Auth\ResetPasswordRequest;
-use App\Http\Requests\Staff\StaffRequest;
+use App\Http\Requests\Page\PageRequest;
 use App\Models\Page\Page;
-use App\Models\Staff\Staff;
 use App\Parser\Page\PageParser;
-use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Access\AccessPermissionName;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Http\Request;
@@ -51,10 +47,8 @@ class PageController extends Controller
                 has_permission_staff(AccessPermissionName::STAFF_PAGE);
                 return $next($request);
             })->only(['updateSuperadmin']);
-
         }
     }
-
 
     /**
      * @param Request $request
@@ -63,8 +57,8 @@ class PageController extends Controller
      */
     public function get(Request $request)
     {
-        $pages = Page::filter($request)->getOrPaginate($request, true);
-        $pages->map(function ($item){
+        $pages = Page::filter($request)->with('createdBy')->getOrPaginate($request);
+         $pages->map(function ($item){
             if ($item->featuredImage){
                 $item['featuredImage'] = Storage::url(PathConstant::IMAGES_PAGE ."/". $item->featuredImage);
             }
@@ -78,10 +72,7 @@ class PageController extends Controller
         if (!$pages || count($pages) == 0) {
             return errPageGet();
         }
-
         return success(PageParser::briefs($pages), pagination: pagination($pages));
-
-        return success(null, null, $page);
     }
 
     /**
@@ -91,36 +82,36 @@ class PageController extends Controller
      */
     public function detail($id)
     {
-        $staff = Staff::find($id);
-        if (!$staff) {
-            errStaffGet();
+        $page = Page::with('seo', 'acf', 'createdBy')->find($id);
+        if (!$page) {
+            errPageGet();
         }
 
-        return success($staff);
+        return success(PageParser::first($page));
     }
 
     /**
-     * @param StaffRequest $request
+     * @param PageRequest $request
      *
      * @return \Illuminate\Http\JsonResponse|mixed|null
      * @throws \Logia\Core\Exception\ErrorException
      */
-    public function create(StaffRequest $request)
+    public function create(PageRequest $request)
     {
-        $algo = new StaffAlgo();
+        $algo = new PageAlgo();
         return $algo->create($request);
     }
 
     /**
      * @param $id
-     * @param StaffRequest $request
+     * @param PageRequest $request
      *
      * @return \Illuminate\Http\JsonResponse|mixed|null
      * @throws \Logia\Core\Exception\ErrorException
      */
-    public function update($id, StaffRequest $request)
+    public function update($id, PageRequest $request)
     {
-        $algo = new StaffAlgo((int)$id);
+        $algo = new PageAlgo((int)$id);
         return $algo->update($request);
     }
 
@@ -132,33 +123,7 @@ class PageController extends Controller
      */
     public function delete($id)
     {
-        $algo = new StaffAlgo((int)$id);
+        $algo = new PageAlgo((int)$id);
         return $algo->delete();
-    }
-
-    /**
-     * @param $id
-     * @param ActivationRequest $request
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed|null
-     * @throws \Logia\Core\Exception\ErrorException
-     */
-    public function activation($id, ActivationRequest $request)
-    {
-        $algo = new StaffAlgo((int)$id);
-        return $algo->activation($request);
-    }
-
-    /**
-     * @param $id
-     * @param ResetPasswordRequest $request
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed|null
-     * @throws \Logia\Core\Exception\ErrorException
-     */
-    public function changePassword($id, ResetPasswordRequest $request)
-    {
-        $algo = new StaffAlgo((int)$id);
-        return $algo->changePassword($request);
     }
 }
