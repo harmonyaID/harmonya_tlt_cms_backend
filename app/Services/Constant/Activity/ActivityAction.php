@@ -9,11 +9,13 @@ class ActivityAction extends BaseCodeName
     const CREATE = 'create';
     const UPDATE = 'update';
     const DELETE = 'delete';
+    const RESTORE = 'restore';
 
     const OPTION = [
         self::CREATE,
         self::UPDATE,
         self::DELETE,
+        self::RESTORE,
     ];
 
 }

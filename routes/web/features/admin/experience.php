@@ -40,6 +40,13 @@ Route::prefix("experiences")
             });
 
 
+        Route::prefix('trash')
+            ->group(function () {
+                Route::get('', [ExperienceController::class, 'trash']);
+                Route::post('{id}/restore', [ExperienceController::class, 'restore']);
+                Route::delete('{id}', [ExperienceController::class, 'forceDelete']);
+            });
+
         Route::get('{id}', [ExperienceController::class, 'detail']);
         Route::post('{id}', [ExperienceController::class, 'update']);
         Route::delete('{id}', [ExperienceController::class, 'delete']);
