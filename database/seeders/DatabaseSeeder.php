@@ -25,17 +25,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            StaffSeeder::class,
-            AccessRoleSeeder::class,
-            AccessPermissionSeeder::class,
-            CountrySeeder::class,
-            LanguageGroupSeeder::class,
-            LanguageSeeder::class,
-            TranslatorSeeder::class,
-            WebsiteInformationSeeder::class,
+            // StaffSeeder::class,
+            // AccessRoleSeeder::class,
+            // AccessPermissionSeeder::class,
+            // CountrySeeder::class,
+            // LanguageGroupSeeder::class,
+            // LanguageSeeder::class,
+            // TranslatorSeeder::class,
+            // WebsiteInformationSeeder::class,
             HomepageSeeder::class,
-            PropertyNearbySettingSeeder::class,
-            PropertyFeatureSeeder::class,
+            // PropertyNearbySettingSeeder::class,
+            // PropertyFeatureSeeder::class,
         ]);
     }
 }
