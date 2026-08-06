@@ -3,6 +3,7 @@
 namespace App\Models\Experience;
 
 use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
 use App\Parser\Experience\ExperienceAreaParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,6 +40,10 @@ class ExperienceArea extends BaseModel
         return $this->belongsTo(ExperienceType::class, 'experienceTypeId');
     }
 
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
     /*
      |--------------------------------------------------------------------------
      | Scopes
