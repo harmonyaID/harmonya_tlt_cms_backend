@@ -24,6 +24,7 @@ Route::prefix("components")
                 Route::get('property-cleaning-statuses', [ComponentStaticController::class, 'getPropertyCleaningStatuses']);
                 Route::get('property-advance-notice-units', [ComponentStaticController::class, 'getPropertyAdvanceNoticeUnits']);
                 Route::get('property-guesty-sync-statuses', [ComponentStaticController::class, 'getPropertyGuestySyncStatuses']);
+                Route::get('menu-types', [ComponentStaticController::class, 'getMenuTypes']);
             });
 
         Route::prefix('contact-form-types')

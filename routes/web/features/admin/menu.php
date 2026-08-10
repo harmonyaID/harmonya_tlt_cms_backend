@@ -7,6 +7,6 @@ Route::prefix("menus")->middleware('auth.web.admin')->group(function () {
     Route::get('', [MenuController::class, 'get']);
     Route::post('', [MenuController::class, 'create']);
     Route::get('{id}', [MenuController::class, 'detail']);
-    Route::put('{id}', [MenuController::class, 'update']);
+    Route::post('{id}', [MenuController::class, 'update']);
     Route::delete('{id}', [MenuController::class, 'delete']);
 });

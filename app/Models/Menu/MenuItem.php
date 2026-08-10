@@ -3,9 +3,11 @@
 namespace App\Models\Menu;
 
 use App\Models\BaseModel;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class MenuItem extends BaseModel
 {
@@ -21,6 +23,7 @@ class MenuItem extends BaseModel
     protected $casts = [
         'menuParent' => 'integer',
         'menuOrder' => 'integer',
+        'typeId' => 'integer',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -45,5 +48,20 @@ class MenuItem extends BaseModel
     public function parent(): BelongsTo
     {
         return $this->belongsTo(MenuItem::class, 'menuParent', 'id');
+    }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
+
+    public function featuredImageUrl()
+    {
+        if (!$this->featuredImage) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_MENU_ITEM . $this->featuredImage);
     }
 }

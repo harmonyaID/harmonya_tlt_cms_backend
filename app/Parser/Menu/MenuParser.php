@@ -2,6 +2,7 @@
 
 namespace App\Parser\Menu;
 
+use App\Services\Constant\Menu\MenuItemType;
 use Logia\Core\Parser\BaseParser;
 
 class MenuParser extends BaseParser
@@ -53,6 +54,9 @@ class MenuParser extends BaseParser
             'menuLabel' => $item->menuLabel,
             'menuUrl' => $item->menuUrl,
             'menuOrder' => $item->menuOrder,
+            'type' => MenuItemType::idName($item->typeId),
+            'description' => $item->description,
+            'featuredImage' => $item->featuredImageUrl(),
             'children' => $children,
         ];
     }

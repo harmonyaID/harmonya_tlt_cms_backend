@@ -107,4 +107,8 @@ class ComponentStaticController extends Controller
     {
         return success(PropertySourceType::get());
     }
+    public function getMenuTypes()
+    {
+        return success(PropertySourceType::get());
+    }
 }
