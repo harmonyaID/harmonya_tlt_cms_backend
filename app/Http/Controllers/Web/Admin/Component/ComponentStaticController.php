@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin\Component;
 use App\Http\Controllers\Controller;
 use App\Services\Constant\Global\MailStatus;
 use App\Services\Constant\MediaPartner\MediaPartnerType;
+use App\Services\Constant\Menu\MenuItemType;
 use App\Services\Constant\Property\PropertyAddressType;
 use App\Services\Constant\Property\PropertyAdvanceNoticeUnit;
 use App\Services\Constant\Property\PropertyAvailabilityType;
@@ -109,6 +110,6 @@ class ComponentStaticController extends Controller
     }
     public function getMenuTypes()
     {
-        return success(PropertySourceType::get());
+        return success(MenuItemType::get());
     }
 }
