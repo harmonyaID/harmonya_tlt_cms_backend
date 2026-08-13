@@ -26,7 +26,7 @@ class PropertyController extends Controller
     {
         $property = Property::where('statusId', PropertyStatus::ACTIVE_ID)
             ->with([
-                'type', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
+                'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
                 'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
             ])
             ->find($id);

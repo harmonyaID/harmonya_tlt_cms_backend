@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Web\Admin\Property;
 
 use App\Algorithms\Property\PropertyReviewAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasTrash;
 use App\Http\Requests\Property\PropertyReviewRequest;
 use App\Models\Property\PropertyReview;
 use App\Parser\Property\PropertyReviewParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
 class PropertyReviewController extends Controller
 {
+    use HasTrash;
+
     public function __construct()
     {
         if (config('auth.with-permission')) {
@@ -19,7 +23,7 @@ class PropertyReviewController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_REVIEW_VIEW);
                 return $next($request);
-            })->only(['get', 'detail']);
+            })->only(['get', 'detail', 'trash']);
 
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_REVIEW_CREATE);
@@ -34,9 +38,29 @@ class PropertyReviewController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_REVIEW_DELETE);
                 return $next($request);
-            })->only(['delete']);
+            })->only(['delete', 'restore', 'forceDelete']);
 
         }
+    }
+
+    protected function trashModel(): string
+    {
+        return PropertyReview::class;
+    }
+
+    protected function trashParser(): string
+    {
+        return PropertyReviewParser::class;
+    }
+
+    protected function trashActivityType(): string
+    {
+        return ActivityType::PROPERTY_REVIEW;
+    }
+
+    protected function trashLabel($item): string
+    {
+        return $item->name;
     }
 
     public function get(Request $request)

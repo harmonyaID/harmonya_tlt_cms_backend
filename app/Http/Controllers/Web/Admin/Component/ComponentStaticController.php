@@ -13,7 +13,6 @@ use App\Services\Constant\Property\PropertyCleaningFeeType;
 use App\Services\Constant\Property\PropertyCleaningStatus;
 use App\Services\Constant\Property\PropertyGuestySyncStatus;
 use App\Services\Constant\Property\PropertyListingType;
-use App\Services\Constant\Property\PropertySourceType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 
@@ -103,11 +102,6 @@ class ComponentStaticController extends Controller
         return success(PropertyGuestySyncStatus::get());
     }
 
-
-    public function getPropertySourceTypes()
-    {
-        return success(PropertySourceType::get());
-    }
     public function getMenuTypes()
     {
         return success(MenuItemType::get());

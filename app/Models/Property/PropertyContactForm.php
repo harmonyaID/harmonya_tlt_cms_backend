@@ -45,6 +45,11 @@ class PropertyContactForm extends BaseModel
         return $this->belongsTo(Property::class, 'propertyId');
     }
 
+    public function sourceType(): BelongsTo
+    {
+        return $this->belongsTo(PropertySourceType::class, 'sourceTypeId');
+    }
+
     /*
      |--------------------------------------------------------------------------
      | Scopes

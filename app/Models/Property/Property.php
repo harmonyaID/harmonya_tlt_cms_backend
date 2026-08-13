@@ -51,6 +51,11 @@ class Property extends BaseModel
         return $this->belongsTo(PropertyType::class, 'propertyTypeId');
     }
 
+    public function sourceType(): BelongsTo
+    {
+        return $this->belongsTo(PropertySourceType::class, 'sourceTypeId');
+    }
+
     public function addresses(): HasMany
     {
         return $this->hasMany(PropertyAddress::class, 'propertyId');

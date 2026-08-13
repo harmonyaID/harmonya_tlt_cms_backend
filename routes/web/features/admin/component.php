@@ -13,7 +13,6 @@ Route::prefix("components")
             ->group(function () {
                 Route::get('status-form', [ComponentStaticController::class, 'getStatusForm']);
                 Route::get('media-partner-type', [ComponentStaticController::class, 'getMediaPartnerType']);
-
                 Route::get('property-unit-types', [ComponentStaticController::class, 'getPropertyUnitTypes']);
                 Route::get('property-listing-types', [ComponentStaticController::class, 'getPropertyListingTypes']);
                 Route::get('property-statuses', [ComponentStaticController::class, 'getPropertyStatuses']);

@@ -41,13 +41,13 @@ class PropertyContactFormController extends Controller
 
     public function get(Request $request)
     {
-        $forms = PropertyContactForm::filter($request)->with('property')->getOrPaginate($request);
+        $forms = PropertyContactForm::filter($request)->with('property', 'sourceType')->getOrPaginate($request);
         return success(PropertyContactFormParser::briefs($forms), pagination: pagination($forms));
     }
 
     public function detail($id)
     {
-        $form = PropertyContactForm::with('property')->find($id);
+        $form = PropertyContactForm::with('property', 'sourceType')->find($id);
         if (!$form) {
             errPropertyContactFormGet();
         }

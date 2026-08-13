@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Web\Admin\Property;
 
 use App\Algorithms\Property\PropertyTagAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasTrash;
 use App\Http\Requests\Component\ComponentRequest;
 use App\Models\Property\PropertyTag;
 use App\Parser\Property\PropertyTagParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
 class PropertyTagController extends Controller
 {
+    use HasTrash;
+
     public function __construct()
     {
         if (config('auth.with-permission')) {
@@ -19,7 +23,7 @@ class PropertyTagController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_TAG_VIEW);
                 return $next($request);
-            })->only(['get', 'detail']);
+            })->only(['get', 'detail', 'trash']);
 
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_TAG_CREATE);
@@ -34,25 +38,25 @@ class PropertyTagController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_TAG_DELETE);
                 return $next($request);
-            })->only(['delete']);
+            })->only(['delete', 'restore', 'forceDelete']);
 
         }
     }
 
     public function get(Request $request)
     {
-        $types = PropertyTag::filter($request)->getOrPaginate($request);
-        return success(PropertyTagParser::briefs($types), pagination: pagination($types));
+        $tags = PropertyTag::filter($request)->getOrPaginate($request);
+        return success(PropertyTagParser::briefs($tags), pagination: pagination($tags));
     }
 
     public function detail($id)
     {
-        $type = PropertyTag::find($id);
-        if (!$type) {
+        $tag = PropertyTag::find($id);
+        if (!$tag) {
             errPropertyTagGet();
         }
 
-        return success(PropertyTagParser::first($type));
+        return success(PropertyTagParser::first($tag));
     }
 
     public function create(ComponentRequest $request)
@@ -71,5 +75,25 @@ class PropertyTagController extends Controller
     {
         $algo = new PropertyTagAlgo((int)$id);
         return $algo->delete();
+    }
+
+    protected function trashModel(): string
+    {
+        return PropertyTag::class;
+    }
+
+    protected function trashParser(): string
+    {
+        return PropertyTagParser::class;
+    }
+
+    protected function trashActivityType(): string
+    {
+        return ActivityType::PROPERTY_TAG;
+    }
+
+    protected function trashLabel($item): string
+    {
+        return $item->name;
     }
 }
