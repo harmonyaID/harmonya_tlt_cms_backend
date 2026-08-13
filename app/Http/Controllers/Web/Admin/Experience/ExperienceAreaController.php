@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Web\Admin\Experience;
 
 use App\Algorithms\Experience\ExperienceAreaAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasTrash;
 use App\Http\Requests\Experience\ExperienceAreaRequest;
 use App\Models\Experience\ExperienceArea;
 use App\Parser\Experience\ExperienceAreaParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
 class ExperienceAreaController extends Controller
 {
+    use HasTrash;
+
     public function __construct()
     {
         if (config('auth.with-permission')) {
@@ -35,6 +39,25 @@ class ExperienceAreaController extends Controller
                 return $next($request);
             })->only(['delete']);
         }
+    }
+    protected function trashModel(): string
+    {
+        return ExperienceArea::class;
+    }
+
+    protected function trashParser(): string
+    {
+        return ExperienceAreaParser::class;
+    }
+
+    protected function trashActivityType(): string
+    {
+        return ActivityType::EXPERIENCE_AREA;
+    }
+
+    protected function trashLabel($item): string
+    {
+        return $item->name;
     }
 
     public function get(Request $request)

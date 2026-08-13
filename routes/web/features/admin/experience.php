@@ -16,6 +16,12 @@ Route::prefix("experiences")
         Route::prefix("types")->middleware('auth.web.admin')->group(function () {
             Route::get('', [ExperienceTypeController::class, 'get']);
             Route::post('', [ExperienceTypeController::class, 'create']);
+            Route::prefix('trash')
+                ->group(function () {
+                    Route::get('', [ExperienceTypeController::class, 'trash']);
+                    Route::post('{id}/restore', [ExperienceTypeController::class, 'restore']);
+                    Route::delete('{id}', [ExperienceTypeController::class, 'forceDelete']);
+                });
             Route::get('{id}', [ExperienceTypeController::class, 'detail']);
             Route::post('{id}', [ExperienceTypeController::class, 'update']);
             Route::delete('{id}', [ExperienceTypeController::class, 'delete']);
@@ -24,6 +30,12 @@ Route::prefix("experiences")
         Route::prefix("areas")->middleware('auth.web.admin')->group(function () {
             Route::get('', [ExperienceAreaController::class, 'get']);
             Route::post('', [ExperienceAreaController::class, 'create']);
+            Route::prefix('trash')
+                ->group(function () {
+                    Route::get('', [ExperienceAreaController::class, 'trash']);
+                    Route::post('{id}/restore', [ExperienceAreaController::class, 'restore']);
+                    Route::delete('{id}', [ExperienceAreaController::class, 'forceDelete']);
+                });
             Route::get('{id}', [ExperienceAreaController::class, 'detail']);
             Route::post('{id}', [ExperienceAreaController::class, 'update']);
             Route::delete('{id}', [ExperienceAreaController::class, 'delete']);

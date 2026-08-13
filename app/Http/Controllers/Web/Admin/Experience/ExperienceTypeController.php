@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Web\Admin\Experience;
 
 use App\Algorithms\Experience\ExperienceTypeAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasTrash;
 use App\Http\Requests\Experience\ExperienceTypeRequest;
 use App\Models\Experience\ExperienceType;
 use App\Parser\Experience\ExperienceTypeParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
 class ExperienceTypeController extends Controller
 {
+    use HasTrash;
+
     public function __construct()
     {
         if (config('auth.with-permission')) {
@@ -20,6 +24,26 @@ class ExperienceTypeController extends Controller
             $this->middleware(fn($req, $next) => tap($next($req), fn() => has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_TYPE_UPDATE)))->only(['update']);
             $this->middleware(fn($req, $next) => tap($next($req), fn() => has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_TYPE_DELETE)))->only(['delete']);
         }
+    }
+
+    protected function trashModel(): string
+    {
+        return ExperienceType::class;
+    }
+
+    protected function trashParser(): string
+    {
+        return ExperienceTypeParser::class;
+    }
+
+    protected function trashActivityType(): string
+    {
+        return ActivityType::EXPERIENCE_TYPE;
+    }
+
+    protected function trashLabel($item): string
+    {
+        return $item->name;
     }
 
     public function get(Request $request)
