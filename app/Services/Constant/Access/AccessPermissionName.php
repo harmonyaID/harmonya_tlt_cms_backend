@@ -178,6 +178,13 @@ class AccessPermissionName
     const STAFF_PROPERTY_TYPE_UPDATE = AccessGroup::STAFF . '.property-type.update';
     const STAFF_PROPERTY_TYPE_DELETE = AccessGroup::STAFF . '.property-type.delete';
 
+    // Property Source Type
+    const STAFF_PROPERTY_SOURCE_TYPE = AccessGroup::STAFF . '.property-source-type.*';
+    const STAFF_PROPERTY_SOURCE_TYPE_VIEW = AccessGroup::STAFF . '.property-source-type.view';
+    const STAFF_PROPERTY_SOURCE_TYPE_CREATE = AccessGroup::STAFF . '.property-source-type.create';
+    const STAFF_PROPERTY_SOURCE_TYPE_UPDATE = AccessGroup::STAFF . '.property-source-type.update';
+    const STAFF_PROPERTY_SOURCE_TYPE_DELETE = AccessGroup::STAFF . '.property-source-type.delete';
+
     // Property Room Type
     const STAFF_PROPERTY_ROOM_TYPE = AccessGroup::STAFF . '.property-room-type.*';
     const STAFF_PROPERTY_ROOM_TYPE_VIEW = AccessGroup::STAFF . '.property-room-type.view';
@@ -198,6 +205,13 @@ class AccessPermissionName
     const STAFF_PROPERTY_TAG_CREATE = AccessGroup::STAFF . '.property-tag.create';
     const STAFF_PROPERTY_TAG_UPDATE = AccessGroup::STAFF . '.property-tag.update';
     const STAFF_PROPERTY_TAG_DELETE = AccessGroup::STAFF . '.property-tag.delete';
+
+    // Property Contact Form
+    const STAFF_PROPERTY_CONTACT_FORM = AccessGroup::STAFF . '.property-contact-form.*';
+    const STAFF_PROPERTY_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.property-contact-form.view';
+    const STAFF_PROPERTY_CONTACT_FORM_CREATE = AccessGroup::STAFF . '.property-contact-form.create';
+    const STAFF_PROPERTY_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.property-contact-form.update';
+    const STAFF_PROPERTY_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.property-contact-form.delete';
 
     // Property
     const STAFF_PROPERTY = AccessGroup::STAFF . '.property.*';
@@ -363,6 +377,12 @@ class AccessPermissionName
         self::STAFF_PROPERTY_TYPE_CREATE,
         self::STAFF_PROPERTY_TYPE_UPDATE,
         self::STAFF_PROPERTY_TYPE_DELETE,
+
+        self::STAFF_PROPERTY_SOURCE_TYPE,
+        self::STAFF_PROPERTY_SOURCE_TYPE_VIEW,
+        self::STAFF_PROPERTY_SOURCE_TYPE_CREATE,
+        self::STAFF_PROPERTY_SOURCE_TYPE_UPDATE,
+        self::STAFF_PROPERTY_SOURCE_TYPE_DELETE,
 
         self::STAFF_PROPERTY_ROOM_TYPE,
         self::STAFF_PROPERTY_ROOM_TYPE_VIEW,

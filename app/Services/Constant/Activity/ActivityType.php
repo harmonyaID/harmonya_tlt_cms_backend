@@ -30,10 +30,12 @@ class ActivityType extends BaseCodeName
     const AMENITY_CATEGORY = 'amenity_category';
     const AMENITY = 'amenity';
     const PROPERTY_TYPE = 'property_type';
+    const PROPERTY_SOURCE_TYPE = 'property_source_type';
     const PROPERTY_ROOM_TYPE = 'property_room_type';
     const PROPERTY_BED_TYPE = 'property_bed_type';
     const PROPERTY_TAG = 'property_tag';
     const PROPERTY = 'property';
+    const PROPERTY_CONTACT_FORM = 'property_contact_form';
     const PROPERTY_REVIEW = 'property_review';
     const API_CONFIGURATION = 'api_configuration';
     const SYSTEM_CACHE = 'system_cache';
@@ -63,11 +65,13 @@ class ActivityType extends BaseCodeName
         self::AMENITY_CATEGORY,
         self::AMENITY,
         self::PROPERTY_TYPE,
+        self::PROPERTY_SOURCE_TYPE,
         self::PROPERTY_ROOM_TYPE,
         self::PROPERTY_BED_TYPE,
         self::PROPERTY_TAG,
         self::PROPERTY,
         self::PROPERTY_REVIEW,
+        self::PROPERTY_CONTACT_FORM,
         self::API_CONFIGURATION,
         self::SYSTEM_CACHE,
     ];

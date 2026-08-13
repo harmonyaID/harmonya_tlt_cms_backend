@@ -3,7 +3,6 @@
 namespace App\Parser\Property;
 
 use App\Services\Constant\Global\MailStatus;
-use App\Services\Constant\Property\PropertySourceType;
 use Logia\Core\Parser\BaseParser;
 
 class PropertyContactFormParser extends BaseParser
@@ -19,7 +18,7 @@ class PropertyContactFormParser extends BaseParser
             'id' => $data->id,
             'status' => MailStatus::idName($data->statusId),
             'property' => optional($data->property)->only('id', 'nickname'),
-            'sourceType' => PropertySourceType::idName($data->sourceTypeId),
+            'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'name' => $data->name,
             'email' => $data->email,
             'phone' => $data->phone,
@@ -44,7 +43,7 @@ class PropertyContactFormParser extends BaseParser
             'id' => $data->id,
             'status' => MailStatus::idName($data->statusId),
             'property' => optional($data->property)->only('id', 'nickname'),
-            'sourceType' => PropertySourceType::idName($data->sourceTypeId),
+            'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'name' => $data->name,
             'email' => $data->email,
             'phone' => $data->phone,

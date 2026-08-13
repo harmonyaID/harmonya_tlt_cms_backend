@@ -25,7 +25,7 @@ class PropertyRequest extends FormRequest
             'propertySize' => 'nullable|numeric|min:0',
             'statusId' => 'required|integer',
             'cleaningStatusId' => 'nullable|integer',
-            'sourceTypeId' => 'nullable|integer',
+            'sourceTypeId' => 'nullable|integer|exists:property_source_types,id',
             'currency' => 'nullable|string|max:10',
 
             'addresses' => 'nullable|array',

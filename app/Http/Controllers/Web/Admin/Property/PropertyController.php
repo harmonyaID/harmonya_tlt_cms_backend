@@ -51,7 +51,7 @@ class PropertyController extends Controller
     public function detail($id)
     {
         $property = Property::with([
-            'type', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
+            'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
             'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
         ])->find($id);
 

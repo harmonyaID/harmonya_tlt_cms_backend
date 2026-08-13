@@ -13,6 +13,7 @@ use App\Models\Property\PropertyPricing;
 use App\Models\Property\PropertyRoom;
 use App\Models\Property\PropertyRoomType;
 use App\Models\Property\PropertyTag;
+use App\Models\Property\PropertySourceType;
 use App\Models\Property\PropertyType;
 use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
@@ -22,7 +23,6 @@ use App\Services\Constant\Property\PropertyAvailabilityType;
 use App\Services\Constant\Property\PropertyCleaningFeeType;
 use App\Services\Constant\Property\PropertyCleaningStatus;
 use App\Services\Constant\Property\PropertyListingType;
-use App\Services\Constant\Property\PropertySourceType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Storage\PathConstant;
@@ -50,7 +50,7 @@ class GuestyPropertyImporter
                     'propertySize' => $listing['areaSquareFeet'] ?? null,
                     'statusId' => ($listing['isListed'] ?? false) ? PropertyStatus::ACTIVE_ID : PropertyStatus::INACTIVE_ID,
                     'cleaningStatusId' => $this->mapCleaningStatus($listing['cleaningStatus']['value'] ?? null),
-                    'sourceTypeId' => PropertySourceType::GUESTY_ID,
+                    'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
                     'currency' => $listing['prices']['currency'] ?? 'USD',
                     'guestyImportedAt' => now(),
                 ]

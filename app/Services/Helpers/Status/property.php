@@ -28,6 +28,34 @@ if (!function_exists("errPropertyTypeDelete")) {
     }
 }
 
+if (!function_exists("errPropertySourceTypeGet")) {
+    function errPropertySourceTypeGet($internalMsg = "")
+    {
+        error(404, "Property source type not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertySourceTypeSave")) {
+    function errPropertySourceTypeSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property source type", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertySourceTypeUpdate")) {
+    function errPropertySourceTypeUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property source type", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertySourceTypeDelete")) {
+    function errPropertySourceTypeDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property source type", $internalMsg);
+    }
+}
+
 if (!function_exists("errPropertyRoomTypeGet")) {
     function errPropertyRoomTypeGet($internalMsg = "")
     {

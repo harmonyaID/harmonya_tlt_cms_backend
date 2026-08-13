@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog\Blog;
 use App\Models\Property\Property;
 use App\Services\Constant\Access\AccessPermissionName;
-use App\Services\Constant\Property\PropertySourceType;
 
 class DashboardController extends Controller
 {
@@ -27,10 +26,26 @@ class DashboardController extends Controller
      */
     public function metrics()
     {
+        // Generic breakdown - automatically includes any source type admins add later
+        $bySourceType = Property::query()
+            ->join('property_source_types', 'property_source_types.id', '=', 'properties.sourceTypeId')
+            ->select('property_source_types.id', 'property_source_types.name')
+            ->selectRaw('count(properties.id) as total')
+            ->groupBy('property_source_types.id', 'property_source_types.name')
+            ->get();
+
         return success([
             'totalBlogPost' => Blog::count(),
-            'totalPropertyGuesty' => Property::where('sourceTypeId', PropertySourceType::GUESTY_ID)->count(),
-            'totalPropertyBookeasy' => Property::where('sourceTypeId', PropertySourceType::BOOKEASY_ID)->count(),
+
+            // kept for backward compatibility with existing dashboard widgets
+            'totalPropertyGuesty' => (int)optional($bySourceType->firstWhere('name', 'Guesty'))->total,
+            'totalPropertyBookeasy' => (int)optional($bySourceType->firstWhere('name', 'Bookeasy'))->total,
+
+            'propertiesBySourceType' => $bySourceType->map(fn ($row) => [
+                'id' => $row->id,
+                'name' => $row->name,
+                'total' => (int)$row->total,
+            ]),
         ]);
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Public\Property\PropertyContactFormController;
 use App\Http\Controllers\Public\Property\PropertyController;
 use App\Http\Controllers\Public\Property\PropertyRelatedController;
 use App\Http\Controllers\Public\Property\PropertyReviewController;
+use App\Http\Controllers\Public\Property\PropertySourceTypeController;
 use App\Http\Controllers\Public\Property\PropertyTagController;
 use App\Http\Controllers\Public\Property\PropertyTypeController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,11 @@ Route::prefix("property-types")
 Route::prefix("property-tags")
     ->group(function () {
         Route::get('', [PropertyTagController::class, 'get']);
+    });
+
+Route::prefix("property-source-types")
+    ->group(function () {
+        Route::get('', [PropertySourceTypeController::class, 'get']);
     });
 
 Route::prefix("property-contact-forms")

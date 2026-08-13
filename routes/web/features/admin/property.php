@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\Admin\Property\PropertyGuestyConfigurationControlle
 use App\Http\Controllers\Web\Admin\Property\PropertyPhotoController;
 use App\Http\Controllers\Web\Admin\Property\PropertyReviewController;
 use App\Http\Controllers\Web\Admin\Property\PropertyRoomTypeController;
+use App\Http\Controllers\Web\Admin\Property\PropertySourceTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTagController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTypeController;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +66,15 @@ Route::prefix("properties")
                 Route::delete('{id}', [PropertyReviewController::class, 'delete']);
             });
 
-        // Guesty API Configuration (Property Management Module)
+        Route::prefix('source-types')
+            ->group(function () {
+                Route::get('', [PropertySourceTypeController::class, 'get']);
+                Route::post('', [PropertySourceTypeController::class, 'create']);
+                Route::get('{id}', [PropertySourceTypeController::class, 'detail']);
+                Route::put('{id}', [PropertySourceTypeController::class, 'update']);
+                Route::delete('{id}', [PropertySourceTypeController::class, 'delete']);
+            });
+
         Route::prefix('guesty-configuration')
             ->group(function () {
                 Route::get('', [PropertyGuestyConfigurationController::class, 'get']);

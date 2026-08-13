@@ -151,6 +151,7 @@ class PropertyAlgo
     {
         return [
             'type',
+            'sourceType',
             'addresses',
             'guestInfo',
             'rooms.roomType',

@@ -53,7 +53,7 @@ class PropertyContactFormAlgo
                 }
             }
 
-            return success($this->contactForm->fresh()->load('property'));
+            return success($this->contactForm->fresh()->load('property', 'sourceType'));
 
         } catch (\Error $error) {
             exception($error);
@@ -92,7 +92,7 @@ class PropertyContactFormAlgo
                 $this->contactForm->update(['isRead' => true]);
             });
 
-            return success($this->contactForm->fresh()->load('property'));
+            return success($this->contactForm->fresh()->load('property', 'sourceType'));
 
         } catch (\Error $error) {
             exception($error);
@@ -105,6 +105,6 @@ class PropertyContactFormAlgo
             'statusId' => $request->statusId,
         ]);
 
-        return success($this->contactForm->fresh()->load('property'));
+        return success($this->contactForm->fresh()->load('property', 'sourceType'));
     }
 }
