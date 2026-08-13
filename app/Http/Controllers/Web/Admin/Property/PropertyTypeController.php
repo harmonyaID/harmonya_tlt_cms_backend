@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Web\Admin\Property;
 
 use App\Algorithms\Property\PropertyTypeAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasTrash;
 use App\Http\Requests\Component\ComponentRequest;
 use App\Models\Property\PropertyType;
 use App\Parser\Property\PropertyTypeParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
 class PropertyTypeController extends Controller
 {
+    use HasTrash;
+
     public function __construct()
     {
         if (config('auth.with-permission')) {
@@ -19,7 +23,7 @@ class PropertyTypeController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_TYPE_VIEW);
                 return $next($request);
-            })->only(['get', 'detail']);
+            })->only(['get', 'detail', 'trash']);
 
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_TYPE_CREATE);
@@ -34,7 +38,7 @@ class PropertyTypeController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_TYPE_DELETE);
                 return $next($request);
-            })->only(['delete']);
+            })->only(['delete', 'restore', 'forceDelete']);
 
         }
     }
@@ -71,5 +75,25 @@ class PropertyTypeController extends Controller
     {
         $algo = new PropertyTypeAlgo((int)$id);
         return $algo->delete();
+    }
+
+    protected function trashModel(): string
+    {
+        return PropertyType::class;
+    }
+
+    protected function trashParser(): string
+    {
+        return PropertyTypeParser::class;
+    }
+
+    protected function trashActivityType(): string
+    {
+        return ActivityType::PROPERTY_TYPE;
+    }
+
+    protected function trashLabel($item): string
+    {
+        return $item->name;
     }
 }
