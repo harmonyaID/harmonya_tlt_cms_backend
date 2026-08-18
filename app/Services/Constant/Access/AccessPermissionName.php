@@ -234,6 +234,12 @@ class AccessPermissionName
     const STAFF_PROPERTY_CONTACT_FORM_UPDATE = AccessGroup::STAFF . '.property-contact-form.update';
     const STAFF_PROPERTY_CONTACT_FORM_DELETE = AccessGroup::STAFF . '.property-contact-form.delete';
 
+    // Property Inquiry Form
+    const STAFF_PROPERTY_INQUIRY_FORM_VIEW = AccessGroup::STAFF . '.property-inquiry-form.view';
+    const STAFF_PROPERTY_INQUIRY_FORM_CREATE = AccessGroup::STAFF . '.property-inquiry-form.create';
+    const STAFF_PROPERTY_INQUIRY_FORM_UPDATE = AccessGroup::STAFF . '.property-inquiry-form.update';
+    const STAFF_PROPERTY_INQUIRY_FORM_DELETE = AccessGroup::STAFF . '.property-inquiry-form.delete';
+
     // Property
     const STAFF_PROPERTY = AccessGroup::STAFF . '.property.*';
     const STAFF_PROPERTY_VIEW = AccessGroup::STAFF . '.property.view';
@@ -452,6 +458,17 @@ class AccessPermissionName
         self::STAFF_PROPERTY_REVIEW_CREATE,
         self::STAFF_PROPERTY_REVIEW_UPDATE,
         self::STAFF_PROPERTY_REVIEW_DELETE,
+
+        self::STAFF_PROPERTY_CONTACT_FORM,
+        self::STAFF_PROPERTY_CONTACT_FORM_VIEW,
+        self::STAFF_PROPERTY_CONTACT_FORM_CREATE,
+        self::STAFF_PROPERTY_CONTACT_FORM_UPDATE,
+        self::STAFF_PROPERTY_CONTACT_FORM_DELETE,
+
+        self::STAFF_PROPERTY_INQUIRY_FORM_VIEW,
+        self::STAFF_PROPERTY_INQUIRY_FORM_CREATE,
+        self::STAFF_PROPERTY_INQUIRY_FORM_UPDATE,
+        self::STAFF_PROPERTY_INQUIRY_FORM_DELETE,
 
         self::STAFF_API_CONFIGURATION,
         self::STAFF_API_CONFIGURATION_VIEW,

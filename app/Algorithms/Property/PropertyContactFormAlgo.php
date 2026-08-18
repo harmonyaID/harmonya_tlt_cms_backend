@@ -41,7 +41,7 @@ class PropertyContactFormAlgo
                     ->setReference($this->contactForm)
                     ->setType(ActivityType::PROPERTY_CONTACT_FORM)
                     ->setAction(ActivityAction::CREATE)
-                    ->log("New property booking form submitted. Name: " . $this->contactForm->name);
+                    ->log("New property inquiry submitted. Name: " . $this->contactForm->name);
             });
 
             if (config('mail.notification_to')) {
@@ -53,7 +53,10 @@ class PropertyContactFormAlgo
                 }
             }
 
-            return success($this->contactForm->fresh()->load('property', 'sourceType'));
+            return success(
+                $this->contactForm->fresh()->load('property', 'sourceType'),
+                'Thank you for your inquiry. Our team will get back to you shortly.'
+            );
 
         } catch (\Error $error) {
             exception($error);

@@ -39,6 +39,7 @@ class ActivityType extends BaseCodeName
     const PROPERTY_TAG = 'property_tag';
     const PROPERTY = 'property';
     const PROPERTY_CONTACT_FORM = 'property_contact_form';
+    const PROPERTY_INQUIRY_FORM = 'property_inquiry_form';
     const PROPERTY_REVIEW = 'property_review';
     const API_CONFIGURATION = 'api_configuration';
     const SYSTEM_CACHE = 'system_cache';
@@ -78,6 +79,7 @@ class ActivityType extends BaseCodeName
         self::PROPERTY,
         self::PROPERTY_REVIEW,
         self::PROPERTY_CONTACT_FORM,
+        self::PROPERTY_INQUIRY_FORM,
         self::API_CONFIGURATION,
         self::SYSTEM_CACHE,
     ];

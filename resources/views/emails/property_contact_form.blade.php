@@ -2,20 +2,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>New Property Booking Inquiry</title>
+    <title>New Property Inquiry</title>
 </head>
 <body style="font-family: Helvetica, Arial, sans-serif; color: #333; font-size: 14px;">
     <div style="max-width: 600px; margin: 0 auto; padding: 24px;">
-        <h2 style="margin-bottom: 4px;">New Property Booking Inquiry</h2>
-        <p style="color: #777; margin-top: 0;">Submitted via website property contact form</p>
+        <h2 style="margin-bottom: 4px;">New Property Inquiry</h2>
+        <p style="color: #777; margin-top: 0;">Submitted via the property inquiry form</p>
 
         <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
             <tr><td style="padding: 6px 0; width: 200px; color: #777;">Name</td><td style="padding: 6px 0;"><b>{{ $contactForm->name }}</b></td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Email</td><td style="padding: 6px 0;">{{ $contactForm->email }}</td></tr>
-            <tr><td style="padding: 6px 0; color: #777;">Phone</td><td style="padding: 6px 0;">{{ $contactForm->phone ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Subject</td><td style="padding: 6px 0;">{{ $contactForm->subject ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Property</td><td style="padding: 6px 0;">{{ optional($contactForm->property)->nickname ?: '-' }}</td></tr>
-            <tr><td style="padding: 6px 0; color: #777;">Check-in / Check-out</td><td style="padding: 6px 0;">{{ optional($contactForm->checkInDate)->format('d/m/Y') ?: '-' }} &ndash; {{ optional($contactForm->checkOutDate)->format('d/m/Y') ?: '-' }}</td></tr>
-            <tr><td style="padding: 6px 0; color: #777;">Adults / Children / Infants</td><td style="padding: 6px 0;">{{ $contactForm->adultCount }} / {{ $contactForm->childCount }} / {{ $contactForm->infantCount }}</td></tr>
         </table>
 
         @if($contactForm->message)

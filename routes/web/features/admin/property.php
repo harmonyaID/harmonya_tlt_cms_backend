@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\Property\PropertyBedTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyContactFormController;
+use App\Http\Controllers\Web\Admin\Property\PropertyInquiryFormController;
 use App\Http\Controllers\Web\Admin\Property\PropertyController;
 use App\Http\Controllers\Web\Admin\Property\PropertyGuestyConfigurationController;
 use App\Http\Controllers\Web\Admin\Property\PropertyPhotoController;
@@ -134,6 +135,16 @@ Route::prefix("properties")
                 Route::delete('{id}', [PropertyContactFormController::class, 'delete']);
                 Route::patch('{id}/read', [PropertyContactFormController::class, 'markAsRead']);
                 Route::patch('{id}/status', [PropertyContactFormController::class, 'changeStatus']);
+            });
+
+        Route::prefix('inquiry-forms')
+            ->group(function () {
+                Route::get('', [PropertyInquiryFormController::class, 'get']);
+                Route::post('', [PropertyInquiryFormController::class, 'create']);
+                Route::get('{id}', [PropertyInquiryFormController::class, 'detail']);
+                Route::delete('{id}', [PropertyInquiryFormController::class, 'delete']);
+                Route::patch('{id}/read', [PropertyInquiryFormController::class, 'markAsRead']);
+                Route::patch('{id}/status', [PropertyInquiryFormController::class, 'changeStatus']);
             });
 
         Route::prefix('source-types')

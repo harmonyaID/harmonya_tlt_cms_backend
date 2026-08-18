@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Public\Property\PropertyContactFormController;
 use App\Http\Controllers\Public\Property\PropertyController;
+use App\Http\Controllers\Public\Property\PropertyInquiryFormController;
 use App\Http\Controllers\Public\Property\PropertyRelatedController;
 use App\Http\Controllers\Public\Property\PropertyReviewController;
 use App\Http\Controllers\Public\Property\PropertySourceTypeController;
@@ -36,4 +37,9 @@ Route::prefix("property-source-types")
 Route::prefix("property-contact-forms")
     ->group(function () {
         Route::post('', [PropertyContactFormController::class, 'create']);
+    });
+
+Route::prefix("property-inquiry-forms")
+    ->group(function () {
+        Route::post('', [PropertyInquiryFormController::class, 'create']);
     });

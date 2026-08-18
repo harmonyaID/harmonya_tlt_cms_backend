@@ -238,6 +238,27 @@ if (!function_exists("errPropertyContactFormDelete")) {
     }
 }
 
+if (!function_exists("errPropertyInquiryFormGet")) {
+    function errPropertyInquiryFormGet($internalMsg = "")
+    {
+        error(404, "Property inquiry form not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyInquiryFormSave")) {
+    function errPropertyInquiryFormSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property inquiry form", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyInquiryFormDelete")) {
+    function errPropertyInquiryFormDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property inquiry form", $internalMsg);
+    }
+}
+
 if (!function_exists("errPropertyFeatureGet")) {
     function errPropertyFeatureGet($internalMsg = "")
     {
