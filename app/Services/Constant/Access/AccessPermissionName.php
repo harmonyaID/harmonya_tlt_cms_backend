@@ -133,6 +133,13 @@ class AccessPermissionName
     const STAFF_OFFER_UPDATE = AccessGroup::STAFF . '.offer.update';
     const STAFF_OFFER_DELETE = AccessGroup::STAFF . '.offer.delete';
 
+    // Team Member
+    const STAFF_TEAM_MEMBER = AccessGroup::STAFF . '.team-member.*';
+    const STAFF_TEAM_MEMBER_VIEW = AccessGroup::STAFF . '.team-member.view';
+    const STAFF_TEAM_MEMBER_CREATE = AccessGroup::STAFF . '.team-member.create';
+    const STAFF_TEAM_MEMBER_UPDATE = AccessGroup::STAFF . '.team-member.update';
+    const STAFF_TEAM_MEMBER_DELETE = AccessGroup::STAFF . '.team-member.delete';
+
     // Experience Type
     const STAFF_EXPERIENCE_TYPE = AccessGroup::STAFF . '.experience-type.*';
     const STAFF_EXPERIENCE_TYPE_VIEW = AccessGroup::STAFF . '.experience-type.view';
@@ -341,6 +348,12 @@ class AccessPermissionName
         self::STAFF_OFFER_CREATE,
         self::STAFF_OFFER_UPDATE,
         self::STAFF_OFFER_DELETE,
+
+        self::STAFF_TEAM_MEMBER,
+        self::STAFF_TEAM_MEMBER_VIEW,
+        self::STAFF_TEAM_MEMBER_CREATE,
+        self::STAFF_TEAM_MEMBER_UPDATE,
+        self::STAFF_TEAM_MEMBER_DELETE,
 
         self::STAFF_BLOG_CATEGORY,
         self::STAFF_BLOG_CATEGORY_VIEW,
