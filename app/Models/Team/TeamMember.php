@@ -50,7 +50,7 @@ class TeamMember extends BaseModel
                 $query->where('role', $request->role);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
 

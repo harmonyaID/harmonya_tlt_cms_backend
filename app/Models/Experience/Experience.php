@@ -91,7 +91,7 @@ class Experience extends BaseModel
                 $query->where('experienceAreaId', $request->experienceAreaId);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
 

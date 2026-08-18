@@ -67,7 +67,7 @@ class PropertyReview extends BaseModel
                 $query->where('propertyId', $request->propertyId);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
 

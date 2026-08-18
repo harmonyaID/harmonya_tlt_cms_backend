@@ -43,7 +43,7 @@ class LembonganArea extends BaseModel
                 $query->where('name', 'LIKE', "%$request->search%");
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
 

@@ -63,7 +63,7 @@ class SettingAmenity extends BaseModel
                 $query->where('isPopular', $request->isPopular);
             }
 
-            if ($request->has('isPublish') && $request->isPublish !== null) {
+            if ($request->has('isPublish') && $request->isPublish !== null && $request->isPublish !== '') {
                 $query->where('isPublish', $request->isPublish);
             }
 
