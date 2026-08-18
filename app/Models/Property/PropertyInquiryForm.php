@@ -3,15 +3,15 @@
 namespace App\Models\Property;
 
 use App\Models\BaseModel;
-use App\Parser\Property\PropertyContactFormParser;
+use App\Parser\Property\PropertyInquiryFormParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PropertyContactForm extends BaseModel
+class PropertyInquiryForm extends BaseModel
 {
     use SoftDeletes;
 
-    protected $table = 'property_contact_forms';
+    protected $table = 'property_inquiry_forms';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -22,12 +22,18 @@ class PropertyContactForm extends BaseModel
         'statusId' => 'integer',
         'sourceTypeId' => 'integer',
         'isRead' => 'boolean',
+        'isDatesFlexible' => 'boolean',
+        'flexibleYear' => 'integer',
+        'adultCount' => 'integer',
+        'childrenAges' => 'array',
+        'checkInDate' => 'date',
+        'checkOutDate' => 'date',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
     ];
 
-    public $parserClass = PropertyContactFormParser::class;
+    public $parserClass = PropertyInquiryFormParser::class;
 
     /*
      |--------------------------------------------------------------------------
@@ -59,7 +65,7 @@ class PropertyContactForm extends BaseModel
                 $query->where(function ($search) use ($request) {
                     $search->where('name', 'LIKE', "%$request->search%")
                         ->orWhere('email', 'LIKE', "%$request->search%")
-                        ->orWhere('phone', 'LIKE', "%$request->search%");
+                        ->orWhere('mobileNumber', 'LIKE', "%$request->search%");
                 });
             }
 
@@ -76,5 +82,16 @@ class PropertyContactForm extends BaseModel
             }
 
         })->orderBy('id', 'DESC');
+    }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
+
+    public function childCount(): int
+    {
+        return count($this->childrenAges ?? []);
     }
 }

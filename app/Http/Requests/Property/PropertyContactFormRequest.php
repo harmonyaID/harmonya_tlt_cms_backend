@@ -24,21 +24,15 @@ class PropertyContactFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'propertyId' => 'nullable|integer|exists:properties,id',
+            'propertyId' => 'required|integer|exists:properties,id',
             'sourceTypeId' => 'nullable|integer',
 
-            // Customer info
+            // Form fields (matches the "INQUIRY" form on the property detail page)
             'name' => 'required|string',
             'email' => 'required|email',
+            'subject' => 'required|string',
+            'message' => 'required|string',
             'phone' => 'nullable|string',
-
-            // Booking detail
-            'checkInDate' => 'nullable|date',
-            'checkOutDate' => 'nullable|date|after_or_equal:checkInDate',
-            'adultCount' => 'required|integer|min:1',
-            'childCount' => 'required|integer|min:0',
-            'infantCount' => 'required|integer|min:0',
-            'message' => 'nullable|string',
         ];
     }
 }
