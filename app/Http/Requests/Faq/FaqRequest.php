@@ -14,6 +14,7 @@ class FaqRequest extends FormRequest
     public function rules()
     {
         return [
+            'typeId'   => 'nullable|integer|exists:faq_types,id',
             'question' => 'required|string',
             'answer'   => 'required|string',
             'order'    => 'nullable|integer|min:0',

@@ -12,6 +12,7 @@ class FaqParser extends BaseParser
 
         return [
             'id'        => $data->id,
+            'type'      => optional($data->type)->only('id', 'name'),
             'question'  => $data->question,
             'answer'    => $data->answer,
             'order'     => $data->order,
@@ -26,6 +27,7 @@ class FaqParser extends BaseParser
 
         return [
             'id'        => $data->id,
+            'type'      => optional($data->type)->only('id', 'name'),
             'question'  => $data->question,
             'answer'    => $data->answer,
             'order'     => $data->order,

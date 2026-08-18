@@ -46,6 +46,7 @@ class PathConstant
     const IMAGES_PROPERTY_PUBLIC_PLACE = 'images/properties/publicPlaces/';
     const IMAGES_PROPERTY_STATUS = 'images/properties/statuses/';
     const IMAGES_BLOG = 'images/blogs/';
+    const IMAGES_OFFER = 'images/offers/';
     const IMAGES_PAGE = 'images/pages/';
     const IMAGES_HOMEPAGE = 'images/homepages/';
     const IMAGES_MENU_ITEM = 'images/menu-items/';
@@ -127,6 +128,10 @@ class PathConstant
     public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
+    }
+    public static function IMAGES_OFFER_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_OFFER);
     }
 
     public static function IMAGES_HOMEPAGE_STORAGE_PUBLIC_PATH()

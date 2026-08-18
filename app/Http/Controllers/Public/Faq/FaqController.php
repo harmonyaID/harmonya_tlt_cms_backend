@@ -13,7 +13,7 @@ class FaqController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $faqs = Faq::filter($request)->getOrPaginate($request);
+        $faqs = Faq::filter($request)->with('type')->getOrPaginate($request);
         return success(FaqParser::briefs($faqs), pagination: pagination($faqs));
     }
 }

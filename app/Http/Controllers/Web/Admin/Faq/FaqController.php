@@ -40,13 +40,13 @@ class FaqController extends Controller
 
     public function get(Request $request)
     {
-        $faqs = Faq::filter($request)->getOrPaginate($request);
+        $faqs = Faq::filter($request)->with('type')->getOrPaginate($request);
         return success(FaqParser::briefs($faqs), pagination: pagination($faqs));
     }
 
     public function detail($id)
     {
-        $faq = Faq::find($id);
+        $faq = Faq::with('type')->find($id);
         if (!$faq) errFaqGet();
 
         return success(FaqParser::first($faq));
