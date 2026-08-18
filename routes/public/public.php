@@ -16,3 +16,5 @@ require($base . "menu.php");
 require($base . "configuration.php");
 require($base . "website-contact-form.php");
 require($base . "lembongan-area.php");
+require($base . "offer.php");
+require($base . "team.php");

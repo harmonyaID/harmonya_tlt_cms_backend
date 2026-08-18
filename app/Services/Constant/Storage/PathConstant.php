@@ -46,12 +46,14 @@ class PathConstant
     const IMAGES_PROPERTY_PUBLIC_PLACE = 'images/properties/publicPlaces/';
     const IMAGES_PROPERTY_STATUS = 'images/properties/statuses/';
     const IMAGES_BLOG = 'images/blogs/';
+    const IMAGES_OFFER = 'images/offers/';
     const IMAGES_PAGE = 'images/pages/';
     const IMAGES_HOMEPAGE = 'images/homepages/';
     const IMAGES_MENU_ITEM = 'images/menu-items/';
     const IMAGES_PIPELINE = 'images/pipelines/';
 
     const IMAGES_MEDIA_PARTNER = 'images/media-partners/';
+    const IMAGES_TEAM_MEMBER = 'images/team-members/';
     const IMAGES_TLT_REVIEW = 'images/tlt-reviews/';
     const IMAGES_BOAT = 'images/boats/';
     const IMAGES_BOAT_PROMO = 'images/boats/promos/';
@@ -91,6 +93,11 @@ class PathConstant
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_MEDIA_PARTNER);
     }
 
+    public static function IMAGES_TEAM_MEMBER_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_TEAM_MEMBER);
+    }
+
     public static function IMAGES_TLT_REVIEW_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_TLT_REVIEW);
@@ -127,6 +134,10 @@ class PathConstant
     public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
+    }
+    public static function IMAGES_OFFER_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_OFFER);
     }
 
     public static function IMAGES_HOMEPAGE_STORAGE_PUBLIC_PATH()

@@ -75,6 +75,13 @@ class AccessPermissionName
     const STAFF_FAQ_CREATE = AccessGroup::STAFF . '.faq.create';
     const STAFF_FAQ_UPDATE = AccessGroup::STAFF . '.faq.update';
     const STAFF_FAQ_DELETE = AccessGroup::STAFF . '.faq.delete';
+
+    // FAQ Type
+    const STAFF_FAQ_TYPE = AccessGroup::STAFF . '.faq-type.*';
+    const STAFF_FAQ_TYPE_VIEW = AccessGroup::STAFF . '.faq-type.view';
+    const STAFF_FAQ_TYPE_CREATE = AccessGroup::STAFF . '.faq-type.create';
+    const STAFF_FAQ_TYPE_UPDATE = AccessGroup::STAFF . '.faq-type.update';
+    const STAFF_FAQ_TYPE_DELETE = AccessGroup::STAFF . '.faq-type.delete';
     /** --- OPTIONS --- */
 
     // Boat
@@ -118,6 +125,20 @@ class AccessPermissionName
     const STAFF_BLOG_CREATE = AccessGroup::STAFF . '.blog.create';
     const STAFF_BLOG_UPDATE = AccessGroup::STAFF . '.blog.update';
     const STAFF_BLOG_DELETE = AccessGroup::STAFF . '.blog.delete';
+
+    // Offer
+    const STAFF_OFFER = AccessGroup::STAFF . '.offer.*';
+    const STAFF_OFFER_VIEW = AccessGroup::STAFF . '.offer.view';
+    const STAFF_OFFER_CREATE = AccessGroup::STAFF . '.offer.create';
+    const STAFF_OFFER_UPDATE = AccessGroup::STAFF . '.offer.update';
+    const STAFF_OFFER_DELETE = AccessGroup::STAFF . '.offer.delete';
+
+    // Team Member
+    const STAFF_TEAM_MEMBER = AccessGroup::STAFF . '.team-member.*';
+    const STAFF_TEAM_MEMBER_VIEW = AccessGroup::STAFF . '.team-member.view';
+    const STAFF_TEAM_MEMBER_CREATE = AccessGroup::STAFF . '.team-member.create';
+    const STAFF_TEAM_MEMBER_UPDATE = AccessGroup::STAFF . '.team-member.update';
+    const STAFF_TEAM_MEMBER_DELETE = AccessGroup::STAFF . '.team-member.delete';
 
     // Experience Type
     const STAFF_EXPERIENCE_TYPE = AccessGroup::STAFF . '.experience-type.*';
@@ -298,6 +319,12 @@ class AccessPermissionName
         self::STAFF_FAQ_UPDATE,
         self::STAFF_FAQ_DELETE,
 
+        self::STAFF_FAQ_TYPE,
+        self::STAFF_FAQ_TYPE_VIEW,
+        self::STAFF_FAQ_TYPE_CREATE,
+        self::STAFF_FAQ_TYPE_UPDATE,
+        self::STAFF_FAQ_TYPE_DELETE,
+
         self::STAFF_BOAT,
         self::STAFF_BOAT_VIEW,
         self::STAFF_BOAT_CREATE,
@@ -315,6 +342,18 @@ class AccessPermissionName
         self::STAFF_BLOG_CREATE,
         self::STAFF_BLOG_UPDATE,
         self::STAFF_BLOG_DELETE,
+
+        self::STAFF_OFFER,
+        self::STAFF_OFFER_VIEW,
+        self::STAFF_OFFER_CREATE,
+        self::STAFF_OFFER_UPDATE,
+        self::STAFF_OFFER_DELETE,
+
+        self::STAFF_TEAM_MEMBER,
+        self::STAFF_TEAM_MEMBER_VIEW,
+        self::STAFF_TEAM_MEMBER_CREATE,
+        self::STAFF_TEAM_MEMBER_UPDATE,
+        self::STAFF_TEAM_MEMBER_DELETE,
 
         self::STAFF_BLOG_CATEGORY,
         self::STAFF_BLOG_CATEGORY_VIEW,

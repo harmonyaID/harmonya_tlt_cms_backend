@@ -4,6 +4,7 @@ namespace App\Models\Faq;
 
 use App\Models\BaseModel;
 use App\Parser\Faq\FaqParser;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Faq extends BaseModel
@@ -18,6 +19,7 @@ class Faq extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
+        'typeId'   => 'integer',
         'order'    => 'integer',
         'isActive' => 'boolean',
         self::CREATED_AT => 'datetime',
@@ -26,6 +28,11 @@ class Faq extends BaseModel
     ];
 
     public $parserClass = FaqParser::class;
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(FaqType::class, 'typeId');
+    }
 
     public function scopeFilter($query, $request)
     {
@@ -36,6 +43,10 @@ class Faq extends BaseModel
                     $search->where('question', 'LIKE', "%$request->search%")
                         ->orWhere('answer', 'LIKE', "%$request->search%");
                 });
+            }
+
+            if ($request->has('typeId') && $request->typeId) {
+                $query->where('typeId', $request->typeId);
             }
 
             if ($request->has('isActive') && $request->isActive !== null) {

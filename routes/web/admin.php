@@ -25,3 +25,5 @@ require($base . "property.php");
 require($base . "dashboard.php");
 require($base . "lembongan-area.php");
 require($base . "system.php");
+require($base . "offer.php");
+require($base . "team.php");
