@@ -17,9 +17,9 @@ class BlogController extends Controller
         return success(BlogParser::briefs($blogs), pagination: pagination($blogs));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $blog = Blog::where('isActive', true)->with(['category', 'tags', 'seo', 'acf'])->find($id);
+        $blog = Blog::where('isActive', true)->bySlugOrId($idOrSlug)->with(['category', 'tags', 'seo', 'acf'])->first();
         if (!$blog) {
             errBlogGet();
         }

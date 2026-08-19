@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\Property\Property;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasSlugLookup;
 use App\Parser\Offer\OfferParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,7 @@ class Offer extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasSlugLookup;
 
     protected $table = 'offers';
     protected $guarded = ['id'];
