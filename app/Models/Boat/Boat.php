@@ -5,6 +5,7 @@ namespace App\Models\Boat;
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Parser\Boat\BoatParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +16,7 @@ class Boat extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasMultiValueFilter;
 
     protected $table = 'boats';
     protected $guarded = ['id'];
@@ -82,14 +84,14 @@ class Boat extends BaseModel
                 });
             }
 
-            if ($request->has('boatComponentTypeId') && $request->boatComponentTypeId) {
-                $query->where('boatComponentTypeId', $request->boatComponentTypeId);
+            if ($request->has('boatComponentTypeIds') && $request->boatComponentTypeIds) {
+                $query->whereIn('boatComponentTypeId', $this->toValueArray($request->boatComponentTypeIds));
             }
             if ($request->has('locale') && $request->locale) {
                 $query->where('locale', $request->locale);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
             $this->applyDateRangeFilter($query, $request);
