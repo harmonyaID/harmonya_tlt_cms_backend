@@ -5,6 +5,7 @@ namespace App\Models\Experience;
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Parser\Experience\ExperienceParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ class Experience extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasMultiValueFilter;
 
     protected $table = 'experiences';
     protected $guarded = ['id'];
@@ -83,12 +85,12 @@ class Experience extends BaseModel
                 });
             }
 
-            if ($request->has('experienceTypeId') && $request->experienceTypeId) {
-                $query->where('experienceTypeId', $request->experienceTypeId);
+            if ($request->has('experienceTypeIds') && $request->experienceTypeIds) {
+                $query->whereIn('experienceTypeId', $this->toValueArray($request->experienceTypeIds));
             }
 
-            if ($request->has('experienceAreaId') && $request->experienceAreaId) {
-                $query->where('experienceAreaId', $request->experienceAreaId);
+            if ($request->has('experienceAreaIds') && $request->experienceAreaIds) {
+                $query->whereIn('experienceAreaId', $this->toValueArray($request->experienceAreaIds));
             }
 
             if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {

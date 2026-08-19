@@ -9,6 +9,7 @@ use App\Models\Notification\NotificationStaff;
 use App\Models\Notification\NotificationStaffToken;
 use App\Models\Setting\SettingCountry;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Parser\Staff\StaffParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +21,7 @@ class Staff extends BaseModel
     use HasActivation;
     use HasAccession;
     use HasDateRangeFilter;
+    use HasMultiValueFilter;
 
     protected $table = 'staffs';
     protected $guarded = ['id'];
@@ -63,9 +65,9 @@ class Staff extends BaseModel
                 $query->where('isSuperadmin', $request->isSuperadmin);
             }
 
-            if ($request->roleId != '') {
+            if ($request->roleIds != '' && $request->roleIds !== null) {
                 $query->whereHas('roles', function ($role) use ($request) {
-                    $role->where('roleId', $request->roleId);
+                    $role->whereIn('roleId', $this->toValueArray($request->roleIds));
                 });
             }
 

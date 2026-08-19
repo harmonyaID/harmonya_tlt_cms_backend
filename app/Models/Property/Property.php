@@ -7,6 +7,7 @@ use App\Models\SEO\ContentSeo;
 use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Parser\Property\PropertyParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,6 +19,7 @@ class Property extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasMultiValueFilter;
 
 
     protected $table = 'properties';
@@ -137,18 +139,18 @@ class Property extends BaseModel
                 $query->where('statusId', $request->statusId);
             }
 
-            if ($request->has('propertyTypeId') && $request->propertyTypeId) {
-                $query->where('propertyTypeId', $request->propertyTypeId);
+            if ($request->has('propertyTypeIds') && $request->propertyTypeIds) {
+                $query->whereIn('propertyTypeId', $this->toValueArray($request->propertyTypeIds));
             }
 
-            if ($request->has('tagId') && $request->tagId) {
+            if ($request->has('tagIds') && $request->tagIds) {
                 $query->whereHas('tags', function ($tag) use ($request) {
-                    $tag->where('property_tags.id', $request->tagId);
+                    $tag->whereIn('property_tags.id', $this->toValueArray($request->tagIds));
                 });
             }
 
-            if ($request->has('sourceTypeId') && $request->sourceTypeId) {
-                $query->where('sourceTypeId', $request->sourceTypeId);
+            if ($request->has('sourceTypeIds') && $request->sourceTypeIds) {
+                $query->whereIn('sourceTypeId', $this->toValueArray($request->sourceTypeIds));
             }
 
             // "Area" = free-text search against the property's address (e.g. "Jungutbatu")

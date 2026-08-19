@@ -5,6 +5,7 @@ namespace App\Models\Blog;
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Parser\Blog\BlogParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ class Blog extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasMultiValueFilter;
 
 
     protected $table = 'blogs';
@@ -75,13 +77,13 @@ class Blog extends BaseModel
                 });
             }
 
-            if ($request->has('categoryId') && $request->categoryId) {
-                $query->where('categoryId', $request->categoryId);
+            if ($request->has('categoryIds') && $request->categoryIds) {
+                $query->whereIn('categoryId', $this->toValueArray($request->categoryIds));
             }
 
-            if ($request->has('tagId') && $request->tagId) {
+            if ($request->has('tagIds') && $request->tagIds) {
                 $query->whereHas('tags', function ($tag) use ($request) {
-                    $tag->where('blog_tags.id', $request->tagId);
+                    $tag->whereIn('blog_tags.id', $this->toValueArray($request->tagIds));
                 });
             }
 
