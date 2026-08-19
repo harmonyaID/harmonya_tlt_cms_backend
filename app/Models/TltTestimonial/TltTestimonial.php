@@ -1,44 +1,33 @@
 <?php
 
-namespace App\Models\TltReview;
+namespace App\Models\TltTestimonial;
 
 use App\Models\BaseModel;
-use App\Parser\TltReview\TltReviewParser;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Parser\TltTestimonial\TltTestimonialParser;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
-class TltReview extends BaseModel
+class TltTestimonial extends BaseModel
 {
     use SoftDeletes;
 
-    protected $table = 'tlt_reviews';
+    protected $table = 'tlt_testimonials';
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
     const UPDATED_AT = 'updatedAt';
     const DELETED_AT = 'deletedAt';
 
-
     protected $casts = [
-        'rating' => 'integer',
+        'order' => 'integer',
         'isActive' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
     ];
 
-    public $parserClass = TltReviewParser::class;
-
-    /*
-     |--------------------------------------------------------------------------
-     | Relationships
-     |-------------------------------------------------------------------------
-     */
-
-    public function photos(): HasMany
-    {
-        return $this->hasMany(TltReviewPhoto::class, 'reviewId');
-    }
+    public $parserClass = TltTestimonialParser::class;
 
     /*
      |--------------------------------------------------------------------------
@@ -54,7 +43,7 @@ class TltReview extends BaseModel
                 $query->where(function ($search) use ($request) {
                     $search->where('name', 'LIKE', "%$request->search%")
                         ->orWhere('company', 'LIKE', "%$request->search%")
-                        ->orWhere('review', 'LIKE', "%$request->search%");
+                        ->orWhere('testimonial', 'LIKE', "%$request->search%");
                 });
             }
 
@@ -62,6 +51,21 @@ class TltReview extends BaseModel
                 $query->where('isActive', $request->isActive);
             }
 
-        })->orderBy('id', 'DESC');
+        })->orderBy('order', 'ASC')->orderBy('id', 'DESC');
+    }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Functions
+     |-------------------------------------------------------------------------
+     */
+
+    public function photoUrl()
+    {
+        if (!$this->photo) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_TLT_TESTIMONIAL . $this->photo);
     }
 }

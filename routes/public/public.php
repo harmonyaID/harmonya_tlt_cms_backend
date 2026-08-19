@@ -18,3 +18,4 @@ require($base . "website-contact-form.php");
 require($base . "lembongan-area.php");
 require($base . "offer.php");
 require($base . "team.php");
+require($base . "tlt-testimonial.php");

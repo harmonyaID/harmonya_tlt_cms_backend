@@ -140,6 +140,13 @@ class AccessPermissionName
     const STAFF_TEAM_MEMBER_UPDATE = AccessGroup::STAFF . '.team-member.update';
     const STAFF_TEAM_MEMBER_DELETE = AccessGroup::STAFF . '.team-member.delete';
 
+    // TLT Testimonial
+    const STAFF_TLT_TESTIMONIAL = AccessGroup::STAFF . '.tlt-testimonial.*';
+    const STAFF_TLT_TESTIMONIAL_VIEW = AccessGroup::STAFF . '.tlt-testimonial.view';
+    const STAFF_TLT_TESTIMONIAL_CREATE = AccessGroup::STAFF . '.tlt-testimonial.create';
+    const STAFF_TLT_TESTIMONIAL_UPDATE = AccessGroup::STAFF . '.tlt-testimonial.update';
+    const STAFF_TLT_TESTIMONIAL_DELETE = AccessGroup::STAFF . '.tlt-testimonial.delete';
+
     // Experience Type
     const STAFF_EXPERIENCE_TYPE = AccessGroup::STAFF . '.experience-type.*';
     const STAFF_EXPERIENCE_TYPE_VIEW = AccessGroup::STAFF . '.experience-type.view';
@@ -360,6 +367,12 @@ class AccessPermissionName
         self::STAFF_TEAM_MEMBER_CREATE,
         self::STAFF_TEAM_MEMBER_UPDATE,
         self::STAFF_TEAM_MEMBER_DELETE,
+
+        self::STAFF_TLT_TESTIMONIAL,
+        self::STAFF_TLT_TESTIMONIAL_VIEW,
+        self::STAFF_TLT_TESTIMONIAL_CREATE,
+        self::STAFF_TLT_TESTIMONIAL_UPDATE,
+        self::STAFF_TLT_TESTIMONIAL_DELETE,
 
         self::STAFF_BLOG_CATEGORY,
         self::STAFF_BLOG_CATEGORY_VIEW,

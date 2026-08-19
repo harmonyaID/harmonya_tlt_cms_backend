@@ -49,7 +49,7 @@ class Faq extends BaseModel
                 $query->where('typeId', $request->typeId);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
 

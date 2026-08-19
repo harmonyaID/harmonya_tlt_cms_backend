@@ -71,7 +71,7 @@ class PropertyContactForm extends BaseModel
                 $query->where('sourceTypeId', $request->sourceTypeId);
             }
 
-            if ($request->has('isRead') && $request->isRead !== null) {
+            if ($request->has('isRead') && $request->isRead !== null && $request->isRead !== '') {
                 $query->where('isRead', $request->isRead);
             }
 

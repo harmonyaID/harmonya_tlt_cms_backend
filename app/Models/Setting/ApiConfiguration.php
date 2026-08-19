@@ -47,7 +47,7 @@ class ApiConfiguration extends BaseModel
                 $query->where('module', $request->module);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null) {
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
 
