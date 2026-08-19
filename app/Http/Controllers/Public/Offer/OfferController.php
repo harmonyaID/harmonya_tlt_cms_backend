@@ -17,9 +17,9 @@ class OfferController extends Controller
         return success(OfferParser::briefs($offers), pagination: pagination($offers));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $offer = Offer::where('isActive', true)->with('properties', 'seo')->find($id);
+        $offer = Offer::where('isActive', true)->bySlugOrId($idOrSlug)->with('properties', 'seo')->first();
         if (!$offer) {
             errOfferGet();
         }
