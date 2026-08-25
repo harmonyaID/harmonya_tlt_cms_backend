@@ -66,7 +66,17 @@ class Page extends BaseModel
 
     public function scopeFilter($query, $request)
     {
-        return $query->orderBy('groupId', 'ASC')->groupBy('groupId')->where(function ($query) use ($request) {
+        return $query
+            ->when(!$request->filled('locale'), function ($q) {
+                $q->whereIn('id', function ($sub) {
+                    $sub->selectRaw('MIN(id)')
+                        ->from('pages')
+                        ->whereNull('deletedAt')
+                        ->groupBy('groupId');
+                });
+            })
+            ->orderBy('groupId', 'ASC')
+            ->where(function ($query) use ($request) {
 
             if ($request->has('search') && strlen($request->search) > 1) {
 
