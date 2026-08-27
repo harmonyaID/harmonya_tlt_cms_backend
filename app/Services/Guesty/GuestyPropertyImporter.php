@@ -65,7 +65,7 @@ class GuestyPropertyImporter
             $this->syncAmenities($property, $listing);
             $this->syncTags($property, $listing);
             $this->syncFeatures($property, $listing);
-            $this->syncPhotos($property, $listing);
+            // $this->syncPhotos($property, $listing);
 
             return $property;
         });

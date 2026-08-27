@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Migration;
 
+use App\Models\Setting\ApiConfiguration;
 use App\Services\Guesty\GuestyClient;
 use App\Services\Guesty\GuestyPropertyImporter;
 use Illuminate\Console\Command;
@@ -16,8 +17,13 @@ class ImportPropertiesFromGuestyCommand extends Command
 
     public function handle(GuestyClient $client, GuestyPropertyImporter $importer)
     {
-        if (!config('guesty.client_id') || !config('guesty.client_secret')) {
-            $this->error('GUESTY_CLIENT_ID / GUESTY_CLIENT_SECRET is not set in .env');
+        $hasDbConfig = ApiConfiguration::where('key', 'guesty')
+            ->where('isActive', true)
+            ->whereNotNull('credentials')
+            ->exists();
+
+        if (!$hasDbConfig && (!config('guesty.client_id') || !config('guesty.client_secret'))) {
+            $this->error('Guesty is not configured yet. Set it up via Property > Guesty Configuration in the admin panel, or set GUESTY_CLIENT_ID / GUESTY_CLIENT_SECRET in .env');
             return self::FAILURE;
         }
 
