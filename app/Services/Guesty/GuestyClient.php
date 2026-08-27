@@ -152,4 +152,48 @@ class GuestyClient
 
         return $response->successful() ? $response->body() : null;
     }
+
+    /**
+     * All amenities supported by Guesty, with their names, groups and channel mappings.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getSupportedAmenities(): array
+    {
+        return $this->get('/properties-api/amenities/supported');
+    }
+
+    /**
+     * All amenity groups/categories supported by Guesty.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getAmenityGroups(): array
+    {
+        return $this->get('/properties-api/amenities/groups');
+    }
+
+    /**
+     * All room/space types supported by Guesty (e.g. Living room, Kitchen, Bedroom).
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getRoomTypes(): array
+    {
+        return $this->get('/properties/spaces/room-types');
+    }
+
+    /**
+     * All bed types supported by Guesty (e.g. KING_BED, QUEEN_BED, SOFA_BED).
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getBedTypes(): array
+    {
+        return $this->get('/properties/spaces/bed-types');
+    }
 }
