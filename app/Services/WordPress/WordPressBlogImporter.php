@@ -60,8 +60,15 @@ class WordPressBlogImporter
     {
         $slug = $post['slug'];
         $title = html_entity_decode(strip_tags($post['title']['rendered'] ?? ''), ENT_QUOTES);
-        $contentHtml = $post['content']['rendered'] ?? '';
-        $excerpt = html_entity_decode(strip_tags($post['excerpt']['rendered'] ?? ''), ENT_QUOTES);
+
+        // Prefer the fully-rendered content from the live public page (guaranteed clean,
+        // since that's what real visitors see and WPBakery renders shortcodes properly
+        // there). Fall back to the REST API field (with shortcode-stripping) only if
+        // the live page fetch fails or no matching content container is found.
+        $contentHtml = $this->fetchRenderedContent($post['link'] ?? null)
+            ?? $this->cleanShortcodes($post['content']['rendered'] ?? '');
+
+        $excerpt = html_entity_decode(strip_tags($this->cleanShortcodes($post['excerpt']['rendered'] ?? '')), ENT_QUOTES);
         $excerpt = trim(preg_replace('/\s+/', ' ', $excerpt));
 
         $categoryId = $this->resolveCategory($post);
@@ -101,6 +108,101 @@ class WordPressBlogImporter
      | Functions
      |-------------------------------------------------------------------------
      */
+
+    /**
+     * Fetch the live, fully-rendered post page and extract just the article
+     * body HTML - bypassing the REST API entirely for this field, since some
+     * page builders (WPBakery included) don't process their shortcodes when
+     * WordPress serves content.rendered via the REST API.
+     *
+     * @param string|null $postUrl
+     *
+     * @return string|null
+     */
+    private function fetchRenderedContent(?string $postUrl): ?string
+    {
+        if (!$postUrl) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(30)->get($postUrl);
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $html = $response->body();
+
+            libxml_use_internal_errors(true);
+            $dom = new \DOMDocument();
+            $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+            libxml_clear_errors();
+
+            $xpath = new \DOMXPath($dom);
+
+            // Try common WordPress theme content-wrapper selectors, in priority order.
+            // WPBakery renders its output *inside* one of these, as real HTML (vc_row/
+            // vc_column divs etc.) - never as raw [bracket] shortcode text.
+            $queries = [
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' entry-content ')]",
+                "//div[contains(concat(' ', normalize-space(@class), ' '), ' post-content ')]",
+                "//article//div[contains(concat(' ', normalize-space(@class), ' '), ' content ')]",
+                "//main//article",
+            ];
+
+            foreach ($queries as $query) {
+                $nodes = $xpath->query($query);
+                if ($nodes && $nodes->length > 0) {
+                    $node = $nodes->item(0);
+                    $innerHtml = $this->innerHtml($node);
+
+                    // Guard against matching an empty/near-empty wrapper
+                    if (strlen(trim(strip_tags($innerHtml))) > 100) {
+                        return $this->cleanShortcodes($innerHtml);
+                    }
+                }
+            }
+
+            return null;
+        } catch (\Throwable $e) {
+            logger()->warning("Failed to fetch rendered content from {$postUrl}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * @param \DOMNode $node
+     *
+     * @return string
+     */
+    private function innerHtml(\DOMNode $node): string
+    {
+        $html = '';
+        foreach ($node->childNodes as $child) {
+            $html .= $node->ownerDocument->saveHTML($child);
+        }
+
+        return $html;
+    }
+
+    /**
+     * Strip page-builder shortcode wrappers (WPBakery/Visual Composer, e.g.
+     * [vc_row][vc_column][vc_column_text]...) that sometimes leak through the
+     * REST API unrendered. Only the bracket tags themselves are removed -
+     * any real HTML (<p>, <strong>, <a href>, etc.) inside them is preserved.
+     *
+     * @param string $content
+     *
+     * @return string
+     */
+    private function cleanShortcodes(string $content): string
+    {
+        // Matches [shortcode_name attr="value" ...] and [/shortcode_name] forms.
+        // Deliberately does NOT touch real HTML tags (those use < >, not [ ]).
+        $cleaned = preg_replace('/\[\/?[a-zA-Z0-9_\-]+(?:\s[^\]]*)?\]/', '', $content);
+
+        return trim($cleaned);
+    }
 
     private function resolveCategory(array $post): ?int
     {
