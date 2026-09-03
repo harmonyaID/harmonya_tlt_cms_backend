@@ -46,10 +46,30 @@ class PathConstant
     const IMAGES_PROPERTY_PUBLIC_PLACE = 'images/properties/publicPlaces/';
     const IMAGES_PROPERTY_STATUS = 'images/properties/statuses/';
     const IMAGES_BLOG = 'images/blogs/';
+    const IMAGES_OFFER = 'images/offers/';
+    const IMAGES_LEMBONGAN_AREA = 'images/lembongan-areas/';
     const IMAGES_PAGE = 'images/pages/';
     const IMAGES_HOMEPAGE = 'images/homepages/';
+    const IMAGES_MENU_ITEM = 'images/menu-items/';
     const IMAGES_PIPELINE = 'images/pipelines/';
 
+    const IMAGES_MEDIA_PARTNER = 'images/media-partners/';
+    const IMAGES_TEAM_MEMBER = 'images/team-members/';
+    const IMAGES_TLT_REVIEW = 'images/tlt-reviews/';
+    const IMAGES_TLT_TESTIMONIAL = 'images/tlt-testimonials/';
+    const IMAGES_BOAT = 'images/boats/';
+    const IMAGES_BOAT_PROMO = 'images/boats/promos/';
+    const FILES_BOAT        = 'files/boats/';
+
+    const IMAGES_EXPERIENCE = 'images/experiences/';
+    const IMAGES_EXPERIENCE_TYPE = 'images/experience-types/';
+    const IMAGES_EXPERIENCE_AREA = 'images/experience-areas/';
+    const PDF_EXPERIENCE = 'PDFs/experiences/';
+
+    const IMAGES_SEO = 'images/seo/';
+
+    const IMAGES_PROPERTY_PHOTO = 'images/property-listings/photos/';
+    const IMAGES_PROPERTY_REVIEW = 'images/property-listings/reviews/';
 
     /*
      |--------------------------------------------------------------------------
@@ -59,4 +79,121 @@ class PathConstant
     const PDF_PROPERTY = 'PDFs/properties/';
     const PDF_PROPERTY_AGREEMENT = 'PDFs/properties/agreements/';
 
+    /*
+     |--------------------------------------------------------------------------
+     | IMAGE PATH
+     |-------------------------------------------------------------------------
+     */
+
+    public static function IMAGES_LANGUAGE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_LANGUAGE);
+    }
+
+    public static function IMAGES_MEDIA_PARTNER_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_MEDIA_PARTNER);
+    }
+
+    public static function IMAGES_TEAM_MEMBER_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_TEAM_MEMBER);
+    }
+
+    public static function IMAGES_TLT_REVIEW_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_TLT_REVIEW);
+    }
+
+    public static function IMAGES_TLT_TESTIMONIAL_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_TLT_TESTIMONIAL);
+    }
+
+    public static function IMAGES_BOAT_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT);
+    }
+
+    public static function IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_PHOTO);
+    }
+
+    public static function IMAGES_PROPERTY_REVIEW_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_REVIEW);
+    }
+
+    public static function IMAGES_BOAT_PROMO_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT_PROMO);
+    }
+
+    public static function IMAGES_SEO_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_SEO);
+    }
+    public static function FILES_BOAT_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::FILES_BOAT);
+    }
+    public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
+    }
+    public static function IMAGES_OFFER_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_OFFER);
+    }
+
+    public static function IMAGES_LEMBONGAN_AREA_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_LEMBONGAN_AREA);
+    }
+
+    public static function IMAGES_HOMEPAGE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_HOMEPAGE);
+    }
+
+    public static function IMAGES_MENU_ITEM_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_MENU_ITEM);
+    }
+
+    public static function IMAGES_PAGE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PAGE);
+    }
+
+
+    public static function IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_EXPERIENCE);
+    }
+
+    public static function IMAGES_EXPERIENCE_TYPE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_EXPERIENCE_TYPE);
+    }
+
+    public static function IMAGES_EXPERIENCE_AREA_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_EXPERIENCE_AREA);
+    }
+
+    public static function PDF_EXPERIENCE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::PDF_EXPERIENCE);
+    }
+    /*
+     |--------------------------------------------------------------------------
+     | LANGUAGE PATH
+     |-------------------------------------------------------------------------
+     */
+    public static function LANG_STORAGE_PUBLIC_PATH($locale)
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::LANG . $locale . '/');
+    }
 }

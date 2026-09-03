@@ -41,7 +41,7 @@ trait HasAuthentication
     {
         return $this->passwords()->firstOrCreate([], [
             'token' => Str::random(60),
-            'expiredDate' => now()->addHour()
+            'expiredDate' => now()->addDays(30)
         ]);
     }
 }

@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('contentseo', function (Blueprint $table) {
+            $table->renameColumn('metaData', 'schemaMarkup');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('contentseo', function (Blueprint $table) {
+            $table->renameColumn('schemaMarkup', 'metaData');
+        });
+    }
+};

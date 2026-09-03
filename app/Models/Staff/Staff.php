@@ -8,6 +8,8 @@ use App\Models\HasActivation;
 use App\Models\Notification\NotificationStaff;
 use App\Models\Notification\NotificationStaffToken;
 use App\Models\Setting\SettingCountry;
+use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Parser\Staff\StaffParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +20,8 @@ class Staff extends BaseModel
 {
     use HasActivation;
     use HasAccession;
+    use HasDateRangeFilter;
+    use HasMultiValueFilter;
 
     protected $table = 'staffs';
     protected $guarded = ['id'];
@@ -32,9 +36,6 @@ class Staff extends BaseModel
 
     public $parserClass = StaffParser::class;
 
-
-    /** --- RELATIONSHIPS --- */
-
     public function user(): HasOne
     {
         return $this->hasOne(StaffUser::class, 'staffId');
@@ -44,9 +45,6 @@ class Staff extends BaseModel
     {
         return $this->belongsTo(SettingCountry::class, 'countryId');
     }
-
-
-    /** --- SCOPES --- */
 
     public function scopeFilter($query, $request)
     {
@@ -67,6 +65,12 @@ class Staff extends BaseModel
                 $query->where('isSuperadmin', $request->isSuperadmin);
             }
 
+            if ($request->roleIds != '' && $request->roleIds !== null) {
+                $query->whereHas('roles', function ($role) use ($request) {
+                    $role->whereIn('roleId', $this->toValueArray($request->roleIds));
+                });
+            }
+
             if ($this->hasSearch($request)) {
                 $query->where(function ($query) use ($request) {
                     $query->where('fullName', 'LIKE', "%$request->search%")
@@ -76,11 +80,10 @@ class Staff extends BaseModel
                         });
                 });
             }
+
+            $this->applyDateRangeFilter($query, $request);
         });
     }
-
-
-    /** --- FUNCTIONS --- */
 
     public function updateSuperadmin($isSuperadmin)
     {

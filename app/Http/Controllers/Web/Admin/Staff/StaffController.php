@@ -63,14 +63,12 @@ class StaffController extends Controller
         return success(StaffParser::briefs($staffs), pagination: pagination($staffs));
     }
 
-    /**
-     * @param $id
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed
-     */
     public function detail($id)
     {
-        
+        $staff = Staff::find($id);
+        if (!$staff) errStaffGet();
+
+        return success(StaffParser::first($staff));
     }
 
     /**

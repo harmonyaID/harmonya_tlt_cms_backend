@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Component;
 
-use GlobalXtreme\Validation\Support\FormRequest;
+use Logia\Core\Validation\Support\FormRequest;
 
 class ComponentRequest extends FormRequest
 {
@@ -11,6 +11,7 @@ class ComponentRequest extends FormRequest
      */
     public function authorize(): bool
     {
+
         return true;
     }
 

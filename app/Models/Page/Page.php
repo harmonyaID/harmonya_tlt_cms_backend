@@ -6,6 +6,7 @@ use App\Models\Access\Traits\HasAccession;
 use App\Models\BaseModel;
 use App\Models\HasActivation;
 use App\Models\Setting\SettingCountry;
+use App\Models\Traits\HasDateRangeFilter;
 use App\Parser\Page\PageParser;
 use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Storage\PathConstant;
@@ -17,6 +18,7 @@ class Page extends BaseModel
 {
     use HasActivation;
     use HasAccession;
+    use HasDateRangeFilter;
 
     protected $table = 'pages';
     protected $guarded = ['id'];
@@ -38,25 +40,25 @@ class Page extends BaseModel
     //     return $this->belongsTo(Language::class, 'language', 'code');
     // }
 
-    // public function createdBy()
-    // {
-    //     return $this->belongsTo(Staff::class, 'createdBy');
-    // }
+    public function createdBy()
+    {
+        return $this->belongsTo(\App\Models\Staff\Staff::class, 'createdBy');
+    }
 
-    // public function seo()
-    // {
-    //     return $this->morphOne(ContentSEO::class, 'contentseoable','contentableType','contentableId');
-    // }
+    public function seo()
+    {
+        return $this->morphOne(\App\Models\SEO\ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
 
     // public function photos()
     // {
     //     return $this->hasMany(PagePhoto::class, 'pageId');
     // }
 
-    // public function acf()
-    // {
-    //     return $this->morphMany(ContentAcf::class, 'contentacfable','contentableType','contentableId');
-    // }
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
 
 
 
@@ -64,7 +66,17 @@ class Page extends BaseModel
 
     public function scopeFilter($query, $request)
     {
-        return $query->orderBy('groupId', 'ASC')->groupBy('groupId')->where(function ($query) use ($request) {
+        return $query
+            ->when(!$request->filled('locale'), function ($q) {
+                $q->whereIn('id', function ($sub) {
+                    $sub->selectRaw('MIN(id)')
+                        ->from('pages')
+                        ->whereNull('deletedAt')
+                        ->groupBy('groupId');
+                });
+            })
+            ->orderBy('groupId', 'ASC')
+            ->where(function ($query) use ($request) {
 
             if ($request->has('search') && strlen($request->search) > 1) {
 
@@ -74,6 +86,16 @@ class Page extends BaseModel
                         ->orWhere("status", "LIKE", "%$request->search%");
                 });
             }
+
+            if ($request->has('status') && $request->status) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->has('locale') && $request->locale) {
+                $query->where('locale', $request->locale);
+            }
+
+            $this->applyDateRangeFilter($query, $request);
 
         });
     }

@@ -46,7 +46,28 @@
             "app/Services/Helpers/Status/auth.php",
             "app/Services/Helpers/Status/access.php",
             "app/Services/Helpers/Status/staff.php",
-            "app/Services/Helpers/Status/setting.php"
+            "app/Services/Helpers/Status/setting.php",
+            "app/Services/Helpers/Status/mediaPartner.php",
+            "app/Services/Helpers/Status/configuration.php",
+            "app/Services/Helpers/Status/language.php",
+            "app/Services/Helpers/Status/page.php",
+            "app/Services/Helpers/Status/websiteContactForm.php",
+            "app/Services/Helpers/Status/tltReview.php",
+            "app/Services/Helpers/Status/faq.php",
+            "app/Services/Helpers/Status/boat.php",
+            "app/Services/Helpers/Status/boatContactForm.php",
+            "app/Services/Helpers/Status/blog.php",
+            "app/Services/Helpers/Status/menu.php",
+            "app/Services/Helpers/Status/homepage.php",
+            "app/Services/Helpers/Status/amenity.php",
+            "app/Services/Helpers/Status/property.php",
+            "app/Services/Helpers/Status/lembonganArea.php",
+                        "app/Services/Helpers/Status/apiConfiguration.php",
+            "app/Services/Helpers/Status/offer.php",
+            "app/Services/Helpers/Status/teamMember.php",
+            "app/Services/Helpers/Status/tltTestimonial.php"
+
+
         ]
     },
     "scripts": {
