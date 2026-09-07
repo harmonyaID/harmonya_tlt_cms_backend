@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('component_contact_form_types', function (Blueprint $table) {
+        Schema::create('component_contact_form_inquiry_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('eventId')->nullable();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('component_contact_form_types');
+        Schema::dropIfExists('component_contact_form_inquiry_types');
     }
 };
