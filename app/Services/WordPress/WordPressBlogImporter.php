@@ -18,17 +18,6 @@ class WordPressBlogImporter
         $this->baseUrl = rtrim($baseUrl, '/');
     }
 
-    /**
-     * Fetch one page of posts from the WordPress REST API.
-     * `_embed=1` inlines featured media, author, and term (category/tag) data
-     * so we don't need extra requests per post.
-     *
-     * @param int $page
-     * @param int $perPage
-     *
-     * @return array
-     * @throws \Exception
-     */
     public function fetchPage(int $page = 1, int $perPage = 20): array
     {
         $response = Http::timeout(30)->get("{$this->baseUrl}/wp-json/wp/v2/posts", [
@@ -49,22 +38,11 @@ class WordPressBlogImporter
         return $response->json();
     }
 
-    /**
-     * Import (create or update, matched by slug) a single WordPress post into Blog.
-     *
-     * @param array $post raw WP REST API post object
-     *
-     * @return Blog
-     */
     public function importPost(array $post): Blog
     {
         $slug = $post['slug'];
         $title = html_entity_decode(strip_tags($post['title']['rendered'] ?? ''), ENT_QUOTES);
 
-        // Prefer the fully-rendered content from the live public page (guaranteed clean,
-        // since that's what real visitors see and WPBakery renders shortcodes properly
-        // there). Fall back to the REST API field (with shortcode-stripping) only if
-        // the live page fetch fails or no matching content container is found.
         $contentHtml = $this->fetchRenderedContent($post['link'] ?? null)
             ?? $this->cleanShortcodes($post['content']['rendered'] ?? '');
 
@@ -80,7 +58,7 @@ class WordPressBlogImporter
                 'categoryId' => $categoryId,
                 'title' => $title,
                 'excerpt' => Str::limit($excerpt, 500, ''),
-                'content' => $contentHtml,
+                // 'content' => $contentHtml,
                 'author' => $this->resolveAuthorName($post),
                 'publishedAt' => $post['date'] ?? now(),
                 'isActive' => ($post['status'] ?? 'publish') === 'publish',
@@ -103,22 +81,6 @@ class WordPressBlogImporter
         return $blog;
     }
 
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
-
-    /**
-     * Fetch the live, fully-rendered post page and extract just the article
-     * body HTML - bypassing the REST API entirely for this field, since some
-     * page builders (WPBakery included) don't process their shortcodes when
-     * WordPress serves content.rendered via the REST API.
-     *
-     * @param string|null $postUrl
-     *
-     * @return string|null
-     */
     private function fetchRenderedContent(?string $postUrl): ?string
     {
         if (!$postUrl) {
@@ -140,9 +102,6 @@ class WordPressBlogImporter
 
             $xpath = new \DOMXPath($dom);
 
-            // Try common WordPress theme content-wrapper selectors, in priority order.
-            // WPBakery renders its output *inside* one of these, as real HTML (vc_row/
-            // vc_column divs etc.) - never as raw [bracket] shortcode text.
             $queries = [
                 "//div[contains(concat(' ', normalize-space(@class), ' '), ' entry-content ')]",
                 "//div[contains(concat(' ', normalize-space(@class), ' '), ' post-content ')]",
@@ -185,20 +144,8 @@ class WordPressBlogImporter
         return $html;
     }
 
-    /**
-     * Strip page-builder shortcode wrappers (WPBakery/Visual Composer, e.g.
-     * [vc_row][vc_column][vc_column_text]...) that sometimes leak through the
-     * REST API unrendered. Only the bracket tags themselves are removed -
-     * any real HTML (<p>, <strong>, <a href>, etc.) inside them is preserved.
-     *
-     * @param string $content
-     *
-     * @return string
-     */
     private function cleanShortcodes(string $content): string
     {
-        // Matches [shortcode_name attr="value" ...] and [/shortcode_name] forms.
-        // Deliberately does NOT touch real HTML tags (those use < >, not [ ]).
         $cleaned = preg_replace('/\[\/?[a-zA-Z0-9_\-]+(?:\s[^\]]*)?\]/', '', $content);
 
         return trim($cleaned);

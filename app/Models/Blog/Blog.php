@@ -62,6 +62,16 @@ class Blog extends BaseModel
     {
         return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
     }
+
+    public function visitors()
+    {
+        return $this->morphMany(\App\Models\Visitor\ContentVisitor::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function uniqueVisitorCount(): int
+    {
+        return $this->visitors()->count();
+    }
     /*
      |--------------------------------------------------------------------------
      | Scopes
