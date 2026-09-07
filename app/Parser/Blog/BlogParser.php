@@ -36,6 +36,7 @@ class BlogParser extends BaseParser
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
+            'uniqueVisitorCount' => $data->uniqueVisitorCount(),
 
         ];
     }
@@ -64,6 +65,7 @@ class BlogParser extends BaseParser
             'isActive' => $data->isActive,
             'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'uniqueVisitorCount' => $data->uniqueVisitorCount(),
         ];
     }
 }

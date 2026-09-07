@@ -23,7 +23,8 @@ class ComponentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'eventId' => 'required|string|nullable'
         ];
     }
 }
