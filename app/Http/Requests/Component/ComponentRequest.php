@@ -24,7 +24,7 @@ class ComponentRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'eventId' => 'required|string|nullable'
+            'eventId' => 'string|nullable'
         ];
     }
 }
