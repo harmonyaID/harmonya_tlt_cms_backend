@@ -30,7 +30,7 @@ class OfferAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'propertyIds', 'seo', 'acf');
+                $data = $request->except('thumbnail', 'propertyIds', 'tagIds', 'seo', 'acf');
                 $data['slug'] = Str::slug($request->slug ?: $request->title);
                 $data['publishedAt'] = $request->publishedAt ?: now();
 
@@ -48,6 +48,10 @@ class OfferAlgo
                     $this->offer->properties()->sync($request->propertyIds);
                 }
 
+                if ($request->has('tagIds') && is_array($request->tagIds)) {
+                    $this->offer->tags()->sync($request->tagIds);
+                }
+
                 (new ContentSeoAlgo($this->offer))->save($request);
                 (new ContentAcfAlgo($this->offer))->save($request);
 
@@ -58,7 +62,7 @@ class OfferAlgo
                     ->log("Enter new offer: " . $this->offer->title);
             });
 
-            return success($this->offer->load('properties', 'seo', 'acf'));
+            return success($this->offer->load('properties', 'category', 'tags', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -70,7 +74,7 @@ class OfferAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'propertyIds', 'seo', 'acf');
+                $data = $request->except('thumbnail', 'propertyIds', 'tagIds', 'seo', 'acf');
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
                 }
@@ -97,6 +101,10 @@ class OfferAlgo
                     $this->offer->properties()->sync($request->propertyIds);
                 }
 
+                if ($request->has('tagIds') && is_array($request->tagIds)) {
+                    $this->offer->tags()->sync($request->tagIds);
+                }
+
                 (new ContentSeoAlgo($this->offer))->save($request);
                 (new ContentAcfAlgo($this->offer))->save($request);
 
@@ -107,7 +115,7 @@ class OfferAlgo
                     ->log("Update offer: " . $this->offer->title);
             });
 
-            return success($this->offer->load('properties', 'seo', 'acf'));
+            return success($this->offer->load('properties', 'category', 'tags', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }

@@ -23,6 +23,8 @@ class ActivityType extends BaseCodeName
     const BLOG_TAG = 'blog_tag';
     const BLOG = 'blog';
     const OFFER = 'offer';
+    const OFFER_CATEGORY = 'offer_category';
+    const OFFER_TAG = 'offer_tag';
     const TEAM_MEMBER = 'team_member';
     const TLT_TESTIMONIAL = 'tlt_testimonial';
     const EXPERIENCE_TYPE = 'experience_type';
@@ -64,6 +66,9 @@ class ActivityType extends BaseCodeName
         self::BLOG_TAG,
         self::BLOG,
         self::OFFER,
+        self::OFFER,
+        self::OFFER_CATEGORY,
+        self::OFFER_TAG,
         self::TEAM_MEMBER,
         self::TLT_TESTIMONIAL,
         self::EXPERIENCE_TYPE,
