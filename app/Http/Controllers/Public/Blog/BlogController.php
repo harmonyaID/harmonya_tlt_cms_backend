@@ -14,13 +14,13 @@ class BlogController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $blogs = Blog::filter($request)->with(['category', 'tags'])->getOrPaginate($request);
+        $blogs = Blog::filter($request)->with(['category', 'tags', 'properties'])->getOrPaginate($request);
         return success(BlogParser::briefs($blogs), pagination: pagination($blogs));
     }
 
     public function detail($idOrSlug, Request $request)
     {
-        $blog = Blog::where('isActive', true)->bySlugOrId($idOrSlug)->with(['category', 'tags', 'seo', 'acf'])->first();
+        $blog = Blog::where('isActive', true)->bySlugOrId($idOrSlug)->with(['category', 'tags', 'properties', 'properties', 'seo', 'acf'])->first();
         if (!$blog) {
             errBlogGet();
         }

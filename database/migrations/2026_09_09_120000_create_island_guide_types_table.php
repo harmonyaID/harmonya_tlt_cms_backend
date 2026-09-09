@@ -26,3 +26,4 @@ return new class extends Migration
         Schema::dropIfExists('island_guide_types');
     }
 };
+

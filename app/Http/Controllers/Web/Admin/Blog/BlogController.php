@@ -65,13 +65,13 @@ class BlogController extends Controller
 
     public function get(Request $request)
     {
-        $blogs = Blog::filter($request)->with('category', 'tags', 'seo', 'acf')->getOrPaginate($request);
+        $blogs = Blog::filter($request)->with('category', 'tags', 'properties', 'properties', 'seo', 'acf')->getOrPaginate($request);
         return success(BlogParser::briefs($blogs), pagination: pagination($blogs));
     }
 
     public function detail($id)
     {
-        $blog = Blog::with('category', 'tags', 'seo', 'acf')->find($id);
+        $blog = Blog::with('category', 'tags', 'properties', 'properties', 'seo', 'acf')->find($id);
         if (!$blog) {
             errBlogGet();
         }

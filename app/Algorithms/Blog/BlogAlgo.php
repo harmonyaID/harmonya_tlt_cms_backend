@@ -31,7 +31,7 @@ class BlogAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'tagIds', 'seo', 'acf');
+                $data = $request->except('thumbnail', 'tagIds', 'propertyIds', 'promoBanner', 'deletePromoBanner', 'seo', 'acf');
                 $data['slug'] = Str::slug($request->slug ?: $request->title);
                 $data['publishedAt'] = $this->parsePublishedAt($request->publishedAt) ?? now();
 
@@ -39,6 +39,15 @@ class BlogAlgo
                 $this->blog = Blog::create($data + created_by());
                 if (!$this->blog) {
                     errBlogSave();
+                }
+
+                if ($request->has('propertyIds') && is_array($request->propertyIds)) {
+                    $this->blog->properties()->sync($this->propertySyncData($request->propertyIds));
+                }
+
+                if ($request->hasFile('promoBanner') && $request->file('promoBanner')->isValid()) {
+                    $this->blog->promoBanner = $this->uploadPromoBanner($request);
+                    $this->blog->save();
                 }
 
                 if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
@@ -60,7 +69,7 @@ class BlogAlgo
                     ->log("Enter new blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags', 'seo', 'acf'));
+            return success($this->blog->load('category', 'tags', 'properties', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -72,12 +81,25 @@ class BlogAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'tagIds', 'seo', 'acf');
+                $data = $request->except('thumbnail', 'tagIds', 'propertyIds', 'promoBanner', 'deletePromoBanner', 'seo', 'acf');
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
                 }
 
                 $this->blog->update($data);
+
+                if ($request->has('propertyIds') && is_array($request->propertyIds)) {
+                    $this->blog->properties()->sync($this->propertySyncData($request->propertyIds));
+                }
+
+                if ($request->boolean('deletePromoBanner')) {
+                    $this->deletePromoBanner();
+                }
+
+                if ($request->hasFile('promoBanner') && $request->file('promoBanner')->isValid()) {
+                    $this->blog->promoBanner = $this->uploadPromoBanner($request);
+                    $this->blog->save();
+                }
 
                 if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
                     $this->blog->thumbnail = $this->uploadThumbnail($request);
@@ -108,7 +130,7 @@ class BlogAlgo
                     ->log("Update blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags', 'seo', 'acf'));
+            return success($this->blog->load('category', 'tags', 'properties', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -126,6 +148,8 @@ class BlogAlgo
                 }
 
                 $this->blog->tags()->detach();
+                $this->blog->properties()->detach();
+                $this->deletePromoBanner();
 
                 if (!$this->blog->delete()) {
                     errBlogDelete();
@@ -149,6 +173,30 @@ class BlogAlgo
      | Functions
      |-------------------------------------------------------------------------
      */
+
+    private function propertySyncData(array $propertyIds): array
+    {
+        return collect($propertyIds)->values()->mapWithKeys(fn($propertyId, $index) => [$propertyId => ['order' => $index]])->all();
+    }
+
+    private function uploadPromoBanner(Request $request): string
+    {
+        $image = $request->file('promoBanner');
+        $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+        if (!file_exists($dirPath)) mkdir($dirPath, 0777, true);
+        $this->deletePromoBanner();
+        $filename = filename($image, $this->blog->title . '-promo-banner');
+        $image->move($dirPath, $filename);
+        return $filename;
+    }
+
+    private function deletePromoBanner(): void
+    {
+        $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+        if ($this->blog->promoBanner && file_exists($dirPath . $this->blog->promoBanner)) unlink($dirPath . $this->blog->promoBanner);
+        $this->blog->promoBanner = null;
+        $this->blog->save();
+    }
 
     private function parsePublishedAt(?string $value): ?Carbon
     {

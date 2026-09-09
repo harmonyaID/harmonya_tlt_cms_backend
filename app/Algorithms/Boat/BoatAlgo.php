@@ -340,24 +340,42 @@ class BoatAlgo
 
     private function syncCustomInformations(Request $request): void
     {
-        $incoming   = collect($request->input('customInformations', []));
-        $incomingIds = $incoming->pluck('id')->filter()->values()->toArray();
+        $groups = collect($request->input('customInformations', []));
+        $incomingIds = $groups
+            ->flatMap(fn ($group) => collect($group['customInformations'] ?? []))
+            ->pluck('id')
+            ->filter()
+            ->values()
+            ->toArray();
 
-        // hapus yang tidak dikirim
-        $this->boat->customInformations()
-            ->whereNotIn('id', $incomingIds)
-            ->delete();
+        $query = $this->boat->customInformations();
 
-        foreach ($incoming as $item) {
-            $this->boat->customInformations()->updateOrCreate(
-                ['id' => $item['id'] ?? null],
-                [
-                    'boatId' => $this->boat->id,
-                    'name'   => $item['name'],
-                    'value'  => $item['value'],
-                    'order'  => $item['order'] ?? 0,
-                ]
-            );
+        if (!empty($incomingIds)) {
+            $query->whereNotIn('id', $incomingIds)->delete();
+        } else {
+            $query->delete();
+        }
+
+        foreach ($groups as $group) {
+            $groupName = $group['name'];
+
+            foreach (collect($group['customInformations'] ?? []) as $index => $item) {
+                $attributes = [
+                    'boatId'    => $this->boat->id,
+                    'groupName' => $groupName,
+                    'name'      => $item['name'],
+                    'value'     => $item['value'],
+                    'order'     => $item['order'] ?? $index,
+                ];
+
+                if (!empty($item['id'])) {
+                    $this->boat->customInformations()
+                        ->whereKey($item['id'])
+                        ->update($attributes);
+                } else {
+                    $this->boat->customInformations()->create($attributes);
+                }
+            }
         }
     }
 }

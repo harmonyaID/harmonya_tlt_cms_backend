@@ -14,6 +14,9 @@ class ExperienceTypeRequest extends FormRequest
             'name' => 'required|string',
             'description' => 'nullable|string',
 
+            'blogIds' => 'nullable|array|max:2',
+            'blogIds.*' => 'integer|distinct|exists:blogs,id',
+
             'featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deleteFeaturedImage' => 'nullable|boolean',
 

@@ -15,6 +15,7 @@ class ExperienceTypeParser extends BaseParser
             'id' => $data->id,
             'name' => $data->name,
             'description' => $data->description,
+            'blogs' => $data->blogs->map(fn($blog) => ['id' => $blog->id, 'title' => $blog->title])->values(),
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
             'seo' => SeoParser::first($data->seo),
@@ -30,6 +31,7 @@ class ExperienceTypeParser extends BaseParser
             'id' => $data->id,
             'name' => $data->name,
             'description' => $data->description,
+            'blogs' => $data->blogs->map(fn($blog) => ['id' => $blog->id, 'title' => $blog->title])->values(),
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
         ];
