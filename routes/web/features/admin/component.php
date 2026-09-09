@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\Component\ComponentContactFormInquiryTypeController;
 use App\Http\Controllers\Web\Admin\Component\ComponentContactFormTypeController;
 use App\Http\Controllers\Web\Admin\Component\ComponentCountryController;
 use App\Http\Controllers\Web\Admin\Component\ComponentStaticController;
@@ -32,6 +33,15 @@ Route::prefix("components")
                 Route::put('{componentContactFormType}', [ComponentContactFormTypeController::class, 'update']);
                 Route::delete('{componentContactFormType}', [ComponentContactFormTypeController::class, 'delete']);
             });
+
+        Route::prefix('contact-form-inquiry-types')
+            ->group(function () {
+                Route::get('', [ComponentContactFormInquiryTypeController::class, 'get']);
+                Route::post('', [ComponentContactFormInquiryTypeController::class, 'create']);
+                Route::put('{componentContactFormInquiryType}', [ComponentContactFormInquiryTypeController::class, 'update']);
+                Route::delete('{componentContactFormInquiryType}', [ComponentContactFormInquiryTypeController::class, 'delete']);
+            });
+
 
         Route::prefix('countries')
             ->group(function () {

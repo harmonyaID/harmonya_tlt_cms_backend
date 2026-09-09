@@ -10,6 +10,7 @@ class ActivityType extends BaseCodeName
     const STAFF = 'staff';
     const SETTING = 'setting';
     const C_CONTACT_FORM_TYPE = 'component_contact_form_type';
+    const C_CONTACT_FORM_INQUIRY_TYPE = 'component_contact_form_inquiry_type';
     const MEDIA_PARTNER = 'media_partner';
     const WEBSITE_CONTACT_FORM = 'website_contact_form';
     const TLT_REVIEW = 'tlt_review';
@@ -50,6 +51,7 @@ class ActivityType extends BaseCodeName
         self::STAFF,
         self::SETTING,
         self::C_CONTACT_FORM_TYPE,
+        self::C_CONTACT_FORM_INQUIRY_TYPE,
         self::MEDIA_PARTNER,
         self::WEBSITE_CONTACT_FORM,
         self::TLT_REVIEW,
