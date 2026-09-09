@@ -7,6 +7,7 @@ use App\Models\SEO\ContentSeo;
 use App\Parser\Experience\ExperienceTypeParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 
 class ExperienceType extends BaseModel
@@ -27,6 +28,11 @@ class ExperienceType extends BaseModel
     ];
 
     public $parserClass = ExperienceTypeParser::class;
+
+    public function blogs(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Blog\Blog::class, 'experience_type_blog', 'experienceTypeId', 'blogId');
+    }
 
     public function scopeFilter($query, $request)
     {

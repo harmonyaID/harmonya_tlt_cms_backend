@@ -2,58 +2,43 @@
 
 namespace App\Http\Controllers\Web\Admin\Experience;
 
-use App\Algorithms\Experience\ExperienceAlgo;
+use App\Algorithms\Experience\ExperienceTypeAlgo;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\HasTrash;
-use App\Http\Requests\Experience\ExperienceRequest;
-use App\Models\Experience\Experience;
-use App\Parser\Experience\ExperienceParser;
+use App\Http\Requests\Experience\ExperienceTypeRequest;
+use App\Models\Experience\ExperienceType;
+use App\Parser\Experience\ExperienceTypeParser;
 use App\Services\Constant\Access\AccessPermissionName;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
-class ExperienceController extends Controller
+class ExperienceTypeController extends Controller
 {
     use HasTrash;
 
     public function __construct()
     {
         if (config('auth.with-permission')) {
-            $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_VIEW);
-                return $next($request);
-            })->only(['get', 'detail', 'trash']);
-
-            $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_CREATE);
-                return $next($request);
-            })->only(['create']);
-
-            $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_UPDATE);
-                return $next($request);
-            })->only(['update']);
-
-            $this->middleware(function ($request, $next) {
-                has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_DELETE);
-                return $next($request);
-            })->only(['delete', 'restore', 'forceDelete']);
+            $this->middleware(fn($req, $next) => tap($next($req), fn() => has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_TYPE_VIEW)))->only(['get', 'detail']);
+            $this->middleware(fn($req, $next) => tap($next($req), fn() => has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_TYPE_CREATE)))->only(['create']);
+            $this->middleware(fn($req, $next) => tap($next($req), fn() => has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_TYPE_UPDATE)))->only(['update']);
+            $this->middleware(fn($req, $next) => tap($next($req), fn() => has_permission_staff(AccessPermissionName::STAFF_EXPERIENCE_TYPE_DELETE)))->only(['delete']);
         }
     }
 
     protected function trashModel(): string
     {
-        return Experience::class;
+        return ExperienceType::class;
     }
 
     protected function trashParser(): string
     {
-        return ExperienceParser::class;
+        return ExperienceTypeParser::class;
     }
 
     protected function trashActivityType(): string
     {
-        return ActivityType::EXPERIENCE;
+        return ActivityType::EXPERIENCE_TYPE;
     }
 
     protected function trashLabel($item): string
@@ -63,29 +48,29 @@ class ExperienceController extends Controller
 
     public function get(Request $request)
     {
-        $experiences = Experience::filter($request)->with('type', 'area', 'photos', 'seo', 'acf')->getOrPaginate($request);
-        return success(ExperienceParser::briefs($experiences), pagination: pagination($experiences));
+        $types = ExperienceType::filter($request)->with('blogs')->getOrPaginate($request);
+        return success(ExperienceTypeParser::briefs($types), pagination: pagination($types));
     }
 
     public function detail($id)
     {
-        $experience = Experience::with('type', 'area', 'photos', 'seo', 'acf')->find($id);
-        if (!$experience) errExperienceGet();
-        return success(ExperienceParser::first($experience));
+        $type = ExperienceType::with('seo', 'blogs')->find($id);
+        if (!$type) errExperienceTypeGet();
+        return success(ExperienceTypeParser::first($type));
     }
 
-    public function create(ExperienceRequest $request)
+    public function create(ExperienceTypeRequest $request)
     {
-        return (new ExperienceAlgo())->create($request);
+        return (new ExperienceTypeAlgo())->create($request);
     }
 
-    public function update($id, ExperienceRequest $request)
+    public function update($id, ExperienceTypeRequest $request)
     {
-        return (new ExperienceAlgo((int)$id))->update($request);
+        return (new ExperienceTypeAlgo((int)$id))->update($request);
     }
 
     public function delete($id)
     {
-        return (new ExperienceAlgo((int)$id))->delete();
+        return (new ExperienceTypeAlgo((int)$id))->delete();
     }
 }

@@ -39,6 +39,13 @@ class BlogRequest extends FormRequest
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deleteThumbnail' => 'nullable|boolean',
 
+            'promoBanner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'promoBannerUrl' => 'nullable|url|max:2048',
+            'deletePromoBanner' => 'nullable|boolean',
+
+            'propertyIds' => 'nullable|array|max:9',
+            'propertyIds.*' => 'integer|distinct|exists:properties,id',
+
             'tagIds' => 'nullable|array',
             'tagIds.*' => 'integer|exists:blog_tags,id',
 

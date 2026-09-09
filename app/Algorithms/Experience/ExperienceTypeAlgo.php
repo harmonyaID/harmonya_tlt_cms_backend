@@ -25,9 +25,13 @@ class ExperienceTypeAlgo
         try {
             DB::transaction(function () use ($request) {
                 $this->experienceType = ExperienceType::create(
-                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner']) + created_by()
+                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner', 'blogIds']) + created_by()
                 );
                 if (!$this->experienceType) errExperienceTypeSave();
+
+                if ($request->has('blogIds') && is_array($request->blogIds)) {
+                    $this->experienceType->blogs()->sync($request->blogIds);
+                }
 
                 if ($request->hasFile('featuredImage') && $request->file('featuredImage')->isValid()) {
                     $this->experienceType->featuredImage = $this->uploadImage($request->file('featuredImage'), 'featured');
@@ -46,7 +50,7 @@ class ExperienceTypeAlgo
                     ->log("Enter new experience type: " . $this->experienceType->name);
             });
 
-            return success($this->experienceType->load('seo'));
+            return success($this->experienceType->load('blogs', 'seo'));
         } catch (\Error $error) { exception($error); }
     }
 
@@ -55,7 +59,7 @@ class ExperienceTypeAlgo
         try {
             DB::transaction(function () use ($request) {
                 $this->experienceType->update(
-                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner'])
+                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner', 'blogIds'])
                 );
 
                 if ($request->boolean('deleteFeaturedImage')) {
@@ -82,6 +86,10 @@ class ExperienceTypeAlgo
                     $this->experienceType->save();
                 }
 
+                if ($request->has('blogIds') && is_array($request->blogIds)) {
+                    $this->experienceType->blogs()->sync($request->blogIds);
+                }
+
                 (new ContentSeoAlgo($this->experienceType))->save($request);
 
                 activity()->setCausedBy()->setReference($this->experienceType)
@@ -89,7 +97,7 @@ class ExperienceTypeAlgo
                     ->log("Update experience type: " . $this->experienceType->name);
             });
 
-            return success($this->experienceType->load('seo'));
+            return success($this->experienceType->load('blogs', 'seo'));
         } catch (\Error $error) { exception($error); }
     }
 
