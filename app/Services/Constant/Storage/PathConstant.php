@@ -68,6 +68,7 @@ class PathConstant
     const IMAGES_ISLAND_GUIDE = 'images/island-guides/';
     const IMAGES_ISLAND_GUIDE_TYPE = 'images/island-guide-types/';
     const IMAGES_ISLAND_GUIDE_AREA = 'images/island-guide-areas/';
+    const PDF_ISLAND_GUIDE = 'PDFs/island-guides/';
 
     const IMAGES_SEO = 'images/seo/';
 
@@ -204,6 +205,11 @@ class PathConstant
     public static function IMAGES_ISLAND_GUIDE_AREA_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_ISLAND_GUIDE_AREA);
+    }
+
+    public static function PDF_ISLAND_GUIDE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::PDF_ISLAND_GUIDE);
     }
     /*
      |--------------------------------------------------------------------------

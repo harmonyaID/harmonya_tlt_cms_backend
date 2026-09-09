@@ -26,7 +26,7 @@ class IslandGuideType extends BaseModel
         self::DELETED_AT => 'datetime',
     ];
 
-    // public $parserClass = IslandGuideTypeParser::class;
+    public $parserClass = IslandGuideTypeParser::class;
 
     public function scopeFilter($query, $request)
     {
