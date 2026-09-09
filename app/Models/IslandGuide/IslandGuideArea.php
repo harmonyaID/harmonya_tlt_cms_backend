@@ -27,7 +27,7 @@ class IslandGuideArea extends BaseModel
         self::DELETED_AT => 'datetime',
     ];
 
-    // public $parserClass = IslandGuideAreaParser::class;
+    public $parserClass = IslandGuideAreaParser::class;
 
     /*
      |--------------------------------------------------------------------------
@@ -44,7 +44,6 @@ class IslandGuideArea extends BaseModel
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
     }
-
     /*
      |--------------------------------------------------------------------------
      | Scopes

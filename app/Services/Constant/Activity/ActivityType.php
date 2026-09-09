@@ -30,6 +30,9 @@ class ActivityType extends BaseCodeName
     const EXPERIENCE_TYPE = 'experience_type';
     const EXPERIENCE_AREA = 'experience_area';
     const EXPERIENCE = 'experience';
+    const ISLAND_GUIDE_TYPE = 'island_guide_type';
+    const ISLAND_GUIDE_AREA = 'island_guide_area';
+    const ISLAND_GUIDE = 'island_guide';
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
     const MENU = 'menu';
     const HOMEPAGE = 'homepage';
@@ -74,6 +77,9 @@ class ActivityType extends BaseCodeName
         self::EXPERIENCE_TYPE,
         self::EXPERIENCE_AREA,
         self::EXPERIENCE,
+        self::ISLAND_GUIDE_TYPE,
+        self::ISLAND_GUIDE_AREA,
+        self::ISLAND_GUIDE,
         self::EXPERIENCE_INQUIRY_FORM,
         self::MENU,
         self::HOMEPAGE,

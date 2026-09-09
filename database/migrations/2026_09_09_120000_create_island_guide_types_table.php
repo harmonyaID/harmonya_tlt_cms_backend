@@ -17,7 +17,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('featuredImage')->nullable();
             $table->string('banner')->nullable();
-
             $this->getDefaultTimestamps($table);
         });
     }

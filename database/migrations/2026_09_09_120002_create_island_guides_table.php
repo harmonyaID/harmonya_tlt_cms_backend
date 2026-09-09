@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('island_guides', function (Blueprint $table) {
             $table->id();
+            $table->string('locale')->nullable()->default('en');
             $table->foreignId('islandGuideTypeId');
             $table->foreignId('islandGuideAreaId')->nullable();
             $table->string('name');
@@ -24,11 +25,9 @@ return new class extends Migration
             $table->string('whatsapp')->nullable();
             $table->string('instagram')->nullable();
             $table->string('website')->nullable();
-            $table->string('locale')->nullable()->default('en');
             $table->boolean('isActive')->default(true);
             $table->boolean('showInquiry')->default(false);
             $table->json('catalogs')->nullable();
-
             $this->getDefaultTimestamps($table);
         });
     }

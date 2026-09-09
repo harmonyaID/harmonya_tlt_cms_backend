@@ -187,6 +187,27 @@ class AccessPermissionName
     const STAFF_EXPERIENCE_INQUIRY_FORM_CREATE = AccessGroup::STAFF . '.experience-inquiry-form.create';
     const STAFF_EXPERIENCE_INQUIRY_FORM_DELETE = AccessGroup::STAFF . '.experience-inquiry-form.delete';
 
+    // Island Guide Type
+    const STAFF_ISLAND_GUIDE_TYPE = AccessGroup::STAFF . '.island-guide-type.*';
+    const STAFF_ISLAND_GUIDE_TYPE_VIEW = AccessGroup::STAFF . '.island-guide-type.view';
+    const STAFF_ISLAND_GUIDE_TYPE_CREATE = AccessGroup::STAFF . '.island-guide-type.create';
+    const STAFF_ISLAND_GUIDE_TYPE_UPDATE = AccessGroup::STAFF . '.island-guide-type.update';
+    const STAFF_ISLAND_GUIDE_TYPE_DELETE = AccessGroup::STAFF . '.island-guide-type.delete';
+
+    // Island Guide Area
+    const STAFF_ISLAND_GUIDE_AREA = AccessGroup::STAFF . '.island-guide-area.*';
+    const STAFF_ISLAND_GUIDE_AREA_VIEW = AccessGroup::STAFF . '.island-guide-area.view';
+    const STAFF_ISLAND_GUIDE_AREA_CREATE = AccessGroup::STAFF . '.island-guide-area.create';
+    const STAFF_ISLAND_GUIDE_AREA_UPDATE = AccessGroup::STAFF . '.island-guide-area.update';
+    const STAFF_ISLAND_GUIDE_AREA_DELETE = AccessGroup::STAFF . '.island-guide-area.delete';
+
+    // Island Guide
+    const STAFF_ISLAND_GUIDE = AccessGroup::STAFF . '.island-guide.*';
+    const STAFF_ISLAND_GUIDE_VIEW = AccessGroup::STAFF . '.island-guide.view';
+    const STAFF_ISLAND_GUIDE_CREATE = AccessGroup::STAFF . '.island-guide.create';
+    const STAFF_ISLAND_GUIDE_UPDATE = AccessGroup::STAFF . '.island-guide.update';
+    const STAFF_ISLAND_GUIDE_DELETE = AccessGroup::STAFF . '.island-guide.delete';
+
     // Menu
     const STAFF_MENU = AccessGroup::STAFF . '.menu.*';
     const STAFF_MENU_VIEW = AccessGroup::STAFF . '.menu.view';
@@ -423,6 +444,24 @@ class AccessPermissionName
         self::STAFF_EXPERIENCE_CREATE,
         self::STAFF_EXPERIENCE_UPDATE,
         self::STAFF_EXPERIENCE_DELETE,
+
+        self::STAFF_ISLAND_GUIDE_TYPE,
+        self::STAFF_ISLAND_GUIDE_TYPE_VIEW,
+        self::STAFF_ISLAND_GUIDE_TYPE_CREATE,
+        self::STAFF_ISLAND_GUIDE_TYPE_UPDATE,
+        self::STAFF_ISLAND_GUIDE_TYPE_DELETE,
+
+        self::STAFF_ISLAND_GUIDE_AREA,
+        self::STAFF_ISLAND_GUIDE_AREA_VIEW,
+        self::STAFF_ISLAND_GUIDE_AREA_CREATE,
+        self::STAFF_ISLAND_GUIDE_AREA_UPDATE,
+        self::STAFF_ISLAND_GUIDE_AREA_DELETE,
+
+        self::STAFF_ISLAND_GUIDE,
+        self::STAFF_ISLAND_GUIDE_VIEW,
+        self::STAFF_ISLAND_GUIDE_CREATE,
+        self::STAFF_ISLAND_GUIDE_UPDATE,
+        self::STAFF_ISLAND_GUIDE_DELETE,
 
         self::STAFF_EXPERIENCE_INQUIRY_FORM,
         self::STAFF_EXPERIENCE_INQUIRY_FORM_VIEW,

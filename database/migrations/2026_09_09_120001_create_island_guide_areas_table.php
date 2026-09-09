@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('island_guide_areas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('islandGuideTypeId')->nullable();
+            $table->foreignId('islandGuideTypeId');
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('featuredImage')->nullable();
             $table->string('banner')->nullable();
-
             $this->getDefaultTimestamps($table);
         });
     }
