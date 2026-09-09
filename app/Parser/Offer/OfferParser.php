@@ -19,14 +19,21 @@ class OfferParser extends BaseParser
             $properties[] = ['id' => $property->id, 'nickname' => $property->nickname];
         }
 
+        $tags = [];
+        foreach ($data->tags as $tag) {
+            $tags[] = ['id' => $tag->id, 'name' => $tag->name];
+        }
+
         return [
             'id' => $data->id,
+            'category' => optional($data->category)->only('id', 'name'),
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),
             'excerpt' => $data->excerpt,
             'content' => $data->content,
             'properties' => $properties,
+            'tags' => $tags,
             'startDate' => optional($data->startDate)->format('d/m/Y'),
             'endDate' => optional($data->endDate)->format('d/m/Y'),
             'locale' => $data->locale,
@@ -46,6 +53,7 @@ class OfferParser extends BaseParser
 
         return [
             'id' => $data->id,
+            'category' => optional($data->category)->only('id', 'name'),
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),

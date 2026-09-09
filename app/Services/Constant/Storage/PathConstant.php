@@ -65,6 +65,9 @@ class PathConstant
     const IMAGES_EXPERIENCE_TYPE = 'images/experience-types/';
     const IMAGES_EXPERIENCE_AREA = 'images/experience-areas/';
     const PDF_EXPERIENCE = 'PDFs/experiences/';
+    const IMAGES_ISLAND_GUIDE = 'images/island-guides/';
+    const IMAGES_ISLAND_GUIDE_TYPE = 'images/island-guide-types/';
+    const IMAGES_ISLAND_GUIDE_AREA = 'images/island-guide-areas/';
 
     const IMAGES_SEO = 'images/seo/';
 
@@ -186,6 +189,21 @@ class PathConstant
     public static function PDF_EXPERIENCE_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::PDF_EXPERIENCE);
+    }
+
+    public static function IMAGES_ISLAND_GUIDE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_ISLAND_GUIDE);
+    }
+
+    public static function IMAGES_ISLAND_GUIDE_TYPE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_ISLAND_GUIDE_TYPE);
+    }
+
+    public static function IMAGES_ISLAND_GUIDE_AREA_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_ISLAND_GUIDE_AREA);
     }
     /*
      |--------------------------------------------------------------------------

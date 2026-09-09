@@ -44,13 +44,13 @@ class OfferController extends Controller
 
     public function get(Request $request)
     {
-        $offers = Offer::filter($request)->with('properties', 'seo')->getOrPaginate($request);
+        $offers = Offer::filter($request)->with('properties', 'category', 'tags', 'seo')->getOrPaginate($request);
         return success(OfferParser::briefs($offers), pagination: pagination($offers));
     }
 
     public function detail($id)
     {
-        $offer = Offer::with('properties', 'seo', 'acf')->find($id);
+        $offer = Offer::with('properties', 'category', 'tags', 'seo', 'acf')->find($id);
         if (!$offer) {
             errOfferGet();
         }

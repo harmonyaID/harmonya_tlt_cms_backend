@@ -19,6 +19,7 @@ class OfferRequest extends FormRequest
         $offerId = $this->route('id');
 
         return array_merge([
+            'categoryId' => 'nullable|integer|exists:offer_categories,id',
             'title' => 'required|string',
 
             'slug' => [
@@ -40,6 +41,9 @@ class OfferRequest extends FormRequest
 
             'propertyIds' => 'nullable|array',
             'propertyIds.*' => 'integer|exists:properties,id',
+
+            'tagIds' => 'nullable|array',
+            'tagIds.*' => 'integer|exists:offer_tags,id',
 
             'seo' => 'nullable|array',
         ], SeoRule::rules(), AcfRule::rules());

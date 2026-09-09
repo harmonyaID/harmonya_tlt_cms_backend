@@ -133,6 +133,20 @@ class AccessPermissionName
     const STAFF_OFFER_UPDATE = AccessGroup::STAFF . '.offer.update';
     const STAFF_OFFER_DELETE = AccessGroup::STAFF . '.offer.delete';
 
+    // Offer Category
+    const STAFF_OFFER_CATEGORY = AccessGroup::STAFF . '.offer-category.*';
+    const STAFF_OFFER_CATEGORY_VIEW = AccessGroup::STAFF . '.offer-category.view';
+    const STAFF_OFFER_CATEGORY_CREATE = AccessGroup::STAFF . '.offer-category.create';
+    const STAFF_OFFER_CATEGORY_UPDATE = AccessGroup::STAFF . '.offer-category.update';
+    const STAFF_OFFER_CATEGORY_DELETE = AccessGroup::STAFF . '.offer-category.delete';
+
+    // Offer Tag
+    const STAFF_OFFER_TAG = AccessGroup::STAFF . '.offer-tag.*';
+    const STAFF_OFFER_TAG_VIEW = AccessGroup::STAFF . '.offer-tag.view';
+    const STAFF_OFFER_TAG_CREATE = AccessGroup::STAFF . '.offer-tag.create';
+    const STAFF_OFFER_TAG_UPDATE = AccessGroup::STAFF . '.offer-tag.update';
+    const STAFF_OFFER_TAG_DELETE = AccessGroup::STAFF . '.offer-tag.delete';
+
     // Team Member
     const STAFF_TEAM_MEMBER = AccessGroup::STAFF . '.team-member.*';
     const STAFF_TEAM_MEMBER_VIEW = AccessGroup::STAFF . '.team-member.view';
@@ -356,12 +370,18 @@ class AccessPermissionName
         self::STAFF_BLOG_UPDATE,
         self::STAFF_BLOG_DELETE,
 
-        self::STAFF_OFFER,
-        self::STAFF_OFFER_VIEW,
-        self::STAFF_OFFER_CREATE,
-        self::STAFF_OFFER_UPDATE,
-        self::STAFF_OFFER_DELETE,
+        self::STAFF_OFFER_CATEGORY,
+        self::STAFF_OFFER_CATEGORY_VIEW,
+        self::STAFF_OFFER_CATEGORY_CREATE,
+        self::STAFF_OFFER_CATEGORY_UPDATE,
+        self::STAFF_OFFER_CATEGORY_DELETE,
 
+        self::STAFF_OFFER_TAG,
+        self::STAFF_OFFER_TAG_VIEW,
+        self::STAFF_OFFER_TAG_CREATE,
+        self::STAFF_OFFER_TAG_UPDATE,
+        self::STAFF_OFFER_TAG_DELETE,
+        
         self::STAFF_TEAM_MEMBER,
         self::STAFF_TEAM_MEMBER_VIEW,
         self::STAFF_TEAM_MEMBER_CREATE,
