@@ -7,6 +7,7 @@ require($base . "blog.php");
 require($base . "page.php");
 require($base . "boat.php");
 require($base . "experience.php");
+require($base . "islandGuide.php");
 require($base . "property.php");
 require($base . "setting.php");
 require($base . "faq.php");

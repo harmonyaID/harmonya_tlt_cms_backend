@@ -23,15 +23,21 @@ class BoatParser extends BaseParser
             ];
         }
 
-        $customInformations = [];
-        foreach ($data->customInformations as $info) {
-            $customInformations[] = [
-                'id'    => $info->id,
-                'name'  => $info->name,
-                'value' => $info->value,
-                'order' => $info->order,
-            ];
-        }
+        $customInformations = $data->customInformations
+            ->groupBy('groupName')
+            ->map(function ($items, $groupName) {
+                return [
+                    'name' => $groupName,
+                    'customInformations' => $items->sortBy('order')->values()->map(function ($info) {
+                        return [
+                            'id'    => $info->id,
+                            'name'  => $info->name,
+                            'value' => $info->value,
+                            'order' => $info->order,
+                        ];
+                    })->toArray(),
+                ];
+            })->values()->toArray();
 
         $promoPhotos = [];
 
@@ -56,6 +62,7 @@ class BoatParser extends BaseParser
         return [
             'id'                  => $data->id,
             'name'                  => $data->name,
+            'promoLabel'           => $data->promoLabel,
             'boatComponentType'   => $boatComponentType,
             'description'         => $data->description,
             'promoPhotos'         => $promoPhotos,
@@ -109,6 +116,7 @@ class BoatParser extends BaseParser
         return [
             'id'                  => $data->id,
             'name'                  => $data->name,
+            'promoLabel'           => $data->promoLabel,
             'boatComponentTypeId'   => $data->boatComponentTypeId,
             'boatComponentTypeName' => optional($data->type)->name,
             'promoPhotos'         => $promoPhotos,

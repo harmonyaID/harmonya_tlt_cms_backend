@@ -2,7 +2,10 @@
     "name": "globalxtreme/laravel-backend-service-v2",
     "type": "project",
     "description": "GlobalXtreme Default Backend Service V2.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -30,7 +33,6 @@
         "files": [
             "app/Services/Helpers/activity.php",
             "app/Services/Helpers/helpers.php",
-
             "app/Services/Helpers/Status/globals.php"
         ]
     },
@@ -41,7 +43,6 @@
         "files": [
             "app/Services/Helpers/activity.php",
             "app/Services/Helpers/helpers.php",
-
             "app/Services/Helpers/Status/globals.php",
             "app/Services/Helpers/Status/auth.php",
             "app/Services/Helpers/Status/access.php",
@@ -62,12 +63,11 @@
             "app/Services/Helpers/Status/amenity.php",
             "app/Services/Helpers/Status/property.php",
             "app/Services/Helpers/Status/lembonganArea.php",
-                        "app/Services/Helpers/Status/apiConfiguration.php",
+            "app/Services/Helpers/Status/apiConfiguration.php",
             "app/Services/Helpers/Status/offer.php",
             "app/Services/Helpers/Status/teamMember.php",
-            "app/Services/Helpers/Status/tltTestimonial.php"
-
-
+            "app/Services/Helpers/Status/tltTestimonial.php",
+            "app/Services/Helpers/Status/islandGuide.php"
         ]
     },
     "scripts": {

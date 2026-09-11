@@ -28,6 +28,7 @@ class Boat extends BaseModel
     protected $casts = [
         'boatComponentTypeId' => 'integer',
         'promoPhotos'         => 'array',
+        'promoLabel'          => 'string',
         'isActive'            => 'boolean',
         self::CREATED_AT      => 'datetime',
         self::UPDATED_AT      => 'datetime',

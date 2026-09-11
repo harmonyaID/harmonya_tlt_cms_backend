@@ -22,34 +22,34 @@ class BoatRequest extends FormRequest
                 'integer',
                 Rule::exists('boat_component_types', 'id')->whereNull('deletedAt'),
             ],
-            'name'          => 'required|string',
+            'name'                 => 'required|string',
             'description'          => 'nullable|string',
             'isActive'             => 'required|boolean',
             'locale'               => 'nullable|string|exists:languages,code',
+            'promoLabel'           => 'nullable|string|max:255',
 
             'priceFile'            => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
-            'deletePriceFile'  => 'nullable|boolean',
+            'deletePriceFile'      => 'nullable|boolean',
 
-            // promo photos (json) — kirim ulang semua saat ganti
             'promoPhotos'          => 'nullable|array',
             'promoPhotos.*'        => 'image|mimes:jpg,jpeg,png,webp|max:5120',
-            'deletePromoPhotoIds'   => 'nullable|array',
+            'deletePromoPhotoIds'  => 'nullable|array',
             'deletePromoPhotoIds.*' => 'integer',
 
-            // photos
             'photos'               => 'nullable|array',
             'photos.*'             => 'image|mimes:jpg,jpeg,png,webp|max:5120',
 
-            // hapus foto tertentu saat update
             'deletePhotoIds'       => 'nullable|array',
             'deletePhotoIds.*'     => 'integer|exists:boat_photos,id',
 
-            // custom informations
-            'customInformations'          => 'nullable|array',
-            'customInformations.*.id'     => 'nullable|integer',
-            'customInformations.*.name'   => 'required_with:customInformations|string',
-            'customInformations.*.value'  => 'required_with:customInformations|string',
-            'customInformations.*.order'  => 'nullable|integer',
+            // custom informations grouped by name
+            'customInformations' => 'nullable|array',
+            'customInformations.*.name' => 'required|string',
+            'customInformations.*.customInformations' => 'required|array',
+            'customInformations.*.customInformations.*.id' => 'nullable|integer',
+            'customInformations.*.customInformations.*.name' => 'required|string',
+            'customInformations.*.customInformations.*.value' => 'required|string',
+            'customInformations.*.customInformations.*.order' => 'nullable|integer',
 
             'seo' => 'nullable|array',
         ] + SeoRule::rules() + AcfRule::rules();

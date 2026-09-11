@@ -54,6 +54,13 @@ class Blog extends BaseModel
     {
         return $this->belongsToMany(BlogTag::class, 'blog_tag', 'blogId', 'tagId');
     }
+    public function properties(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Property\Property::class, 'blog_property', 'blogId', 'propertyId')
+            ->withPivot('order')
+            ->orderBy('blog_property.order');
+    }
+
     public function seo()
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
@@ -117,6 +124,12 @@ class Blog extends BaseModel
      | Functions
      |-------------------------------------------------------------------------
      */
+
+    public function promoBannerUrl()
+    {
+        if (!$this->promoBanner) return null;
+        return Storage::disk('public')->url(PathConstant::IMAGES_BLOG . $this->promoBanner);
+    }
 
     public function thumbnailUrl()
     {

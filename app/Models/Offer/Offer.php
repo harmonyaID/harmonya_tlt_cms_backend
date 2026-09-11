@@ -7,9 +7,11 @@ use App\Models\BaseModel;
 use App\Models\Property\Property;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
 use App\Models\Traits\HasSlugLookup;
 use App\Parser\Offer\OfferParser;
 use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +20,7 @@ class Offer extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasMultiValueFilter;
     use HasSlugLookup;
 
     protected $table = 'offers';
@@ -50,6 +53,16 @@ class Offer extends BaseModel
         return $this->belongsToMany(Property::class, 'offer_property', 'offerId', 'propertyId');
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(OfferCategory::class, 'categoryId');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(OfferTag::class, 'offer_tag', 'offerId', 'tagId');
+    }
+
     public function seo()
     {
         return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
@@ -80,6 +93,16 @@ class Offer extends BaseModel
             if ($request->has('propertyId') && $request->propertyId) {
                 $query->whereHas('properties', function ($property) use ($request) {
                     $property->where('properties.id', $request->propertyId);
+                });
+            }
+
+            if ($request->has('categoryIds') && $request->categoryIds) {
+                $query->whereIn('categoryId', $this->toValueArray($request->categoryIds));
+            }
+
+            if ($request->has('tagIds') && $request->tagIds) {
+                $query->whereHas('tags', function ($tag) use ($request) {
+                    $tag->whereIn('offer_tags.id', $this->toValueArray($request->tagIds));
                 });
             }
 
