@@ -25,6 +25,7 @@ class WebsiteContactFormRequest extends FormRequest
     {
         return [
             'formTypeId' => 'nullable|integer|exists:component_contact_form_types,id',
+            'formInquiryTypeId' => 'nullable|integer|exists:component_contact_form_inquiry_types,id',
             'name' => 'required|string',
             'email' => 'required|email',
             'phone' => 'nullable|string',
