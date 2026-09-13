@@ -23,7 +23,8 @@ class WebsiteContactFormParser extends BaseParser
 
         return [
             'id' => $data->id,
-            'formType' => optional($data->getFormType)->only('id', 'name'),
+            'formType' => optional($data->getFormType)->only('id', 'name','eventId'),
+            'formInquiryType' => optional($data->getFormInquiryType)->only('id', 'name','eventId'),
             'name' => $data->name,
             'status' => $status,
             'email' => $data->email,
@@ -50,7 +51,8 @@ class WebsiteContactFormParser extends BaseParser
 
         return [
             'id' => $data->id,
-            'formType' => optional($data->getFormType)->only('id', 'name'),
+            'formType' => optional($data->getFormType)->only('id', 'name','eventId'),
+            'formInquiryType' => optional($data->getFormInquiryType)->only('id', 'name','eventId'),
             'name' => $data->name,
             'status' => $status,
             'email' => $data->email,

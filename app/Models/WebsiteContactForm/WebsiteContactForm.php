@@ -3,7 +3,9 @@
 namespace App\Models\WebsiteContactForm;
 
 use App\Models\BaseModel;
+use App\Models\Component\ComponentContactFormInquiryType;
 use App\Models\Component\ComponentContactFormType;
+use App\Models\Traits\HasDateRangeFilter;
 use App\Parser\WebsiteContactForm\WebsiteContactFormParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class WebsiteContactForm extends BaseModel
 {
     use SoftDeletes;
+    use HasDateRangeFilter;
 
     protected $table = 'website_contact_forms';
     protected $guarded = ['id'];
@@ -40,6 +43,12 @@ class WebsiteContactForm extends BaseModel
         return $this->belongsTo(ComponentContactFormType::class, 'formTypeId');
     }
 
+    public function getFormInquiryType(): BelongsTo
+    {
+        return $this->belongsTo(ComponentContactFormInquiryType::class, 'formInquiryTypeId');
+    }
+
+
     /*
      |--------------------------------------------------------------------------
      | Scopes
@@ -61,6 +70,13 @@ class WebsiteContactForm extends BaseModel
             if ($request->has('formTypeId') && $request->formTypeId) {
                 $query->where('formTypeId', $request->formTypeId);
             }
+
+
+            if ($request->has('formInquiryTypeId') && $request->formInquiryTypeId) {
+                $query->where('formInquiryTypeId', $request->formInquiryTypeId);
+            }
+
+            $this->applyDateRangeFilter($query, $request);
 
         })->orderBy('id', 'DESC');
     }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('formTypeId')->nullable();
+            $table->foreignId('formInquiryTypeId')->nullable();
             $table->string('name');
             $table->string('email');
             $table->string('phone')->nullable();

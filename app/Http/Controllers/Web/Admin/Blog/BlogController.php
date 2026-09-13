@@ -65,7 +65,7 @@ class BlogController extends Controller
 
     public function get(Request $request)
     {
-        $blogs = Blog::filter($request)->with('category', 'tags', 'properties', 'properties', 'seo', 'acf')->getOrPaginate($request);
+        $blogs = Blog::filter($request)->with('category', 'tags', 'properties', 'properties', 'seo', 'acf')->orderBy('publishedAt', 'desc')->getOrPaginate($request);
         return success(BlogParser::briefs($blogs), pagination: pagination($blogs));
     }
 
