@@ -66,6 +66,19 @@ class Page extends BaseModel
 
     /** --- SCOPES --- */
 
+    public function scopeBySlugOrId($query, $value)
+    {
+        return $query->where(function ($q) use ($value) {
+            $q->whereHas('seo', function ($seo) use ($value) {
+                $seo->where('slug', $value);
+            });
+
+            if (is_numeric($value)) {
+                $q->orWhere('id', $value);
+            }
+        });
+    }
+    
     public function scopeFilter($query, $request)
     {
         return $query
@@ -80,26 +93,25 @@ class Page extends BaseModel
             ->orderBy('groupId', 'ASC')
             ->where(function ($query) use ($request) {
 
-            if ($request->has('search') && strlen($request->search) > 1) {
+                if ($request->has('search') && strlen($request->search) > 1) {
 
-                $query->where(function ($search) use ($request) {
-                    $search->where("title", "LIKE", "%$request->search%")
-                        ->orWhere("shortDescription", "LIKE", "%$request->search%")
-                        ->orWhere("status", "LIKE", "%$request->search%");
-                });
-            }
+                    $query->where(function ($search) use ($request) {
+                        $search->where("title", "LIKE", "%$request->search%")
+                            ->orWhere("shortDescription", "LIKE", "%$request->search%")
+                            ->orWhere("status", "LIKE", "%$request->search%");
+                    });
+                }
 
-            if ($request->has('status') && $request->status) {
-                $query->where('status', $request->status);
-            }
+                if ($request->has('status') && $request->status) {
+                    $query->where('status', $request->status);
+                }
 
-            if ($request->has('locale') && $request->locale) {
-                $query->where('locale', $request->locale);
-            }
+                if ($request->has('locale') && $request->locale) {
+                    $query->where('locale', $request->locale);
+                }
 
-            $this->applyDateRangeFilter($query, $request);
-
-        });
+                $this->applyDateRangeFilter($query, $request);
+            });
     }
 
     public function scopeLanguage($query, $request)
