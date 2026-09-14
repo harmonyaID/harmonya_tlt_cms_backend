@@ -15,14 +15,13 @@ trait HasSlugLookup
      *
      * @return mixed
      */
-    public function scopeBySlugOrId($query, $value)
+    public function scopeBySlugOrId($query, $idOrSlug)
     {
-        return $query->where(function ($q) use ($value) {
-            $q->where('slug', $value);
-
-            if (is_numeric($value)) {
-                $q->orWhere('id', $value);
-            }
+        return $query->where(function ($query) use ($idOrSlug) {
+            $query->where('id', $idOrSlug)
+                ->orWhereHas('seo', function ($seo) use ($idOrSlug) {
+                    $seo->where('slug', $idOrSlug);
+                });
         });
     }
 }
