@@ -8,12 +8,14 @@ use App\Parser\Page\PageParser;
 
 class PageController extends Controller
 {
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $page = Page::where('isActive', true)->find($id);
-        if (!$page) {
+
+        $page = Page::bySlugOrId($idOrSlug)->with(['seo', 'acf'])->first();
+       if (!$page) {
             errPageGet();
         }
+
 
         return success(PageParser::first($page));
     }
