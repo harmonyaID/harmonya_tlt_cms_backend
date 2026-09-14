@@ -62,6 +62,8 @@ class ExperienceParser extends BaseParser
             'isActive' => $data->isActive,
             'showInquiry' => $data->showInquiry,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'seo' => SeoParser::first($data->seo),
+
         ];
     }
 }

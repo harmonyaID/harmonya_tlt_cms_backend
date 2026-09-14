@@ -34,6 +34,8 @@ class ExperienceAreaParser extends BaseParser
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
+            'seo' => SeoParser::first($data->seo),
+
         ];
     }
 }
