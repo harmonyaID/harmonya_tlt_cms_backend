@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\HasActivation;
 use App\Models\Setting\SettingCountry;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasSlugLookup;
 use App\Parser\Page\PageParser;
 use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Storage\PathConstant;
@@ -19,6 +20,7 @@ class Page extends BaseModel
     use HasActivation;
     use HasAccession;
     use HasDateRangeFilter;
+    use HasSlugLookup;
 
     protected $table = 'pages';
     protected $guarded = ['id'];
