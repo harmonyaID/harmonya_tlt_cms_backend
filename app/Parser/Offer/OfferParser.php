@@ -65,6 +65,7 @@ class OfferParser extends BaseParser
             'isActive' => $data->isActive,
             'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'seo' => SeoParser::first($data->seo),
         ];
     }
 }

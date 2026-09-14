@@ -50,8 +50,14 @@ class PropertyParser extends BaseParser
             }),
 
             'guestInfo' => optional($data->guestInfo)->only([
-                'hostName', 'wifiName', 'wifiPassword', 'houseManual',
-                'trashInstructions', 'parkingInstructions', 'cleaningInstructions', 'interactionWithGuests',
+                'hostName',
+                'wifiName',
+                'wifiPassword',
+                'houseManual',
+                'trashInstructions',
+                'parkingInstructions',
+                'cleaningInstructions',
+                'interactionWithGuests',
             ]),
 
             'rooms' => $data->rooms->map(function ($room) {
@@ -148,6 +154,7 @@ class PropertyParser extends BaseParser
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'coverPhoto' => $cover ? $cover->pathUrl() : null,
             'address' => optional($data->addresses->first())->address,
+            'seo' => SeoParser::first($data->seo),
         ];
     }
 }

@@ -16,7 +16,7 @@ class PropertyController extends Controller
         $request->merge(['statusId' => PropertyStatus::ACTIVE_ID]);
 
         $properties = Property::filter($request)
-            ->with(['type', 'photos', 'addresses'])
+            ->with(['type', 'photos', 'addresses','seo'])
             ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));

@@ -11,7 +11,7 @@ class ExperienceTypeController extends Controller
 {
     public function get(Request $request)
     {
-        $types = ExperienceType::filter($request)->with('blogs')->getOrPaginate($request);
+        $types = ExperienceType::filter($request)->with('blogs','seo')->getOrPaginate($request);
         return success(ExperienceTypeParser::briefs($types), pagination: pagination($types));
     }
 
