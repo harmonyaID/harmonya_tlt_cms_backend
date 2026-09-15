@@ -27,6 +27,7 @@ class BoatRequest extends FormRequest
             'isActive'             => 'required|boolean',
             'locale'               => 'nullable|string|exists:languages,code',
             'promoLabel'           => 'nullable|string|max:255',
+            'promoLabelUrl'        => 'nullable|string|max:500',
 
             'priceFile'            => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
             'deletePriceFile'      => 'nullable|boolean',

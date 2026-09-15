@@ -29,6 +29,7 @@ class Boat extends BaseModel
         'boatComponentTypeId' => 'integer',
         'promoPhotos'         => 'array',
         'promoLabel'          => 'string',
+        'promoLabelUrl'       => 'string',
         'isActive'            => 'boolean',
         self::CREATED_AT      => 'datetime',
         self::UPDATED_AT      => 'datetime',
