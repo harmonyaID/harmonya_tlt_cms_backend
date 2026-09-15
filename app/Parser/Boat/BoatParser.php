@@ -63,6 +63,7 @@ class BoatParser extends BaseParser
             'id'                  => $data->id,
             'name'                  => $data->name,
             'promoLabel'           => $data->promoLabel,
+            'promoLabelUrl' => $data->promoLabelUrl,
             'boatComponentType'   => $boatComponentType,
             'description'         => $data->description,
             'promoPhotos'         => $promoPhotos,
