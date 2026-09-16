@@ -4,6 +4,7 @@ namespace App\Http\Requests\Page;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
 class PageRequest extends FormRequest
@@ -25,11 +26,21 @@ class PageRequest extends FormRequest
      */
     public function rules()
     {
+        $pageId = $this->route('id');
+
         return array_merge([
-            'title' => 'required|string|max:256',
-            'shortDescription' => 'required|string',
-            'content' => 'required|string',
-            'status' => 'required|string',
+            'title' => 'nullable|string|max:256',
+
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('pages', 'slug')->ignore($pageId),
+            ],
+
+            'shortDescription' => 'nullable|string',
+            'content' => 'required|array',
+            'status' => 'nullable|string',
             'template' => 'nullable|string',
             'groupId' => 'nullable|integer',
             'locale' => 'nullable|string|exists:languages,code',
