@@ -29,3 +29,4 @@ require($base . "offer.php");
 require($base . "team.php");
 require($base . "tlt-testimonial.php");
 require($base . "islandGuide.php");
+require($base . "redirection.php");

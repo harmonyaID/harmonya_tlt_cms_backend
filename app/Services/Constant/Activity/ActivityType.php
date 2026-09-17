@@ -50,6 +50,7 @@ class ActivityType extends BaseCodeName
     const PROPERTY_REVIEW = 'property_review';
     const API_CONFIGURATION = 'api_configuration';
     const SYSTEM_CACHE = 'system_cache';
+    const REDIRECTION = 'redirection';
 
     const OPTION = [
         self::ACCESS,
@@ -97,5 +98,6 @@ class ActivityType extends BaseCodeName
         self::PROPERTY_INQUIRY_FORM,
         self::API_CONFIGURATION,
         self::SYSTEM_CACHE,
+        self::REDIRECTION
     ];
 }
