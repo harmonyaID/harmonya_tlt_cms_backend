@@ -82,9 +82,9 @@ class BoatContactForm extends BaseModel
             if ($request->has('typeName') && $request->typeName) {
                 $typeName = Str::of($request->typeName)
                     ->replace('-', ' ')
-                    ->lower()
-                    ->singular();
+                    ->lower();
 
+                dd($typeName);
                 $query->whereHas('boat', function ($boat) use ($typeName) {
                     $boat->whereHas('type', function ($type) use ($typeName) {
                         $type->whereRaw(
