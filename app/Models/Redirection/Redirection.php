@@ -3,6 +3,7 @@
 namespace App\Models\Redirection;
 
 use App\Models\BaseModel;
+use App\Parser\Redirection\RedirectionParser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Redirection extends BaseModel
@@ -24,6 +25,9 @@ class Redirection extends BaseModel
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
     ];
+
+    public $parserClass = RedirectionParser::class;
+
 
     public function scopeFilter($query, $request)
     {
