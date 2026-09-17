@@ -31,6 +31,7 @@ class Page extends BaseModel
         self::DELETED_AT => 'datetime',
         'isActive' => 'boolean',
         'isSuperadmin' => 'boolean',
+        'content' => 'array',
     ];
 
     public $parserClass = PageParser::class;
