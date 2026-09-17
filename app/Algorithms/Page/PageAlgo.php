@@ -2,7 +2,6 @@
 
 namespace App\Algorithms\Page;
 
-use App\Algorithms\Acf\ContentAcfAlgo;
 use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\Page\Page;
 use App\Services\Constant\Activity\ActivityAction;
@@ -17,6 +16,7 @@ class PageAlgo
     {
         if (is_int($this->page)) {
             $this->page = Page::find($this->page);
+
             if (!$this->page) {
                 errPageGet();
             }
@@ -28,9 +28,23 @@ class PageAlgo
         try {
             DB::transaction(function () use ($request) {
 
-                $data = $request->except(['featuredImage', 'deleteFeaturedImage', 'seo', 'acf']);
+                $content = $request->input('content', []);
+
+                if (!is_array($content)) {
+                    $content = [];
+                }
+
+                $data = $request->except([
+                    'featuredImage',
+                    'deleteFeaturedImage',
+                    'seo',
+                    'acf',
+                ]);
+
+                $data['content'] = $content;
 
                 $this->page = Page::create($data + created_by());
+
                 if (!$this->page) {
                     errPageSave();
                 }
@@ -40,13 +54,15 @@ class PageAlgo
                     $this->page->save();
                 }
 
-                if ($request->hasFile('featuredImage') && $request->file('featuredImage')->isValid()) {
+                if (
+                    $request->hasFile('featuredImage') &&
+                    $request->file('featuredImage')->isValid()
+                ) {
                     $this->page->featuredImage = $this->uploadImage($request);
                     $this->page->save();
                 }
 
                 (new ContentSeoAlgo($this->page))->save($request);
-                (new ContentAcfAlgo($this->page))->save($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->page)
@@ -55,7 +71,13 @@ class PageAlgo
                     ->log("Enter new page: " . $this->page->title);
             });
 
-            return success($this->page->load('seo', 'acf', 'createdBy'));
+            return success(
+                $this->page->load(
+                    'seo',
+                    'createdBy'
+                )
+            );
+
         } catch (\Error $error) {
             exception($error);
         }
@@ -66,23 +88,43 @@ class PageAlgo
         try {
             DB::transaction(function () use ($request) {
 
-                $data = $request->except(['featuredImage', 'deleteFeaturedImage', 'seo', 'acf']);
+                $data = $request->except([
+                    'featuredImage',
+                    'deleteFeaturedImage',
+                    'seo',
+                    'acf',
+                ]);
 
-                $this->page->update($data);
+                if ($request->has('content')) {
+                    $content = $request->input('content', []);
+
+                    if (!is_array($content)) {
+                        $content = [];
+                    }
+
+                    $data['content'] = $content;
+                }
+
+                if (!$this->page->update($data)) {
+                    errPageUpdate();
+                }
 
                 if ($request->boolean('deleteFeaturedImage')) {
                     $this->deleteImage($this->page->featuredImage);
+
                     $this->page->featuredImage = null;
                     $this->page->save();
                 }
 
-                if ($request->hasFile('featuredImage') && $request->file('featuredImage')->isValid()) {
+                if (
+                    $request->hasFile('featuredImage') &&
+                    $request->file('featuredImage')->isValid()
+                ) {
                     $this->page->featuredImage = $this->uploadImage($request);
                     $this->page->save();
                 }
 
                 (new ContentSeoAlgo($this->page))->save($request);
-                (new ContentAcfAlgo($this->page))->save($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->page)
@@ -91,7 +133,13 @@ class PageAlgo
                     ->log("Update page: " . $this->page->title);
             });
 
-            return success($this->page->load('seo', 'acf', 'createdBy'));
+            return success(
+                $this->page->load(
+                    'seo',
+                    'createdBy'
+                )
+            );
+
         } catch (\Error $error) {
             exception($error);
         }
@@ -102,8 +150,10 @@ class PageAlgo
         try {
             DB::transaction(function () {
 
-                $this->deleteImage($this->page->featuredImage);
-                $this->page->acf()->delete();
+                $this->deleteImage(
+                    $this->page->featuredImage
+                );
+
                 if ($this->page->seo) {
                     $this->page->seo()->delete();
                 }
@@ -120,30 +170,35 @@ class PageAlgo
             });
 
             return success();
+
         } catch (\Error $error) {
             exception($error);
         }
     }
-
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
 
     private function uploadImage(Request $request): string
     {
         $image = $request->file('featuredImage');
 
         $dirPath = PathConstant::IMAGES_PAGE_STORAGE_PUBLIC_PATH();
+
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0777, true);
         }
 
-        $this->deleteImage($this->page->featuredImage);
+        $this->deleteImage(
+            $this->page->featuredImage
+        );
 
-        $filename = filename($image, $this->page->title);
-        $image->move($dirPath, $filename);
+        $filename = filename(
+            $image,
+            $this->page->title
+        );
+
+        $image->move(
+            $dirPath,
+            $filename
+        );
 
         return $filename;
     }
@@ -155,6 +210,7 @@ class PageAlgo
         }
 
         $dirPath = PathConstant::IMAGES_PAGE_STORAGE_PUBLIC_PATH();
+
         if (file_exists($dirPath . $filename)) {
             unlink($dirPath . $filename);
         }
