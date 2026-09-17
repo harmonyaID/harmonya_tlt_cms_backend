@@ -13,17 +13,13 @@ class RedirectionController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Redirection::query()
+        $datas = Redirection::query()
             ->filter($request)
             ->paginate(
                 $request->input('perPage', 20)
             );
 
-        return success(
-            $data->through(
-                fn($item) => RedirectionParser::brief($item)
-            )
-        );
+        return success(RedirectionParser::briefs($datas), pagination: pagination($datas));
     }
 
     public function show($id)
