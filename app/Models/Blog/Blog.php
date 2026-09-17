@@ -35,6 +35,8 @@ class Blog extends BaseModel
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
+        'content' => 'array',
+
     ];
 
     public $parserClass = BlogParser::class;
