@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Redirection;
+namespace App\Http\Controllers\Web\Admin\Redirection;
 
 use App\Algorithms\Redirection\RedirectionAlgo;
 use App\Http\Controllers\Controller;

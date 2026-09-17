@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\Redirection\RedirectionController;
-
+use App\Http\Controllers\Web\Admin\Redirection\RedirectionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("redirections")
