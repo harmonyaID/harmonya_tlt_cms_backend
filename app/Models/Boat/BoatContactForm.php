@@ -84,7 +84,6 @@ class BoatContactForm extends BaseModel
                     ->replace('-', ' ')
                     ->lower();
 
-                dd($typeName);
                 $query->whereHas('boat', function ($boat) use ($typeName) {
                     $boat->whereHas('type', function ($type) use ($typeName) {
                         $type->whereRaw(
