@@ -41,6 +41,7 @@ class Property extends BaseModel
         'cleaningStatusId' => 'integer',
         'sourceTypeId' => 'integer',
         'guestyImportedAt' => 'datetime',
+        'isPopular' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -176,7 +177,6 @@ class Property extends BaseModel
             }
 
             $this->applyDateRangeFilter($query, $request);
-
         })->orderBy('id', 'DESC');
     }
 }
