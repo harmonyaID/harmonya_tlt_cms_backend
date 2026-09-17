@@ -12,20 +12,21 @@ use App\Services\Constant\Property\PropertyListingType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Property\PropertyAddressType;
+use Illuminate\Support\Carbon;
 use Logia\Core\Parser\BaseParser;
 
 class PropertyParser extends BaseParser
 {
-
     public static function first($data)
     {
         if (!$data) {
             return null;
         }
-
         return [
             'id' => $data->id,
             'nickname' => $data->nickname,
+            'isPopular' => $data->isPopular,
+            'isNewVilla' => $data->createdAt ? Carbon::parse($data->createdAt)->gte(now()->subMonth()) : false,
             'type' => optional($data->type)->only('id', 'name'),
             'unitType' => PropertyUnitType::idName($data->unitTypeId),
             'listingType' => PropertyListingType::idName($data->listingTypeId),
@@ -36,7 +37,6 @@ class PropertyParser extends BaseParser
             'cleaningStatus' => PropertyCleaningStatus::idName($data->cleaningStatusId),
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'currency' => $data->currency,
-
             'addresses' => $data->addresses->map(function ($address) {
                 return [
                     'id' => $address->id,
@@ -48,7 +48,6 @@ class PropertyParser extends BaseParser
                     'zipCode' => $address->zipCode,
                 ];
             }),
-
             'guestInfo' => optional($data->guestInfo)->only([
                 'hostName',
                 'wifiName',
@@ -59,7 +58,6 @@ class PropertyParser extends BaseParser
                 'cleaningInstructions',
                 'interactionWithGuests',
             ]),
-
             'rooms' => $data->rooms->map(function ($room) {
                 return [
                     'id' => $room->id,
@@ -70,7 +68,6 @@ class PropertyParser extends BaseParser
                     'order' => $room->order,
                 ];
             }),
-
             'availability' => $data->availability ? [
                 'defaultAvailability' => PropertyAvailabilityType::idName($data->availability->defaultAvailabilityId),
                 'bookingWindow' => $data->availability->bookingWindow,
@@ -82,7 +79,6 @@ class PropertyParser extends BaseParser
                 'minLengthOfStay' => $data->availability->minLengthOfStay,
                 'maxLengthOfStay' => $data->availability->maxLengthOfStay,
             ] : null,
-
             'pricing' => $data->pricing ? [
                 'weekdayBasePrice' => $data->pricing->weekdayBasePrice,
                 'weekendBasePrice' => $data->pricing->weekendBasePrice,
@@ -95,7 +91,6 @@ class PropertyParser extends BaseParser
                 'monthlyDiscount' => $data->pricing->monthlyDiscount,
                 'markupPercent' => $data->pricing->markupPercent,
             ] : null,
-
             'descriptions' => $data->descriptions->map(function ($description) {
                 return [
                     'id' => $description->id,
@@ -110,7 +105,6 @@ class PropertyParser extends BaseParser
                     'otherThingsToNote' => $description->otherThingsToNote,
                 ];
             }),
-
             'photos' => $data->photos->map(function ($photo) {
                 return [
                     'id' => $photo->id,
@@ -119,33 +113,34 @@ class PropertyParser extends BaseParser
                     'order' => $photo->order,
                 ];
             }),
-
             'amenities' => $data->amenities->map(function ($amenity) {
-                return ['id' => $amenity->id, 'name' => $amenity->name];
+                return [
+                    'id' => $amenity->id,
+                    'name' => $amenity->name,
+                ];
             }),
-
             'tags' => $data->tags->map(function ($tag) {
-                return ['id' => $tag->id, 'name' => $tag->name];
+                return [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                ];
             }),
-
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
-
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
-
     public static function brief($data)
     {
         if (!$data) {
             return null;
         }
-
         $cover = $data->photos->first();
-
         return [
             'id' => $data->id,
             'nickname' => $data->nickname,
+            'isPopular' => $data->isPopular,
+            'isNewVilla' => $data->createdAt ? Carbon::parse($data->createdAt)->gte(now()->subMonth()) : false,
             'type' => optional($data->type)->only('id', 'name'),
             'unitType' => PropertyUnitType::idName($data->unitTypeId),
             'occupancy' => $data->occupancy,

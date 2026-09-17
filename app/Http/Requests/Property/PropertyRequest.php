@@ -27,6 +27,7 @@ class PropertyRequest extends FormRequest
             'cleaningStatusId' => 'nullable|integer',
             'sourceTypeId' => 'nullable|integer|exists:property_source_types,id',
             'currency' => 'nullable|string|max:10',
+            'isPopular' => 'nullable|boolean',
 
             'addresses' => 'nullable|array',
             'addresses.*.typeId' => 'required|integer',
