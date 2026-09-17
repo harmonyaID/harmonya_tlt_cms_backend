@@ -30,7 +30,7 @@ class BlogRequest extends FormRequest
                 Rule::unique('blogs', 'slug')->ignore($blogId),
             ],
             'excerpt' => 'nullable|string',
-            'content' => 'nullable|string',
+            'content' => 'nullable|array',
             'author' => 'nullable|string',
             'publishedAt' => 'nullable|date',
             'isActive' => 'required|boolean',

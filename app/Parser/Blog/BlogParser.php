@@ -63,6 +63,7 @@ class BlogParser extends BaseParser
             'thumbnail' => $data->thumbnailUrl(),
             'promoBanner' => $data->promoBannerUrl(),
             'promoBannerUrl' => $data->promoBannerUrl,
+            'content' => $data->content,
             'excerpt' => $data->excerpt,
             'author' => $data->author,
             'tags' => $tags,

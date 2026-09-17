@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('pages', function (Blueprint $table) {
             $table->string('slug')->nullable()->unique()->after('title');
+            $table->json('content')->nullable()->change();
+
         });
     }
 
@@ -23,6 +25,8 @@ return new class extends Migration
     {
         Schema::table('pages', function (Blueprint $table) {
             $table->dropColumn('slug');
+            $table->dropColumn('content');
+
         });
     }
 };
