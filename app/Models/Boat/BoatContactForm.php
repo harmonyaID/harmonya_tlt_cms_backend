@@ -6,7 +6,9 @@ use App\Models\BaseModel;
 use App\Models\Boat\Boat;
 use App\Parser\Boat\BoatContactFormParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class BoatContactForm extends BaseModel
 {
@@ -46,6 +48,7 @@ class BoatContactForm extends BaseModel
         return $this->belongsTo(Boat::class, 'boatId');
     }
 
+
     /*
      |--------------------------------------------------------------------------
      | Scopes
@@ -74,6 +77,22 @@ class BoatContactForm extends BaseModel
 
             if ($request->has('isRead') && $request->isRead !== null) {
                 $query->where('isRead', $request->isRead);
+            }
+
+            if ($request->has('typeName') && $request->typeName) {
+                $typeName = Str::of($request->typeName)
+                    ->replace('-', ' ')
+                    ->lower()
+                    ->singular();
+
+                $query->whereHas('boat', function ($boat) use ($typeName) {
+                    $boat->whereHas('type', function ($type) use ($typeName) {
+                        $type->whereRaw(
+                            'LOWER(name) = ?',
+                            [$typeName]
+                        );
+                    });
+                });
             }
 
         })->orderBy('id', 'DESC');
