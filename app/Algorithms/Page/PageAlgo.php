@@ -8,6 +8,7 @@ use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class PageAlgo
@@ -29,12 +30,22 @@ class PageAlgo
             DB::transaction(function () use ($request) {
 
                 $content = $request->input('content', []);
+                $files = $request->file('content', []);
 
                 if (!is_array($content)) {
                     $content = [];
                 }
 
+                if ($files) {
+                    $content = $this->uploadContentImages(
+                        $content,
+                        $files,
+                        []
+                    );
+                }
+
                 $data = $request->except([
+                    'content',
                     'featuredImage',
                     'deleteFeaturedImage',
                     'seo',
@@ -77,7 +88,6 @@ class PageAlgo
                     'createdBy'
                 )
             );
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -88,7 +98,25 @@ class PageAlgo
         try {
             DB::transaction(function () use ($request) {
 
+                $oldContent = $this->page->content ?? [];
+
+                $content = $request->input('content', []);
+                $files = $request->file('content', []);
+
+                if (!is_array($content)) {
+                    $content = [];
+                }
+
+                if ($files) {
+                    $content = $this->uploadContentImages(
+                        $content,
+                        $files,
+                        is_array($oldContent) ? $oldContent : []
+                    );
+                }
+
                 $data = $request->except([
+                    'content',
                     'featuredImage',
                     'deleteFeaturedImage',
                     'seo',
@@ -96,12 +124,6 @@ class PageAlgo
                 ]);
 
                 if ($request->has('content')) {
-                    $content = $request->input('content', []);
-
-                    if (!is_array($content)) {
-                        $content = [];
-                    }
-
                     $data['content'] = $content;
                 }
 
@@ -110,7 +132,9 @@ class PageAlgo
                 }
 
                 if ($request->boolean('deleteFeaturedImage')) {
-                    $this->deleteImage($this->page->featuredImage);
+                    $this->deleteImage(
+                        $this->page->featuredImage
+                    );
 
                     $this->page->featuredImage = null;
                     $this->page->save();
@@ -139,7 +163,6 @@ class PageAlgo
                     'createdBy'
                 )
             );
-
         } catch (\Error $error) {
             exception($error);
         }
@@ -170,12 +193,88 @@ class PageAlgo
             });
 
             return success();
-
         } catch (\Error $error) {
             exception($error);
         }
     }
 
+    private function uploadContentImages(
+        array $content,
+        array $files,
+        array $oldContent
+    ): array {
+        foreach ($files as $key => $item) {
+
+            if ($item instanceof UploadedFile) {
+
+                if (!$item->isValid()) {
+                    continue;
+                }
+
+                $old = is_array($oldContent)
+                    ? ($oldContent[$key] ?? null)
+                    : null;
+
+                if (!is_string($old)) {
+                    $old = null;
+                }
+
+                $content[$key] = $this->uploadContentFile(
+                    $item,
+                    $old
+                );
+
+                continue;
+            }
+
+            if (is_array($item)) {
+
+                $currentContent = is_array($content[$key] ?? null)
+                    ? $content[$key]
+                    : [];
+
+                $currentOldContent = is_array($oldContent[$key] ?? null)
+                    ? $oldContent[$key]
+                    : [];
+
+                $content[$key] = $this->uploadContentImages(
+                    $currentContent,
+                    $item,
+                    $currentOldContent
+                );
+            }
+        }
+
+        return $content;
+    }
+
+    private function uploadContentFile(
+        UploadedFile $image,
+        ?string $oldFilename = null
+    ): string {
+        $dirPath = PathConstant::IMAGES_PAGE_STORAGE_PUBLIC_PATH();
+
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        $this->deleteImage($oldFilename);
+
+        $filename = filename(
+            $image,
+            'page'
+        );
+
+        $image->move(
+            $dirPath,
+            $filename
+        );
+
+        return asset(
+            'storage/images/pages/' . $filename
+        );
+    }
+    
     private function uploadImage(Request $request): string
     {
         $image = $request->file('featuredImage');
@@ -208,6 +307,8 @@ class PageAlgo
         if (!$filename) {
             return;
         }
+
+        $filename = basename($filename);
 
         $dirPath = PathConstant::IMAGES_PAGE_STORAGE_PUBLIC_PATH();
 
