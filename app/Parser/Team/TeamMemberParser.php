@@ -20,6 +20,7 @@ class TeamMemberParser extends BaseParser
             'question' => $data->question,
             'answer' => $data->answer,
             'order' => $data->order,
+            'level' => $data->level,
             'isActive' => $data->isActive,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
@@ -39,6 +40,7 @@ class TeamMemberParser extends BaseParser
             'question' => $data->question,
             'answer' => $data->answer,
             'order' => $data->order,
+            'level' => $data->level,
             'isActive' => $data->isActive,
         ];
     }

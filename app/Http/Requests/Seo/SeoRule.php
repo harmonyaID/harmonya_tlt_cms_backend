@@ -2,14 +2,26 @@
 
 namespace App\Http\Requests\Seo;
 
+use Illuminate\Validation\Rule;
+
 class SeoRule
 {
-    public static function rules(string $prefix = 'seo.'): array
-    {
+    public static function rules(
+        string $prefix = 'seo.',
+        ?int $seoId = null
+    ): array {
         return [
             "{$prefix}info" => 'nullable|string|max:255',
             "{$prefix}title" => 'nullable|string|max:255',
-            "{$prefix}slug" => 'nullable|string|max:255',
+
+            "{$prefix}slug" => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('contentseo', 'slug')
+                    ->ignore($seoId),
+            ],
+
             "{$prefix}description" => 'nullable|string',
             "{$prefix}metaKeyword" => 'nullable|string',
             "{$prefix}canonicalUrl" => 'nullable|url|max:255',
