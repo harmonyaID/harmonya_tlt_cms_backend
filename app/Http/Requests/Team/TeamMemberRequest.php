@@ -29,6 +29,7 @@ class TeamMemberRequest extends FormRequest
             'question' => 'nullable|string',
             'answer' => 'nullable|string',
             'order' => 'nullable|integer|min:0',
+            'level' => 'nullable|integer|min:0',
             'isActive' => 'required|boolean',
 
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
