@@ -17,7 +17,7 @@ class ExperienceAreaController extends Controller
 
     public function detail($idOrSlug)
     {
-        $area = ExperienceArea::with('type', 'seo')->bySlugOrId($idOrSlug)->first($idOrSlug);
+        $area = ExperienceArea::with('type', 'seo')->bySlugOrId($idOrSlug)->first();
         if (!$area) {
             errExperienceAreaGet();
         }

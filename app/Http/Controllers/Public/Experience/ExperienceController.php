@@ -20,7 +20,7 @@ class ExperienceController extends Controller
     public function detail($idOrSlug)
     {        dd("test");
 
-        $experience = Experience::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'seo','acf'])->first($idOrSlug);
+        $experience = Experience::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'seo','acf'])->first();
         if (!$experience) {
             errExperienceGet();
         }

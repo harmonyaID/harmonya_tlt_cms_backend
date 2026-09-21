@@ -19,7 +19,7 @@ class IslandGuideController extends Controller
 
     public function detail($idOrSlug)
     {
-        $islandGuide = IslandGuide::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'acf'])->first($idOrSlug);
+        $islandGuide = IslandGuide::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'acf'])->first();
         if (!$islandGuide) {
             errIslandGuideGet();
         }
