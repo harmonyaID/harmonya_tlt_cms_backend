@@ -19,6 +19,7 @@ class BlogAlgo
     {
         if (is_int($this->blog)) {
             $this->blog = Blog::find($this->blog);
+
             if (!$this->blog) {
                 errBlogGet();
             }
@@ -28,35 +29,78 @@ class BlogAlgo
     public function create(Request $request)
     {
         try {
-
             DB::transaction(function () use ($request) {
+                $data = $request->except(
+                    'thumbnail',
+                    'tagIds',
+                    'categoryIds',
+                    'propertyIds',
+                    'promoBanner',
+                    'deletePromoBanner',
+                    'deleteThumbnail',
+                    'seo',
+                    'acf'
+                );
 
-                $data = $request->except('thumbnail', 'tagIds', 'propertyIds', 'promoBanner', 'deletePromoBanner', 'seo', 'acf');
-                $data['slug'] = Str::slug($request->slug ?: $request->title);
-                $data['publishedAt'] = $this->parsePublishedAt($request->publishedAt) ?? now();
+                $data['slug'] = Str::slug(
+                    $request->slug ?: $request->title
+                );
 
+                $data['publishedAt'] =
+                    $this->parsePublishedAt($request->publishedAt) ?? now();
+
+                $data['visibility'] = $request->boolean('visibility', true);
 
                 $this->blog = Blog::create($data + created_by());
+
                 if (!$this->blog) {
                     errBlogSave();
                 }
 
-                if ($request->has('propertyIds') && is_array($request->propertyIds)) {
-                    $this->blog->properties()->sync($this->propertySyncData($request->propertyIds));
+                if ($request->has('categoryIds')) {
+                    $categoryIds = $request->input('categoryIds', []);
+
+                    $this->blog->categories()->sync(
+                        is_array($categoryIds) ? $categoryIds : []
+                    );
                 }
 
-                if ($request->hasFile('promoBanner') && $request->file('promoBanner')->isValid()) {
-                    $this->blog->promoBanner = $this->uploadPromoBanner($request);
+                if ($request->has('propertyIds')) {
+                    $propertyIds = $request->input('propertyIds', []);
+
+                    $this->blog->properties()->sync(
+                        is_array($propertyIds)
+                            ? $this->propertySyncData($propertyIds)
+                            : []
+                    );
+                }
+
+                if (
+                    $request->hasFile('promoBanner')
+                    && $request->file('promoBanner')->isValid()
+                ) {
+                    $this->blog->promoBanner =
+                        $this->uploadPromoBanner($request);
+
                     $this->blog->save();
                 }
 
-                if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
-                    $this->blog->thumbnail = $this->uploadThumbnail($request);
+                if (
+                    $request->hasFile('thumbnail')
+                    && $request->file('thumbnail')->isValid()
+                ) {
+                    $this->blog->thumbnail =
+                        $this->uploadThumbnail($request);
+
                     $this->blog->save();
                 }
 
-                if ($request->has('tagIds') && is_array($request->tagIds)) {
-                    $this->blog->tags()->sync($request->tagIds);
+                if ($request->has('tagIds')) {
+                    $tagIds = $request->input('tagIds', []);
+
+                    $this->blog->tags()->sync(
+                        is_array($tagIds) ? $tagIds : []
+                    );
                 }
 
                 (new ContentSeoAlgo($this->blog))->save($request);
@@ -69,7 +113,15 @@ class BlogAlgo
                     ->log("Enter new blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags', 'properties', 'seo', 'acf'));
+            return success(
+                $this->blog->load(
+                    'categories',
+                    'tags',
+                    'properties',
+                    'seo',
+                    'acf'
+                )
+            );
         } catch (\Error $error) {
             exception($error);
         }
@@ -78,46 +130,94 @@ class BlogAlgo
     public function update(Request $request)
     {
         try {
-
             DB::transaction(function () use ($request) {
+                $data = $request->except(
+                    'thumbnail',
+                    'tagIds',
+                    'categoryIds',
+                    'propertyIds',
+                    'promoBanner',
+                    'deletePromoBanner',
+                    'deleteThumbnail',
+                    'seo',
+                    'acf'
+                );
 
-                $data = $request->except('thumbnail', 'tagIds', 'propertyIds', 'promoBanner', 'deletePromoBanner', 'seo', 'acf');
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
                 }
 
+                if ($request->has('visibility')) {
+                    $data['visibility'] = $request->boolean('visibility');
+                }
+
                 $this->blog->update($data);
 
-                if ($request->has('propertyIds') && is_array($request->propertyIds)) {
-                    $this->blog->properties()->sync($this->propertySyncData($request->propertyIds));
+                if ($request->has('categoryIds')) {
+                    $categoryIds = $request->input('categoryIds', []);
+
+                    $this->blog->categories()->sync(
+                        is_array($categoryIds) ? $categoryIds : []
+                    );
+                }
+
+                if ($request->has('propertyIds')) {
+                    $propertyIds = $request->input('propertyIds', []);
+
+                    $this->blog->properties()->sync(
+                        is_array($propertyIds)
+                            ? $this->propertySyncData($propertyIds)
+                            : []
+                    );
                 }
 
                 if ($request->boolean('deletePromoBanner')) {
                     $this->deletePromoBanner();
                 }
 
-                if ($request->hasFile('promoBanner') && $request->file('promoBanner')->isValid()) {
-                    $this->blog->promoBanner = $this->uploadPromoBanner($request);
+                if (
+                    $request->hasFile('promoBanner')
+                    && $request->file('promoBanner')->isValid()
+                ) {
+                    $this->blog->promoBanner =
+                        $this->uploadPromoBanner($request);
+
                     $this->blog->save();
                 }
 
-                if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {
-                    $this->blog->thumbnail = $this->uploadThumbnail($request);
+                if (
+                    $request->hasFile('thumbnail')
+                    && $request->file('thumbnail')->isValid()
+                ) {
+                    $this->blog->thumbnail =
+                        $this->uploadThumbnail($request);
+
                     $this->blog->save();
                 }
 
                 if ($request->boolean('deleteThumbnail')) {
-                    $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+                    $dirPath =
+                        PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
 
-                    if ($this->blog->thumbnail && file_exists($dirPath . $this->blog->thumbnail)) {
-                        unlink($dirPath . $this->blog->thumbnail);
+                    if (
+                        $this->blog->thumbnail
+                        && file_exists($dirPath . $this->blog->thumbnail)
+                    ) {
+                        unlink(
+                            $dirPath . $this->blog->thumbnail
+                        );
                     }
 
                     $this->blog->thumbnail = null;
                     $this->blog->save();
                 }
-                if ($request->has('tagIds') && is_array($request->tagIds)) {
-                    $this->blog->tags()->sync($request->tagIds);
+
+                if ($request->has('tagIds')) {
+                    $tagIds = $request->input('tagIds', []);
+
+                    $this->blog->tags()->sync(
+                        is_array($tagIds) ? $tagIds : []
+                    );
                 }
 
                 (new ContentSeoAlgo($this->blog))->save($request);
@@ -130,7 +230,15 @@ class BlogAlgo
                     ->log("Update blog: " . $this->blog->title);
             });
 
-            return success($this->blog->load('category', 'tags', 'properties', 'seo', 'acf'));
+            return success(
+                $this->blog->load(
+                    'categories',
+                    'tags',
+                    'properties',
+                    'seo',
+                    'acf'
+                )
+            );
         } catch (\Error $error) {
             exception($error);
         }
@@ -139,16 +247,23 @@ class BlogAlgo
     public function delete()
     {
         try {
-
             DB::transaction(function () {
+                $dirPath =
+                    PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
 
-                $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
-                if ($this->blog->thumbnail && file_exists($dirPath . $this->blog->thumbnail)) {
-                    unlink($dirPath . $this->blog->thumbnail);
+                if (
+                    $this->blog->thumbnail
+                    && file_exists($dirPath . $this->blog->thumbnail)
+                ) {
+                    unlink(
+                        $dirPath . $this->blog->thumbnail
+                    );
                 }
 
+                $this->blog->categories()->detach();
                 $this->blog->tags()->detach();
                 $this->blog->properties()->detach();
+
                 $this->deletePromoBanner();
 
                 if (!$this->blog->delete()) {
@@ -168,32 +283,57 @@ class BlogAlgo
         }
     }
 
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
-
     private function propertySyncData(array $propertyIds): array
     {
-        return collect($propertyIds)->values()->mapWithKeys(fn($propertyId, $index) => [$propertyId => ['order' => $index]])->all();
+        return collect($propertyIds)
+            ->values()
+            ->mapWithKeys(
+                fn($propertyId, $index) => [
+                    $propertyId => [
+                        'order' => $index,
+                    ],
+                ]
+            )
+            ->all();
     }
 
     private function uploadPromoBanner(Request $request): string
     {
         $image = $request->file('promoBanner');
-        $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
-        if (!file_exists($dirPath)) mkdir($dirPath, 0777, true);
+
+        $dirPath =
+            PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
         $this->deletePromoBanner();
-        $filename = filename($image, $this->blog->title . '-promo-banner');
+
+        $filename = filename(
+            $image,
+            $this->blog->title . '-promo-banner'
+        );
+
         $image->move($dirPath, $filename);
+
         return $filename;
     }
 
     private function deletePromoBanner(): void
     {
-        $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
-        if ($this->blog->promoBanner && file_exists($dirPath . $this->blog->promoBanner)) unlink($dirPath . $this->blog->promoBanner);
+        $dirPath =
+            PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+
+        if (
+            $this->blog->promoBanner
+            && file_exists($dirPath . $this->blog->promoBanner)
+        ) {
+            unlink(
+                $dirPath . $this->blog->promoBanner
+            );
+        }
+
         $this->blog->promoBanner = null;
         $this->blog->save();
     }
@@ -215,16 +355,25 @@ class BlogAlgo
     {
         $image = $request->file('thumbnail');
 
-        $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+        $dirPath =
+            PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0777, true);
         }
 
-        if ($this->blog->thumbnail && file_exists($dirPath . $this->blog->thumbnail)) {
+        if (
+            $this->blog->thumbnail
+            && file_exists($dirPath . $this->blog->thumbnail)
+        ) {
             unlink($dirPath . $this->blog->thumbnail);
         }
 
-        $filename = filename($image, $this->blog->title);
+        $filename = filename(
+            $image,
+            $this->blog->title
+        );
+
         $image->move($dirPath, $filename);
 
         return $filename;

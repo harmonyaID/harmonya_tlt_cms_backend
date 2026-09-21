@@ -30,6 +30,7 @@ class Blog extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
+        'visibility' => 'boolean',
         'isActive' => 'boolean',
         'publishedAt' => 'datetime',
         self::CREATED_AT => 'datetime',
@@ -49,6 +50,16 @@ class Blog extends BaseModel
     public function category(): BelongsTo
     {
         return $this->belongsTo(BlogCategory::class, 'categoryId');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(
+            BlogCategory::class,
+            'blog_category',
+            'blogId',
+            'categoryId'
+        );
     }
 
     public function tags(): BelongsToMany
@@ -116,7 +127,6 @@ class Blog extends BaseModel
             }
 
             $this->applyDateRangeFilter($query, $request, 'publishedAt');
-
         })->orderBy('id', 'DESC');
     }
 

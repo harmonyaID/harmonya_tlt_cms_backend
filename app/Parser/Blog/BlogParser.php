@@ -8,21 +8,29 @@ use Logia\Core\Parser\BaseParser;
 
 class BlogParser extends BaseParser
 {
-
     public static function first($data)
     {
         if (!$data) {
             return null;
         }
 
-        $tags = [];
-        foreach ($data->tags as $tag) {
-            $tags[] = ['id' => $tag->id, 'name' => $tag->name];
-        }
+        $categories = $data->categories->map(
+            fn ($category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+            ]
+        )->values();
+
+        $tags = $data->tags->map(
+            fn ($tag) => [
+                'id' => $tag->id,
+                'name' => $tag->name,
+            ]
+        )->values();
 
         return [
             'id' => $data->id,
-            'category' => optional($data->category)->only('id', 'name'),
+            'categories' => $categories,
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),
@@ -32,15 +40,23 @@ class BlogParser extends BaseParser
             'content' => $data->content,
             'author' => $data->author,
             'tags' => $tags,
-            'properties' => $data->properties->map(fn($property) => ['id' => $property->id, 'nickname' => $property->nickname, 'order' => $property->pivot->order])->values(),
+            'properties' => $data->properties
+                ->map(fn ($property) => [
+                    'id' => $property->id,
+                    'nickname' => $property->nickname,
+                    'order' => $property->pivot->order,
+                ])
+                ->values(),
             'locale' => $data->locale,
+            'visibility' => $data->visibility,
             'isActive' => $data->isActive,
-            'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
-            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'publishedAt' => optional($data->publishedAt)
+                ->format('d/m/Y H:i'),
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
             'uniqueVisitorCount' => $data->uniqueVisitorCount(),
-
         ];
     }
 
@@ -50,14 +66,23 @@ class BlogParser extends BaseParser
             return null;
         }
 
-        $tags = [];
-        foreach ($data->tags as $tag) {
-            $tags[] = ['id' => $tag->id, 'name' => $tag->name];
-        }
+        $categories = $data->categories->map(
+            fn ($category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+            ]
+        )->values();
+
+        $tags = $data->tags->map(
+            fn ($tag) => [
+                'id' => $tag->id,
+                'name' => $tag->name,
+            ]
+        )->values();
 
         return [
             'id' => $data->id,
-            'category' => optional($data->category)->only('id', 'name'),
+            'categories' => $categories,
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),
@@ -67,11 +92,20 @@ class BlogParser extends BaseParser
             'excerpt' => $data->excerpt,
             'author' => $data->author,
             'tags' => $tags,
-            'properties' => $data->properties->map(fn($property) => ['id' => $property->id, 'nickname' => $property->nickname, 'order' => $property->pivot->order])->values(),
+            'properties' => $data->properties
+                ->map(fn ($property) => [
+                    'id' => $property->id,
+                    'nickname' => $property->nickname,
+                    'order' => $property->pivot->order,
+                ])
+                ->values(),
             'locale' => $data->locale,
+            'visibility' => $data->visibility,
             'isActive' => $data->isActive,
-            'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
-            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'publishedAt' => optional($data->publishedAt)
+                ->format('d/m/Y H:i'),
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
             'uniqueVisitorCount' => $data->uniqueVisitorCount(),
         ];
     }
