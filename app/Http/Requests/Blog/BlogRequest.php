@@ -21,6 +21,9 @@ class BlogRequest extends FormRequest
 
         return array_merge([
             'categoryId' => 'nullable|integer|exists:blog_categories,id',
+            'categoryIds' => 'nullable|array',
+            'categoryIds.*' => 'integer|exists:blog_categories,id',
+
             'title' => 'required|string',
 
             'slug' => [
