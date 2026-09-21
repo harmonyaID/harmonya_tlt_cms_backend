@@ -15,9 +15,9 @@ class ExperienceAreaController extends Controller
         return success(ExperienceAreaParser::briefs($areas), pagination: pagination($areas));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $area = ExperienceArea::with('type', 'seo')->find($id);
+        $area = ExperienceArea::with('type', 'seo')->bySlugOrId($idOrSlug)->first($idOrSlug);
         if (!$area) {
             errExperienceAreaGet();
         }

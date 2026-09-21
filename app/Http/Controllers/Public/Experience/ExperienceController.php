@@ -17,9 +17,10 @@ class ExperienceController extends Controller
         return success(ExperienceParser::briefs($experiences), pagination: pagination($experiences));
     }
 
-    public function detail($id)
-    {
-        $experience = Experience::where('isActive', true)->with(['type', 'area', 'photos', 'seo','acf'])->find($id);
+    public function detail($idOrSlug)
+    {        dd("test");
+
+        $experience = Experience::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'seo','acf'])->first($idOrSlug);
         if (!$experience) {
             errExperienceGet();
         }

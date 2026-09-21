@@ -17,9 +17,9 @@ class BoatController extends Controller
         return success(BoatParser::briefs($boats), pagination: pagination($boats));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $boat = Boat::where('isActive', true)->with(['photos', 'type', 'customInformations', 'acf'])->find($id);
+        $boat = Boat::where('isActive', true)->bySlugOrId($idOrSlug)->with(['photos', 'type', 'customInformations', 'acf'])->first($idOrSlug);
         if (!$boat) {
             errBoatGet();
         }

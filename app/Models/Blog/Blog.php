@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Models\Traits\HasSlugLookup;
 use App\Parser\Blog\BlogParser;
 use App\Services\Constant\Storage\PathConstant;
@@ -19,7 +20,7 @@ class Blog extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
-    use HasSlugLookup;
+    use HasSeoSlugScope;
 
 
     protected $table = 'blogs';
