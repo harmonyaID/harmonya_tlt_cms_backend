@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\HasActivation;
 use App\Models\Setting\SettingCountry;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Models\Traits\HasSlugLookup;
 use App\Parser\Page\PageParser;
 use App\Parser\Staff\StaffParser;
@@ -20,7 +21,7 @@ class Page extends BaseModel
     use HasActivation;
     use HasAccession;
     use HasDateRangeFilter;
-    use HasSlugLookup;
+    use HasSeoSlugScope;
 
     protected $table = 'pages';
     protected $guarded = ['id'];
@@ -66,20 +67,6 @@ class Page extends BaseModel
 
 
     /** --- SCOPES --- */
-
-    public function scopeBySlugOrId($query, $value)
-    {
-        return $query->where(function ($q) use ($value) {
-            $q->whereHas('seo', function ($seo) use ($value) {
-                $seo->where('slug', $value);
-            });
-
-            if (is_numeric($value)) {
-                $q->orWhere('id', $value);
-            }
-        });
-    }
-    
     public function scopeFilter($query, $request)
     {
         return $query

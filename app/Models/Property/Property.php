@@ -8,6 +8,7 @@ use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Property\PropertyParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,7 +21,7 @@ class Property extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
-
+    use HasSeoSlugScope;
 
     protected $table = 'properties';
     protected $guarded = ['id'];

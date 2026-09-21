@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Boat\BoatParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,6 +18,7 @@ class Boat extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
+    use HasSeoSlugScope;
 
     protected $table = 'boats';
     protected $guarded = ['id'];

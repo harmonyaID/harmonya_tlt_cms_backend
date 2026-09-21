@@ -15,9 +15,9 @@ class ExperienceTypeController extends Controller
         return success(ExperienceTypeParser::briefs($types), pagination: pagination($types));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $type = ExperienceType::with('seo', 'blogs')->find($id);
+        $type = ExperienceType::with('seo', 'blogs')->bySlugOrId($idOrSlug)->find($idOrSlug);
         if (!$type) {
             errExperienceTypeGet();
         }

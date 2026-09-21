@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\IslandGuide\IslandGuideParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,8 @@ class IslandGuide extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
+    use HasSeoSlugScope;
+
 
     protected $table = 'island_guides';
     protected $guarded = ['id'];

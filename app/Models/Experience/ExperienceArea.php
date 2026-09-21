@@ -4,6 +4,7 @@ namespace App\Models\Experience;
 
 use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Experience\ExperienceAreaParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class ExperienceArea extends BaseModel
 {
     use SoftDeletes;
+    use HasSeoSlugScope;
 
     protected $table = 'experience_areas';
     protected $guarded = ['id'];

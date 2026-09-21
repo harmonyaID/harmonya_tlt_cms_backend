@@ -17,9 +17,9 @@ class IslandGuideController extends Controller
         return success(IslandGuideParser::briefs($islandGuides), pagination: pagination($islandGuides));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $islandGuide = IslandGuide::where('isActive', true)->with(['type', 'area', 'photos', 'acf'])->find($id);
+        $islandGuide = IslandGuide::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'acf'])->first($idOrSlug);
         if (!$islandGuide) {
             errIslandGuideGet();
         }

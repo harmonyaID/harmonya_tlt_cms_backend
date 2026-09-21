@@ -22,14 +22,15 @@ class PropertyController extends Controller
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
         $property = Property::where('statusId', PropertyStatus::ACTIVE_ID)
-            ->with([
+        ->bySlugOrId($idOrSlug)    
+        ->with([
                 'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
                 'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
             ])
-            ->find($id);
+            ->find($idOrSlug);
 
         if (!$property) {
             errPropertyGet();
