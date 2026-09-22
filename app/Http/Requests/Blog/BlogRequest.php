@@ -57,6 +57,6 @@ class BlogRequest extends FormRequest
             'tagIds.*' => 'integer|exists:blog_tags,id',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules($blog?->seo), AcfRule::rules());
+        ], SeoRule::rules('seo.', $blog?->seo), AcfRule::rules());
     }
 }

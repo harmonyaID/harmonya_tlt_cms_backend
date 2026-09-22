@@ -48,6 +48,6 @@ class OfferRequest extends FormRequest
             'tagIds.*' => 'integer|exists:offer_tags,id',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules($offer?->seo), AcfRule::rules());
+        ], SeoRule::rules('seo.', $offer?->seo), AcfRule::rules());
     }
 }

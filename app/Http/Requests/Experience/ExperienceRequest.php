@@ -50,6 +50,6 @@ class ExperienceRequest extends FormRequest
             'deleteCatalogIds.*' => 'integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules($experience?->seo) + AcfRule::rules();
+        ] + SeoRule::rules('seo.', $experience?->seo) + AcfRule::rules();
     }
 }

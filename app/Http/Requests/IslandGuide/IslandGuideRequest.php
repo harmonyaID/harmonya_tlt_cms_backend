@@ -50,6 +50,6 @@ class IslandGuideRequest extends FormRequest
             'deleteCatalogIds.*' => 'integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules($islandGuide?->seo) + AcfRule::rules();
+        ] + SeoRule::rules('seo.', $islandGuide?->seo) + AcfRule::rules();
     }
 }
