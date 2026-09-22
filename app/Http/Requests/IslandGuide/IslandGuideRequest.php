@@ -4,6 +4,7 @@ namespace App\Http\Requests\IslandGuide;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\IslandGuide\IslandGuide;
 use Logia\Core\Validation\Support\FormRequest;
 
 class IslandGuideRequest extends FormRequest
@@ -15,6 +16,9 @@ class IslandGuideRequest extends FormRequest
 
     public function rules()
     {
+        $islandGuideId = $this->route('id');
+        $islandGuide = IslandGuide::with('seo')->find($islandGuideId);
+
         return [
             'islandGuideTypeId' => 'required|integer|exists:island_guide_types,id',
             'islandGuideAreaId' => 'nullable|integer|exists:island_guide_areas,id',
@@ -46,6 +50,6 @@ class IslandGuideRequest extends FormRequest
             'deleteCatalogIds.*' => 'integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules() + AcfRule::rules();
+        ] + SeoRule::rules($islandGuide?->seo) + AcfRule::rules();
     }
 }
