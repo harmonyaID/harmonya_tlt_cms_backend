@@ -4,6 +4,7 @@ namespace App\Http\Requests\Boat;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\Boat\Boat;
 use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -16,6 +17,9 @@ class BoatRequest extends FormRequest
 
     public function rules()
     {
+        $boatId = $this->route('id');
+        $boat = Boat::with('seo')->find($boatId);
+        
         return [
             'boatComponentTypeId'  => [
                 'required',
@@ -53,6 +57,6 @@ class BoatRequest extends FormRequest
             'customInformations.*.customInformations.*.order' => 'nullable|integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules() + AcfRule::rules();
+        ] + SeoRule::rules($boat?->seo) + AcfRule::rules();
     }
 }

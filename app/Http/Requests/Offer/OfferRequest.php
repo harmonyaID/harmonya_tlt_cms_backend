@@ -4,6 +4,7 @@ namespace App\Http\Requests\Offer;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\Offer\Offer;
 use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -17,6 +18,7 @@ class OfferRequest extends FormRequest
     public function rules()
     {
         $offerId = $this->route('id');
+        $offer = Offer::with('seo')->find($offerId);
 
         return array_merge([
             'categoryId' => 'nullable|integer|exists:offer_categories,id',
@@ -46,6 +48,6 @@ class OfferRequest extends FormRequest
             'tagIds.*' => 'integer|exists:offer_tags,id',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules(), AcfRule::rules());
+        ], SeoRule::rules($offer?->seo), AcfRule::rules());
     }
 }

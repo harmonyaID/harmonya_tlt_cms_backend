@@ -4,6 +4,7 @@ namespace App\Http\Requests\Page;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\Page\Page;
 use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -27,6 +28,7 @@ class PageRequest extends FormRequest
     public function rules()
     {
         $pageId = $this->route('id');
+        $page = Page::with('seo')->find($pageId);
 
         return array_merge([
             'title' => 'nullable|string|max:256',
@@ -49,6 +51,6 @@ class PageRequest extends FormRequest
             'deleteFeaturedImage' => 'nullable|boolean',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules(), AcfRule::rules());
+        ], SeoRule::rules($page?->seo), AcfRule::rules());
     }
 }

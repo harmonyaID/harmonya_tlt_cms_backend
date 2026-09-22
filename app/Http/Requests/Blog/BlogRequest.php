@@ -5,6 +5,7 @@ namespace App\Http\Requests\Blog;
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRequest;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\Blog\Blog;
 use Illuminate\Validation\Rule;
 use Logia\Core\Validation\Support\FormRequest;
 
@@ -18,6 +19,8 @@ class BlogRequest extends FormRequest
     public function rules()
     {
         $blogId = $this->route('id');
+
+        $blog = Blog::with('seo')->find($blogId);
 
         return array_merge([
             'categoryId' => 'nullable|integer|exists:blog_categories,id',
@@ -54,6 +57,6 @@ class BlogRequest extends FormRequest
             'tagIds.*' => 'integer|exists:blog_tags,id',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules(), AcfRule::rules());
+        ], SeoRule::rules($blog?->seo), AcfRule::rules());
     }
 }

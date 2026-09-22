@@ -4,6 +4,7 @@ namespace App\Http\Requests\Experience;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\Experience\Experience;
 use Logia\Core\Validation\Support\FormRequest;
 
 class ExperienceRequest extends FormRequest
@@ -15,6 +16,9 @@ class ExperienceRequest extends FormRequest
 
     public function rules()
     {
+        $experienceId = $this->route('id');
+        $experience = Experience::with('seo')->find($experienceId);
+
         return [
             'experienceTypeId' => 'required|integer|exists:experience_types,id',
             'experienceAreaId' => 'nullable|integer|exists:experience_areas,id',
@@ -46,6 +50,6 @@ class ExperienceRequest extends FormRequest
             'deleteCatalogIds.*' => 'integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules() + AcfRule::rules();
+        ] + SeoRule::rules($experience?->seo) + AcfRule::rules();
     }
 }
