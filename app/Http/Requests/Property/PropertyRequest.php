@@ -104,6 +104,6 @@ class PropertyRequest extends FormRequest
             'features.*.value' => 'nullable|string',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules($property?->seo), AcfRule::rules());
+        ], SeoRule::rules('seo.', $property?->seo), AcfRule::rules());
     }
 }

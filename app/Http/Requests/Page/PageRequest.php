@@ -51,6 +51,6 @@ class PageRequest extends FormRequest
             'deleteFeaturedImage' => 'nullable|boolean',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules($page?->seo), AcfRule::rules());
+        ], SeoRule::rules('seo.', $page?->seo), AcfRule::rules());
     }
 }

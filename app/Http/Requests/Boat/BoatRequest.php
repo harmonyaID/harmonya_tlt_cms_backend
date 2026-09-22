@@ -57,6 +57,6 @@ class BoatRequest extends FormRequest
             'customInformations.*.customInformations.*.order' => 'nullable|integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules($boat?->seo) + AcfRule::rules();
+        ] + SeoRule::rules('seo.', $boat?->seo) + AcfRule::rules();
     }
 }

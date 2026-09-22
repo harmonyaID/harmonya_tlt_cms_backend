@@ -23,6 +23,6 @@ class HomepageRequest extends FormRequest
             'locale' => 'nullable|string|max:10',
 
             'seo' => 'nullable|array',
-        ], SeoRule::rules($homepage?->seo));
+        ], SeoRule::rules('seo.', $homepage?->seo));
     }
 }
