@@ -16,8 +16,6 @@ class ContentSeoAlgo
     public function save(Request $request): ContentSeo
     {
         $seo = $request->input('seo', []);
-
-        dd( $seo, $request->all());
         $contentSeo = $this->contentable->seo()->firstOrNew([]);
 
         $contentSeo->fill([
