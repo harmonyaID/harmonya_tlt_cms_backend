@@ -31,7 +31,18 @@ class BoatAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->boat = Boat::create($request->except(['photos', 'promoPhotos', 'priceFile', 'deletePhotoIds', 'customInformations', 'seo', 'acf']));
+                $this->boat = Boat::create($request->except([
+                    'photos',
+                    'promoPhotos',
+                    'priceFile',
+                    'mapImage',
+                    'deletePhotoIds',
+                    'deleteMapImage',
+                    'customInformations',
+                    'seo',
+                    'acf',
+                ]));
+
                 if (!$this->boat) {
                     errBoatSave();
                 }
@@ -43,6 +54,11 @@ class BoatAlgo
 
                 if ($request->hasFile('priceFile')) {
                     $this->boat->priceFile = $this->uploadPriceFile($request);
+                    $this->boat->save();
+                }
+
+                if ($request->hasFile('mapImage')) {
+                    $this->boat->mapImage = $this->uploadMapImage($request);
                     $this->boat->save();
                 }
 
@@ -81,9 +97,11 @@ class BoatAlgo
                     'photos',
                     'promoPhotos',
                     'priceFile',
+                    'mapImage',
                     'deletePhotoIds',
                     'deletePromoPhotoIds',
                     'deletePriceFile',
+                    'deleteMapImage',
                     'customInformations',
                     'seo',
                     'acf',
@@ -157,12 +175,26 @@ class BoatAlgo
                 $this->syncCustomInformations($request);
             }
 
+            if ($request->boolean('deleteMapImage')) {
+                $this->deleteMapImage();
+
+                $this->boat->mapImage = null;
+                $this->boat->save();
+            }
+
+            if ($request->hasFile('mapImage')) {
+                $this->deleteMapImage();
+
+                $this->boat->mapImage = $this->uploadMapImage($request);
+                $this->boat->save();
+            }
             (new ContentSeoAlgo($this->boat))->save($request);
             (new ContentAcfAlgo($this->boat))->save($request);
 
             DB::commit();
 
-            return success(BoatParser::first(
+            return success(
+                BoatParser::first(
                     $this->boat->fresh([
                         'photos',
                         'customInformations',
@@ -197,7 +229,7 @@ class BoatAlgo
 
                 $this->deletePromoPhotos();
                 $this->deletePriceFile();
-
+                $this->deleteMapImage();
                 $this->boat->customInformations()->delete();
 
                 if (!$this->boat->delete()) {
@@ -338,11 +370,39 @@ class BoatAlgo
         }
     }
 
+    private function uploadMapImage(Request $request): string
+    {
+        $dirPath = PathConstant::IMAGES_BOAT_MAPS_STORAGE_PUBLIC_PATH();
+
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        $file = $request->file('mapImage');
+        $filename = filename($file, 'boat-maps-' . $this->boat->id);
+        $file->move($dirPath, $filename);
+
+        return $filename;
+    }
+
+    private function deleteMapImage(): void
+    {
+        if (!$this->boat->mapImage) {
+            return;
+        }
+
+        $path = PathConstant::IMAGES_BOAT_MAPS_STORAGE_PUBLIC_PATH() . $this->boat->mapImage;
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
+    }
+
     private function syncCustomInformations(Request $request): void
     {
         $groups = collect($request->input('customInformations', []));
         $incomingIds = $groups
-            ->flatMap(fn ($group) => collect($group['customInformations'] ?? []))
+            ->flatMap(fn($group) => collect($group['customInformations'] ?? []))
             ->pluck('id')
             ->filter()
             ->values()

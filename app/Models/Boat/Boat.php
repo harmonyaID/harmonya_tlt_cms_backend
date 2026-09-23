@@ -30,6 +30,7 @@ class Boat extends BaseModel
     protected $casts = [
         'boatComponentTypeId' => 'integer',
         'promoPhotos'         => 'array',
+        'mapImage'           => 'string',
         'promoLabel'          => 'string',
         'promoLabelUrl'       => 'string',
         'isActive'            => 'boolean',

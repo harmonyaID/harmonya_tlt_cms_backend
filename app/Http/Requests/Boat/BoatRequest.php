@@ -47,6 +47,9 @@ class BoatRequest extends FormRequest
             'deletePhotoIds'       => 'nullable|array',
             'deletePhotoIds.*'     => 'integer|exists:boat_photos,id',
 
+            'mapImage'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'deleteMapImage' => 'nullable|boolean',
+
             // custom informations grouped by name
             'customInformations' => 'nullable|array',
             'customInformations.*.name' => 'required|string',

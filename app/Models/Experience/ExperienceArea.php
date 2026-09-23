@@ -3,6 +3,7 @@
 namespace App\Models\Experience;
 
 use App\Models\BaseModel;
+use App\Models\Property\Property;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Experience\ExperienceAreaParser;
@@ -24,6 +25,10 @@ class ExperienceArea extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
+        'customInformations' => 'array',
+        'experiencePlayIds' => 'array',
+        'experienceEatIds' => 'array',
+        'propertyIds' => 'array',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -31,26 +36,35 @@ class ExperienceArea extends BaseModel
 
     public $parserClass = ExperienceAreaParser::class;
 
-    /*
-     |--------------------------------------------------------------------------
-     | Relationships
-     |-------------------------------------------------------------------------
-     */
-
     public function type(): BelongsTo
     {
         return $this->belongsTo(ExperienceType::class, 'experienceTypeId');
     }
 
+    public function getExperiencePlayData()
+    {
+        return Experience::whereIn('id', $this->experiencePlayIds ?? [])->get();
+    }
+
+    public function getExperienceEatData()
+    {
+        return Experience::whereIn('id', $this->experienceEatIds ?? [])->get();
+    }
+
+    public function getPropertyData()
+    {
+        return Property::whereIn('id', $this->propertyIds ?? [])->get();
+    }
+
     public function seo()
     {
-        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+        return $this->morphOne(
+            ContentSeo::class,
+            'contentable',
+            'contentableType',
+            'contentableId'
+        );
     }
-    /*
-     |--------------------------------------------------------------------------
-     | Scopes
-     |-------------------------------------------------------------------------
-     */
 
     public function scopeFilter($query, $request)
     {
@@ -63,15 +77,8 @@ class ExperienceArea extends BaseModel
             if ($request->has('experienceTypeId') && $request->experienceTypeId) {
                 $query->where('experienceTypeId', $request->experienceTypeId);
             }
-
         })->orderBy('id', 'ASC');
     }
-
-    /*
-     |--------------------------------------------------------------------------
-     | Functions
-     |-------------------------------------------------------------------------
-     */
 
     public function featuredImageUrl()
     {
@@ -79,7 +86,20 @@ class ExperienceArea extends BaseModel
             return null;
         }
 
-        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_AREA . $this->featuredImage);
+        return Storage::disk('public')->url(
+            PathConstant::IMAGES_EXPERIENCE_AREA . $this->featuredImage
+        );
+    }
+
+    public function mapsImageUrl()
+    {
+        if (!$this->mapsImage) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(
+            PathConstant::IMAGES_EXPERIENCE_AREA . $this->mapsImage
+        );
     }
 
     public function bannerUrl()
@@ -88,6 +108,8 @@ class ExperienceArea extends BaseModel
             return null;
         }
 
-        return Storage::disk('public')->url(PathConstant::IMAGES_EXPERIENCE_AREA . $this->banner);
+        return Storage::disk('public')->url(
+            PathConstant::IMAGES_EXPERIENCE_AREA . $this->banner
+        );
     }
 }

@@ -16,8 +16,38 @@ class ExperienceAreaParser extends BaseParser
             'type' => optional($data->type)->only('id', 'name'),
             'name' => $data->name,
             'description' => $data->description,
+
             'featuredImage' => $data->featuredImageUrl(),
+            'mapsImage' => $data->mapsImageUrl(),
             'banner' => $data->bannerUrl(),
+
+            'customInformations' => $data->customInformations,
+
+            'experiencePlayIds' => $data->experiencePlayIds,
+            'experienceEatIds' => $data->experienceEatIds,
+            'propertyIds' => $data->propertyIds,
+
+            'experiencePlay' => $data->getExperiencePlayData()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
+
+            'experienceEat' => $data->getExperienceEatData()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
+
+            'properties' => $data->getPropertyData()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
+
             'seo' => SeoParser::first($data->seo),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
@@ -32,10 +62,39 @@ class ExperienceAreaParser extends BaseParser
             'type' => optional($data->type)->only('id', 'name'),
             'name' => $data->name,
             'description' => $data->description,
-            'featuredImage' => $data->featuredImageUrl(),
-            'banner' => $data->bannerUrl(),
-            'seo' => SeoParser::first($data->seo),
 
+            'featuredImage' => $data->featuredImageUrl(),
+            'mapsImage' => $data->mapsImageUrl(),
+            'banner' => $data->bannerUrl(),
+
+            'customInformations' => $data->customInformations,
+
+            'experiencePlayIds' => $data->experiencePlayIds,
+            'experienceEatIds' => $data->experienceEatIds,
+            'propertyIds' => $data->propertyIds,
+
+            'experiencePlay' => $data->getExperiencePlayData()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
+
+            'experienceEat' => $data->getExperienceEatData()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
+
+            'properties' => $data->getPropertyData()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
+
+            'seo' => SeoParser::first($data->seo),
         ];
     }
 }
