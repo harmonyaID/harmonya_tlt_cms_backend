@@ -15,6 +15,7 @@ class BoatParser extends BaseParser
         if (!$data) return null;
 
         $photos = [];
+
         foreach ($data->photos as $photo) {
             $photos[] = [
                 'id'    => $photo->id,
@@ -28,21 +29,26 @@ class BoatParser extends BaseParser
             ->map(function ($items, $groupName) {
                 return [
                     'name' => $groupName,
-                    'customInformations' => $items->sortBy('order')->values()->map(function ($info) {
-                        return [
-                            'id'    => $info->id,
-                            'name'  => $info->name,
-                            'value' => $info->value,
-                            'order' => $info->order,
-                        ];
-                    })->toArray(),
+                    'customInformations' => $items
+                        ->sortBy('order')
+                        ->values()
+                        ->map(function ($info) {
+                            return [
+                                'id'    => $info->id,
+                                'name'  => $info->name,
+                                'value' => $info->value,
+                                'order' => $info->order,
+                            ];
+                        })
+                        ->toArray(),
                 ];
-            })->values()->toArray();
+            })
+            ->values()
+            ->toArray();
 
         $promoPhotos = [];
 
         foreach ($data->promoPhotos ?? [] as $photo) {
-
             $promoPhotos[] = [
                 'id'   => $photo['id'],
                 'file' => Storage::disk('public')->url(
@@ -50,6 +56,7 @@ class BoatParser extends BaseParser
                 ),
             ];
         }
+
         $boatComponentType = null;
 
         if (isset($data->type)) {
@@ -60,16 +67,26 @@ class BoatParser extends BaseParser
         }
 
         return [
-            'id'                  => $data->id,
-            'name'                  => $data->name,
-            'promoLabel'           => $data->promoLabel,
-            'promoLabelUrl' => $data->promoLabelUrl,
-            'boatComponentType'   => $boatComponentType,
-            'description'         => $data->description,
-            'promoPhotos'         => $promoPhotos,
-            'priceFile'           => $data->priceFile
-                ? Storage::disk('public')->url(PathConstant::FILES_BOAT . $data->priceFile)
+            'id'                 => $data->id,
+            'name'               => $data->name,
+            'promoLabel'         => $data->promoLabel,
+            'promoLabelUrl'      => $data->promoLabelUrl,
+            'boatComponentType'  => $boatComponentType,
+            'description'        => $data->description,
+            'promoPhotos'        => $promoPhotos,
+
+            'priceFile' => $data->priceFile
+                ? Storage::disk('public')->url(
+                    PathConstant::FILES_BOAT . $data->priceFile
+                )
                 : null,
+
+            'mapImage' => $data->mapImage
+                ? Storage::disk('public')->url(
+                    PathConstant::IMAGES_BOAT_MAPS . $data->mapImage
+                )
+                : null,
+
             'photos'              => $photos,
             'customInformations'  => $customInformations,
             'locale'              => $data->locale,
@@ -85,6 +102,7 @@ class BoatParser extends BaseParser
         if (!$data) return null;
 
         $photos = [];
+
         foreach ($data->photos as $photo) {
             $photos[] = [
                 'id'    => $photo->id,
@@ -104,7 +122,6 @@ class BoatParser extends BaseParser
                     ),
                 ];
             } else {
-                // $photo is just a filename string
                 $promoPhotos[] = [
                     'id'   => $key,
                     'file' => Storage::disk('public')->url(
@@ -115,16 +132,23 @@ class BoatParser extends BaseParser
         }
 
         return [
-            'id'                  => $data->id,
+            'id'                    => $data->id,
             'name'                  => $data->name,
-            'promoLabel'           => $data->promoLabel,
+            'promoLabel'            => $data->promoLabel,
             'boatComponentTypeId'   => $data->boatComponentTypeId,
             'boatComponentTypeName' => optional($data->type)->name,
-            'promoPhotos'         => $promoPhotos,
-            'photos'              => $photos,
-            'locale'              => $data->locale,
-            'isActive'            => $data->isActive,
-            'createdAt'           => optional($data->createdAt)->format('d/m/Y H:i'),
+            'promoPhotos'           => $promoPhotos,
+
+            'mapImage' => $data->mapImage
+                ? Storage::disk('public')->url(
+                    PathConstant::IMAGES_BOAT_MAPS . $data->mapImage
+                )
+                : null,
+
+            'photos'    => $photos,
+            'locale'    => $data->locale,
+            'isActive'  => $data->isActive,
+            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
 }
