@@ -26,13 +26,12 @@ use App\Services\Constant\Property\PropertyListingType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Storage\PathConstant;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class GuestyPropertyImporter
 {
-    public function __construct(protected GuestyClient $client)
-    {
-    }
+    public function __construct(protected GuestyClient $client) {}
 
     public function import(array $listing): Property
     {
@@ -53,6 +52,13 @@ class GuestyPropertyImporter
                     'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
                     'currency' => $listing['prices']['currency'] ?? 'USD',
                     'guestyImportedAt' => now(),
+                    'sourceCreatedAt' => !empty($listing['createdAt'])
+                        ? Carbon::parse($listing['createdAt'])
+                        : null,
+
+                    'sourceUpdatedAt' => !empty($listing['updatedAt'])
+                        ? Carbon::parse($listing['updatedAt'])
+                        : null,
                 ]
             );
 
