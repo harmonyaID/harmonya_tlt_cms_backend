@@ -17,7 +17,7 @@ class ExperienceTypeController extends Controller
 
     public function detail($idOrSlug)
     {
-        $type = ExperienceType::with('seo', 'blogs')->bySlugOrId($idOrSlug)->find($idOrSlug);
+        $type = ExperienceType::with('seo', 'blogs')->bySlugOrId($idOrSlug)->first();;
         if (!$type) {
             errExperienceTypeGet();
         }
