@@ -182,6 +182,14 @@ class AccessPermissionName
     const STAFF_EXPERIENCE_UPDATE = AccessGroup::STAFF . '.experience.update';
     const STAFF_EXPERIENCE_DELETE = AccessGroup::STAFF . '.experience.delete';
 
+
+    // Experience Tag
+    const STAFF_EXPERIENCE_TAG = AccessGroup::STAFF . '.experience-tag.*';
+    const STAFF_EXPERIENCE_TAG_VIEW = AccessGroup::STAFF . '.experience-tag.view';
+    const STAFF_EXPERIENCE_TAG_CREATE = AccessGroup::STAFF . '.experience-tag.create';
+    const STAFF_EXPERIENCE_TAG_UPDATE = AccessGroup::STAFF . '.experience-tag.update';
+    const STAFF_EXPERIENCE_TAG_DELETE = AccessGroup::STAFF . '.experience-tag.delete';
+
     const STAFF_EXPERIENCE_INQUIRY_FORM        = AccessGroup::STAFF . '.experience-inquiry-form.*';
     const STAFF_EXPERIENCE_INQUIRY_FORM_VIEW   = AccessGroup::STAFF . '.experience-inquiry-form.view';
     const STAFF_EXPERIENCE_INQUIRY_FORM_CREATE = AccessGroup::STAFF . '.experience-inquiry-form.create';
@@ -402,7 +410,7 @@ class AccessPermissionName
         self::STAFF_OFFER_TAG_CREATE,
         self::STAFF_OFFER_TAG_UPDATE,
         self::STAFF_OFFER_TAG_DELETE,
-        
+
         self::STAFF_TEAM_MEMBER,
         self::STAFF_TEAM_MEMBER_VIEW,
         self::STAFF_TEAM_MEMBER_CREATE,
@@ -445,6 +453,12 @@ class AccessPermissionName
         self::STAFF_EXPERIENCE_UPDATE,
         self::STAFF_EXPERIENCE_DELETE,
 
+        self::STAFF_EXPERIENCE_TAG,
+        self::STAFF_EXPERIENCE_TAG_VIEW,
+        self::STAFF_EXPERIENCE_TAG_CREATE,
+        self::STAFF_EXPERIENCE_TAG_UPDATE,
+        self::STAFF_EXPERIENCE_TAG_DELETE,
+        
         self::STAFF_ISLAND_GUIDE_TYPE,
         self::STAFF_ISLAND_GUIDE_TYPE_VIEW,
         self::STAFF_ISLAND_GUIDE_TYPE_CREATE,

@@ -23,6 +23,7 @@ class Experience extends BaseModel
     use HasSeoSlugScope;
 
     protected $table = 'experiences';
+
     protected $guarded = ['id'];
 
     const CREATED_AT = 'createdAt';
@@ -31,7 +32,7 @@ class Experience extends BaseModel
 
     protected $casts = [
         'catalogs' => 'array',
-        'contactInfo' => 'array',
+        'contactInformation' => 'array',
         'isActive' => 'boolean',
         'showInquiry' => 'boolean',
         self::CREATED_AT => 'datetime',
@@ -43,17 +44,38 @@ class Experience extends BaseModel
 
     public function type(): BelongsTo
     {
-        return $this->belongsTo(ExperienceType::class, 'experienceTypeId');
+        return $this->belongsTo(
+            ExperienceType::class,
+            'experienceTypeId'
+        );
     }
 
     public function area(): BelongsTo
     {
-        return $this->belongsTo(ExperienceArea::class, 'experienceAreaId');
+        return $this->belongsTo(
+            ExperienceArea::class,
+            'experienceAreaId'
+        );
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ExperienceTag::class,
+            'experience_tag',
+            'experienceId',
+            'tagId'
+        );
     }
 
     public function seo()
     {
-        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+        return $this->morphOne(
+            ContentSeo::class,
+            'contentable',
+            'contentableType',
+            'contentableId'
+        );
     }
 
     public function acf()
@@ -68,71 +90,94 @@ class Experience extends BaseModel
 
     public function photos(): HasMany
     {
-        return $this->hasMany(ExperiencePhoto::class, 'experienceId')
-            ->orderBy('order');
-    }
-
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            ExperienceTag::class,
-            'experience_tag',
-            'experienceId',
-            'tagId'
-        );
+        return $this->hasMany(
+            ExperiencePhoto::class,
+            'experienceId'
+        )->orderBy('order');
     }
 
     public function scopeFilter($query, $request)
     {
-        return $query->where(function ($query) use ($request) {
+        return $query
+            ->where(function ($query) use ($request) {
 
-            if ($request->has('search') && strlen($request->search) > 1) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('name', 'LIKE', "%$request->search%")
-                        ->orWhere('description', 'LIKE', "%$request->search%");
-                });
-            }
+                if ($request->has('search') && strlen($request->search) > 1) {
+                    $query->where(function ($q) use ($request) {
+                        $q->where(
+                            'name',
+                            'LIKE',
+                            "%$request->search%"
+                        )->orWhere(
+                            'description',
+                            'LIKE',
+                            "%$request->search%"
+                        );
+                    });
+                }
 
-            if ($request->has('experienceTypeIds') && $request->experienceTypeIds) {
-                $query->whereIn(
-                    'experienceTypeId',
-                    $this->toValueArray($request->experienceTypeIds)
-                );
-            }
-
-            if ($request->has('experienceAreaIds') && $request->experienceAreaIds) {
-                $query->whereIn(
-                    'experienceAreaId',
-                    $this->toValueArray($request->experienceAreaIds)
-                );
-            }
-
-            if ($request->has('tagIds') && $request->tagIds) {
-                $query->whereHas('tags', function ($tag) use ($request) {
-                    $tag->whereIn(
-                        'experience_tags.id',
-                        $this->toValueArray($request->tagIds)
+                if (
+                    $request->has('experienceTypeIds') &&
+                    $request->experienceTypeIds
+                ) {
+                    $query->whereIn(
+                        'experienceTypeId',
+                        $this->toValueArray(
+                            $request->experienceTypeIds
+                        )
                     );
-                });
-            }
+                }
 
-            if ($request->has('excludeIds') && $request->excludeIds) {
-                $query->whereNotIn(
-                    'id',
-                    $this->toValueArray($request->excludeIds)
+                if (
+                    $request->has('experienceAreaIds') &&
+                    $request->experienceAreaIds
+                ) {
+                    $query->whereIn(
+                        'experienceAreaId',
+                        $this->toValueArray(
+                            $request->experienceAreaIds
+                        )
+                    );
+                }
+
+                if (
+                    $request->has('isActive') &&
+                    $request->isActive !== null &&
+                    $request->isActive !== ''
+                ) {
+                    $query->where(
+                        'isActive',
+                        $request->isActive
+                    );
+                }
+
+                if (
+                    $request->has('locale') &&
+                    $request->locale
+                ) {
+                    $query->where(
+                        'locale',
+                        $request->locale
+                    );
+                }
+
+                if (
+                    $request->has('excludeIds') &&
+                    $request->excludeIds
+                ) {
+                    $query->whereNotIn(
+                        'id',
+                        $this->toValueArray(
+                            $request->excludeIds
+                        )
+                    );
+                }
+
+                $this->applyDateRangeFilter(
+                    $query,
+                    $request
                 );
-            }
-
-            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
-                $query->where('isActive', $request->isActive);
-            }
-
-            if ($request->has('locale') && $request->locale) {
-                $query->where('locale', $request->locale);
-            }
-
-            $this->applyDateRangeFilter($query, $request);
-        })->orderBy('id', 'DESC');
+            })
+            ->orderBy('id', 'DESC');
     }
 
     public function thumbnailUrl()
@@ -142,7 +187,8 @@ class Experience extends BaseModel
         }
 
         return Storage::disk('public')->url(
-            PathConstant::IMAGES_EXPERIENCE . $this->thumbnail
+            PathConstant::IMAGES_EXPERIENCE .
+            $this->thumbnail
         );
     }
 
@@ -154,7 +200,8 @@ class Experience extends BaseModel
                     'id' => $catalog['id'],
                     'name' => $catalog['name'],
                     'file' => Storage::disk('public')->url(
-                        PathConstant::PDF_EXPERIENCE . $catalog['file']
+                        PathConstant::PDF_EXPERIENCE .
+                        $catalog['file']
                     ),
                 ];
             })

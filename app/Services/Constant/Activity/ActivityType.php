@@ -33,6 +33,7 @@ class ActivityType extends BaseCodeName
     const ISLAND_GUIDE_TYPE = 'island_guide_type';
     const ISLAND_GUIDE_AREA = 'island_guide_area';
     const ISLAND_GUIDE = 'island_guide';
+    const EXPERIENCE_TAG = 'experience-tag';
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
     const MENU = 'menu';
     const HOMEPAGE = 'homepage';

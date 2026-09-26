@@ -38,21 +38,21 @@ if (!function_exists("errExperienceAreaGet")) {
 if (!function_exists("errExperienceAreaSave")) {
     function errExperienceAreaSave($internalMsg = "", $status = 500)
     {
-        error($status, "Unable to save experience category", $internalMsg);
+        error($status, "Unable to save experience area", $internalMsg);
     }
 }
 
 if (!function_exists("errExperienceAreaUpdate")) {
     function errExperienceAreaUpdate($internalMsg = "", $status = 500)
     {
-        error($status, "Unable to update experience category", $internalMsg);
+        error($status, "Unable to update experience area", $internalMsg);
     }
 }
 
 if (!function_exists("errExperienceAreaDelete")) {
     function errExperienceAreaDelete($internalMsg = "", $status = 500)
     {
-        error($status, "Unable to delete experience category", $internalMsg);
+        error($status, "Unable to delete experience area", $internalMsg);
     }
 }
 
@@ -81,6 +81,34 @@ if (!function_exists("errExperienceTypeDelete")) {
     function errExperienceTypeDelete($internalMsg = "", $status = 500)
     {
         error($status, "Unable to delete experience type", $internalMsg);
+    }
+}
+
+if (!function_exists("errExperienceTagGet")) {
+    function errExperienceTagGet($internalMsg = "")
+    {
+        error(404, "Experience tag not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errExperienceTagSave")) {
+    function errExperienceTagSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save experience tag", $internalMsg);
+    }
+}
+
+if (!function_exists("errExperienceTagUpdate")) {
+    function errExperienceTagUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update experience tag", $internalMsg);
+    }
+}
+
+if (!function_exists("errExperienceTagDelete")) {
+    function errExperienceTagDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete experience tag", $internalMsg);
     }
 }
 
