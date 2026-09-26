@@ -32,52 +32,52 @@ class ExperienceAreaParser extends BaseParser
             'customInformations' => $data->customInformations,
 
             'experienceSection1Ids' =>
-                $data->experienceSection1Ids,
+            $data->experienceSection1Ids,
 
             'experienceSection2Ids' =>
-                $data->experienceSection2Ids,
+            $data->experienceSection2Ids,
 
             'propertyIds' =>
-                $data->propertyIds,
+            $data->propertyIds,
 
             'blogIds' =>
-                $data->blogIds,
+            $data->blogIds,
 
             'experienceSection1' =>
-                $data->getExperienceSection1Data()
-                    ->map(fn ($item) => [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                    ])
-                    ->values(),
+            $data->getExperienceSection1Data()
+                ->map(fn($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
 
             'experienceSection2' =>
-                $data->getExperienceSection2Data()
-                    ->map(fn ($item) => [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                    ])
-                    ->values(),
+            $data->getExperienceSection2Data()
+                ->map(fn($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
 
             'properties' =>
-                $data->getPropertyData()
-                    ->map(fn ($item) => [
-                        'id' => $item->id,
-                        'name' => $item->nickname,
-                    ])
-                    ->values(),
+            $data->getPropertyData()
+                ->map(fn($item) => [
+                    'id' => $item->id,
+                    'nickname' => $item->nickname,
+                ])
+                ->values(),
 
             'blogs' =>
-                BlogParser::briefs(
-                    $data->getBlogData()
-                ),
+            BlogParser::briefs(
+                $data->getBlogData()
+            ),
 
             'seo' =>
-                SeoParser::first($data->seo),
+            SeoParser::first($data->seo),
 
             'createdAt' =>
-                optional($data->createdAt)
-                    ->format('d/m/Y H:i'),
+            optional($data->createdAt)
+                ->format('d/m/Y H:i'),
         ];
     }
 
@@ -104,49 +104,37 @@ class ExperienceAreaParser extends BaseParser
 
             'customInformations' => $data->customInformations,
 
-            'experienceSection1Ids' =>
-                $data->experienceSection1Ids,
-
-            'experienceSection2Ids' =>
-                $data->experienceSection2Ids,
-
-            'propertyIds' =>
-                $data->propertyIds,
-
-            'blogIds' =>
-                $data->blogIds,
-
             'experienceSection1' =>
-                $data->getExperienceSection1Data()
-                    ->map(fn ($item) => [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                    ])
-                    ->values(),
+            $data->getExperienceSection1Data()
+                ->map(fn($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
 
             'experienceSection2' =>
-                $data->getExperienceSection2Data()
-                    ->map(fn ($item) => [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                    ])
-                    ->values(),
+            $data->getExperienceSection2Data()
+                ->map(fn($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                ])
+                ->values(),
 
             'properties' =>
-                $data->getPropertyData()
-                    ->map(fn ($item) => [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                    ])
-                    ->values(),
+            $data->getPropertyData()
+                ->map(fn($item) => [
+                    'id' => $item->id,
+                    'nickname' => $item->nickname,
+                ])
+                ->values(),
 
             'blogs' =>
-                BlogParser::briefs(
-                    $data->getBlogData()
-                ),
+            BlogParser::briefs(
+                $data->getBlogData()
+            ),
 
             'seo' =>
-                SeoParser::first($data->seo),
+            SeoParser::first($data->seo),
         ];
     }
 }

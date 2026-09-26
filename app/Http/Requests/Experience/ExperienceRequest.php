@@ -23,23 +23,33 @@ class ExperienceRequest extends FormRequest
             'experienceTypeId' => 'required|integer|exists:experience_types,id',
             'experienceAreaId' => 'nullable|integer|exists:experience_areas,id',
             'name' => 'required|string',
-            'openHours' => 'nullable|string',
+            'excerpt' => 'nullable|string',
             'description' => 'nullable|string',
+            'address' => 'nullable|string',
+            'openHours' => 'nullable|string',
             'mapLocationUrl' => 'nullable|string',
-            'whatsapp' => 'nullable|string',
+
+            'contactInfo' => 'nullable|array',
+            'contactInfo.whatsapp' => 'nullable|string',
+            'contactInfo.email' => 'nullable|email',
+
             'instagram' => 'nullable|string',
             'website' => 'nullable|string',
+
             'isActive' => 'required|boolean',
             'locale' => 'nullable|string|exists:languages,code',
             'showInquiry' => 'required|boolean',
 
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'mapImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
 
             'photos' => 'nullable|array',
             'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+
             'deletePhotoIds' => 'nullable|array',
             'deletePhotoIds.*' => 'integer|exists:experience_photos,id',
+
+            'tagIds' => 'nullable|array',
+            'tagIds.*' => 'integer|exists:experience_tags,id',
 
             'catalogs' => 'nullable|array',
             'catalogs.*.id' => 'nullable|integer',
@@ -50,6 +60,7 @@ class ExperienceRequest extends FormRequest
             'deleteCatalogIds.*' => 'integer',
 
             'seo' => 'nullable|array',
-        ] + SeoRule::rules('seo.', $experience?->seo) + AcfRule::rules();
+        ] + SeoRule::rules('seo.', $experience?->seo)
+          + AcfRule::rules();
     }
 }
