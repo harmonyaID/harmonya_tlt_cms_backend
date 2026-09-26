@@ -10,6 +10,7 @@ use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
 use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Property\PropertyParser;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -129,6 +130,14 @@ class Property extends BaseModel
         return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
     }
 
+    public function floorplanImageUrl(): ?string
+    {
+        if (!$this->floorplanImage) {
+            return null;
+        }
+
+        return asset('storage/' . PathConstant::IMAGES_PROPERTY_FLOORPLAN . $this->floorplanImage);
+    }
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($query) use ($request) {

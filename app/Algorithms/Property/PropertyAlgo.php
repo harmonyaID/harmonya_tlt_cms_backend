@@ -31,12 +31,14 @@ class PropertyAlgo
         'features',
         'seo',
         'acf',
+        'deleteFloorplanImage',
     ];
 
     public function __construct(protected Property|int|null $property = null)
     {
         if (is_int($this->property)) {
             $this->property = Property::find($this->property);
+
             if (!$this->property) {
                 errPropertyGet();
             }
@@ -46,12 +48,15 @@ class PropertyAlgo
     public function create(Request $request)
     {
         try {
-
             DB::transaction(function () use ($request) {
-
                 $data = $request->except($this->nestedKeys);
 
+                if ($request->hasFile('floorplanImage')) {
+                    $data['floorplanImage'] = $this->uploadFloorplanImage($request);
+                }
+
                 $this->property = Property::create($data + created_by());
+
                 if (!$this->property) {
                     errPropertySave();
                 }
@@ -77,10 +82,19 @@ class PropertyAlgo
     public function update(Request $request)
     {
         try {
-
             DB::transaction(function () use ($request) {
-
                 $data = $request->except($this->nestedKeys);
+
+                if ($request->hasFile('floorplanImage')) {
+                    $this->deleteFloorplanImage();
+
+                    $data['floorplanImage'] = $this->uploadFloorplanImage($request);
+                } elseif ($request->boolean('deleteFloorplanImage')) {
+                    $this->deleteFloorplanImage();
+
+                    $data['floorplanImage'] = null;
+                }
+
                 $this->property->update($data);
 
                 $this->syncNested($request);
@@ -104,15 +118,16 @@ class PropertyAlgo
     public function delete()
     {
         try {
-
             DB::transaction(function () {
-
                 $dirPath = PathConstant::IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH();
+
                 foreach ($this->property->photos as $photo) {
                     if ($photo->path && file_exists($dirPath . $photo->path)) {
                         unlink($dirPath . $photo->path);
                     }
                 }
+
+                $this->deleteFloorplanImage();
 
                 $this->property->addresses()->delete();
                 $this->property->guestInfo()->delete();
@@ -168,12 +183,45 @@ class PropertyAlgo
         ];
     }
 
+    private function uploadFloorplanImage(Request $request): string
+    {
+        $dirPath = PathConstant::IMAGES_PROPERTY_FLOORPLAN_STORAGE_PUBLIC_PATH();
+
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        $file = $request->file('floorplanImage');
+        $filename = uniqid('floorplan_') . '.' . $file->getClientOriginalExtension();
+
+        $file->move($dirPath, $filename);
+
+        return $filename;
+    }
+
+    private function deleteFloorplanImage(): void
+    {
+        if (!$this->property?->floorplanImage) {
+            return;
+        }
+
+        $dirPath = PathConstant::IMAGES_PROPERTY_FLOORPLAN_STORAGE_PUBLIC_PATH();
+        $filePath = $dirPath . $this->property->floorplanImage;
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
     private function syncNested(Request $request)
     {
         if ($request->has('addresses') && is_array($request->addresses)) {
             $this->property->addresses()->delete();
+
             foreach ($request->addresses as $address) {
-                PropertyAddress::create(['propertyId' => $this->property->id] + $address);
+                PropertyAddress::create([
+                    'propertyId' => $this->property->id,
+                ] + $address);
             }
         }
 
@@ -186,8 +234,11 @@ class PropertyAlgo
 
         if ($request->has('rooms') && is_array($request->rooms)) {
             $this->property->rooms()->delete();
+
             foreach ($request->rooms as $room) {
-                PropertyRoom::create(['propertyId' => $this->property->id] + $room);
+                PropertyRoom::create([
+                    'propertyId' => $this->property->id,
+                ] + $room);
             }
         }
 
@@ -207,8 +258,11 @@ class PropertyAlgo
 
         if ($request->has('descriptions') && is_array($request->descriptions)) {
             $this->property->descriptions()->delete();
+
             foreach ($request->descriptions as $description) {
-                PropertyDescription::create(['propertyId' => $this->property->id] + $description);
+                PropertyDescription::create([
+                    'propertyId' => $this->property->id,
+                ] + $description);
             }
         }
 
@@ -222,9 +276,13 @@ class PropertyAlgo
 
         if ($request->has('features') && is_array($request->features)) {
             $syncData = [];
+
             foreach ($request->features as $feature) {
-                $syncData[$feature['featureId']] = ['value' => $feature['value'] ?? null];
+                $syncData[$feature['featureId']] = [
+                    'value' => $feature['value'] ?? null,
+                ];
             }
+
             $this->property->features()->sync($syncData);
         }
     }

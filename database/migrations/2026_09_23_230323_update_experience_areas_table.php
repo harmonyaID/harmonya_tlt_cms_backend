@@ -22,7 +22,7 @@ return new class extends Migration
         Schema::table('experience_areas', function (Blueprint $table) {
             $table->dropColumn([
                 'customInformations',
-                'mapsImage',
+                'mapImage',
                 'banner',
                 'experiencePlayIds',
                 'experienceEatIds',

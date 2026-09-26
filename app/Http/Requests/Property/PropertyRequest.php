@@ -103,6 +103,8 @@ class PropertyRequest extends FormRequest
             'features.*.featureId' => 'required_with:features|integer|exists:setting_property_features,id',
             'features.*.value' => 'nullable|string',
 
+            'floorplanImage' => [ 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', ],
+            
             'seo' => 'nullable|array',
         ], SeoRule::rules('seo.', $property?->seo), AcfRule::rules());
     }

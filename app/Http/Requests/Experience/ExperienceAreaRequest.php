@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Experience;
+namespace App\Http\Requests\Property;
 
+use App\Http\Requests\Acf\AcfRule;
+use App\Http\Requests\Seo\SeoRule;
+use App\Models\Property\Property;
 use Logia\Core\Validation\Support\FormRequest;
 
-class ExperienceAreaRequest extends FormRequest
+class PropertyRequest extends FormRequest
 {
     public function authorize()
     {
@@ -13,36 +16,101 @@ class ExperienceAreaRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'experienceTypeId' => 'required|integer|exists:experience_types,id',
-            'name' => 'required|string',
-            'description' => 'nullable|string',
+        $propertyId = $this->route('id');
+        $property = Property::with('seo')->find($propertyId);
 
-            'featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'deleteFeaturedImage' => 'nullable|boolean',
+        return array_merge([
+            'nickname' => 'required|string',
+            'propertyTypeId' => 'nullable|integer|exists:property_types,id',
+            'unitTypeId' => 'required|integer',
+            'listingTypeId' => 'required|integer',
+            'roomType' => 'nullable|string',
+            'occupancy' => 'nullable|integer|min:0',
+            'propertySize' => 'nullable|numeric|min:0',
+            'statusId' => 'required|integer',
+            'cleaningStatusId' => 'nullable|integer',
+            'sourceTypeId' => 'nullable|integer|exists:property_source_types,id',
+            'currency' => 'nullable|string|max:10',
+            'isPopular' => 'nullable|boolean',
 
-            'mapsImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
-            'deleteMapsImage' => 'nullable|boolean',
+            'addresses' => 'nullable|array',
+            'addresses.*.typeId' => 'required|integer',
+            'addresses.*.address' => 'nullable|string',
+            'addresses.*.buildingName' => 'nullable|string',
+            'addresses.*.latitude' => 'nullable|numeric',
+            'addresses.*.longitude' => 'nullable|numeric',
+            'addresses.*.zipCode' => 'nullable|string',
 
-            'banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
-            'deleteBanner' => 'nullable|boolean',
+            'guestInfo' => 'nullable|array',
+            'guestInfo.hostName' => 'nullable|string',
+            'guestInfo.wifiName' => 'nullable|string',
+            'guestInfo.wifiPassword' => 'nullable|string',
+            'guestInfo.houseManual' => 'nullable|string',
+            'guestInfo.trashInstructions' => 'nullable|string',
+            'guestInfo.parkingInstructions' => 'nullable|string',
+            'guestInfo.cleaningInstructions' => 'nullable|string',
+            'guestInfo.interactionWithGuests' => 'nullable|string',
 
-            'customInformations' => 'nullable|array',
-            'customInformations.*.name' => 'required|string',
-            'customInformations.*.customInformations' => 'required|array',
-            'customInformations.*.customInformations.*.id' => 'nullable|integer',
-            'customInformations.*.customInformations.*.name' => 'required|string',
-            'customInformations.*.customInformations.*.value' => 'required|string',
-            'customInformations.*.customInformations.*.order' => 'nullable|integer',
+            'rooms' => 'nullable|array',
+            'rooms.*.roomTypeId' => 'required|integer|exists:property_room_types,id',
+            'rooms.*.label' => 'nullable|string',
+            'rooms.*.bedTypeId' => 'nullable|integer|exists:property_bed_types,id',
+            'rooms.*.bedCount' => 'nullable|integer|min:0',
+            'rooms.*.order' => 'nullable|integer',
 
-            'experiencePlayIds' => 'nullable|array',
-            'experiencePlayIds.*' => 'integer',
+            'availability' => 'nullable|array',
+            'availability.defaultAvailabilityId' => 'nullable|integer',
+            'availability.bookingWindow' => 'nullable|string',
+            'availability.advanceNoticeValue' => 'nullable|integer|min:0',
+            'availability.advanceNoticeUnitId' => 'nullable|integer',
+            'availability.preparationTimeValue' => 'nullable|integer|min:0',
+            'availability.checkInRestrictions' => 'nullable|string',
+            'availability.maxNightsPerYear' => 'nullable|integer|min:0',
+            'availability.minLengthOfStay' => 'nullable|integer|min:0',
+            'availability.maxLengthOfStay' => 'nullable|integer|min:0',
 
-            'experienceEatIds' => 'nullable|array',
-            'experienceEatIds.*' => 'integer',
+            'pricing' => 'nullable|array',
+            'pricing.weekdayBasePrice' => 'nullable|numeric|min:0',
+            'pricing.weekendBasePrice' => 'nullable|numeric|min:0',
+            'pricing.rateStrategy' => 'nullable|string',
+            'pricing.cleaningFee' => 'nullable|numeric|min:0',
+            'pricing.cleaningFeeTypeId' => 'nullable|integer',
+            'pricing.extraPersonFee' => 'nullable|numeric|min:0',
+            'pricing.securityDepositFee' => 'nullable|numeric|min:0',
+            'pricing.weeklyDiscount' => 'nullable|numeric|min:0|max:100',
+            'pricing.monthlyDiscount' => 'nullable|numeric|min:0|max:100',
+            'pricing.markupPercent' => 'nullable|numeric',
 
-            'propertyIds' => 'nullable|array',
-            'propertyIds.*' => 'integer',
-        ];
+            'descriptions' => 'nullable|array',
+            'descriptions.*.channel' => 'nullable|string',
+            'descriptions.*.language' => 'nullable|string',
+            'descriptions.*.title' => 'nullable|string',
+            'descriptions.*.summary' => 'nullable|string',
+            'descriptions.*.theSpace' => 'nullable|string',
+            'descriptions.*.guestAccess' => 'nullable|string',
+            'descriptions.*.theNeighborhood' => 'nullable|string',
+            'descriptions.*.gettingAround' => 'nullable|string',
+            'descriptions.*.otherThingsToNote' => 'nullable|string',
+
+            'amenityIds' => 'nullable|array',
+            'amenityIds.*' => 'integer|exists:setting_amenities,id',
+
+            'tagIds' => 'nullable|array',
+            'tagIds.*' => 'integer|exists:property_tags,id',
+
+            'features' => 'nullable|array',
+            'features.*.featureId' => 'required_with:features|integer|exists:setting_property_features,id',
+            'features.*.value' => 'nullable|string',
+
+            'floorplanImage' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
+            'deleteFloorplanImage' => 'nullable|boolean',
+
+            'seo' => 'nullable|array',
+        ], SeoRule::rules('seo.', $property?->seo), AcfRule::rules());
     }
 }

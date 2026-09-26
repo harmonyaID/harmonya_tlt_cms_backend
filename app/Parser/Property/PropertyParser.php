@@ -22,11 +22,15 @@ class PropertyParser extends BaseParser
         if (!$data) {
             return null;
         }
+
         return [
             'id' => $data->id,
             'nickname' => $data->nickname,
+            'floorplanImage' => $data->floorplanImageUrl(),
             'isPopular' => $data->isPopular,
-            'isNewVilla' => $data->sourceCreatedAt ? Carbon::parse($data->sourceCreatedAt)->gte(now()->subMonth()) : false,
+            'isNewVilla' => $data->sourceCreatedAt
+                ? Carbon::parse($data->sourceCreatedAt)->gte(now()->subMonth())
+                : false,
             'type' => optional($data->type)->only('id', 'name'),
             'unitType' => PropertyUnitType::idName($data->unitTypeId),
             'listingType' => PropertyListingType::idName($data->listingTypeId),
@@ -130,17 +134,23 @@ class PropertyParser extends BaseParser
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
+
     public static function brief($data)
     {
         if (!$data) {
             return null;
         }
+
         $cover = $data->photos->first();
+
         return [
             'id' => $data->id,
             'nickname' => $data->nickname,
+            'floorplanImage' => $data->floorplanImageUrl(),
             'isPopular' => $data->isPopular,
-            'isNewVilla' => $data->sourceCreatedAt ? Carbon::parse($data->sourceCreatedAt)->gte(now()->subMonth()) : false,
+            'isNewVilla' => $data->sourceCreatedAt
+                ? Carbon::parse($data->sourceCreatedAt)->gte(now()->subMonth())
+                : false,
             'type' => optional($data->type)->only('id', 'name'),
             'unitType' => PropertyUnitType::idName($data->unitTypeId),
             'occupancy' => $data->occupancy,
