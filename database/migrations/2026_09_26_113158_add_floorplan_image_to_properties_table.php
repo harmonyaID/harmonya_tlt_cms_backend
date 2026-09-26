@@ -10,8 +10,7 @@ return new class extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->string('floorplanImage', 500)
-                ->nullable()
-                ->after('description');
+                ->nullable();
         });
     }
 
