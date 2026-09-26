@@ -7,26 +7,24 @@ class PathConstant
     /*
      |--------------------------------------------------------------------------
      | BASE PATHS
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
     const STORAGE_BASE = 'app/';
     const STORAGE_PUBLIC_BASE = 'app/public/';
     const STORAGE_PUBLIC_TMP = 'app/public/tmp/';
     const STORAGE_PUBLIC_TMP_PROPERTY = 'app/public/tmp/properties/';
 
-
     /*
      |--------------------------------------------------------------------------
      | LANGUAGE
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
     const LANG = 'lang/';
-
 
     /*
      |--------------------------------------------------------------------------
      | IMAGES
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
     const IMAGES_LANGUAGE = 'images/languages/';
     const IMAGES_CURRENCY = 'images/currencies/';
@@ -36,6 +34,7 @@ class PathConstant
     const IMAGES_CUSTOMER = 'images/customers/';
     const IMAGES_CUSTOMER_IDENTITY = 'images/customers/identities/';
     const IMAGES_FLAG = 'images/flags/';
+
     const IMAGES_PROPERTY_BUILDING = 'images/properties/buildings/';
     const IMAGES_PROPERTY_BUILDING_IMB = 'images/properties/buildings/IMB/';
     const IMAGES_PROPERTY_BUILDING_FLOOR = 'images/properties/buildings/floors/';
@@ -45,6 +44,10 @@ class PathConstant
     const IMAGES_PROPERTY_AREA = 'images/properties/areas/';
     const IMAGES_PROPERTY_PUBLIC_PLACE = 'images/properties/publicPlaces/';
     const IMAGES_PROPERTY_STATUS = 'images/properties/statuses/';
+    const IMAGES_PROPERTY_PHOTO = 'images/property-listings/photos/';
+    const IMAGES_PROPERTY_REVIEW = 'images/property-listings/reviews/';
+    const IMAGES_PROPERTY_FLOORPLAN = 'images/property-listings/floorplans/';
+
     const IMAGES_BLOG = 'images/blogs/';
     const IMAGES_OFFER = 'images/offers/';
     const IMAGES_LEMBONGAN_AREA = 'images/lembongan-areas/';
@@ -57,39 +60,43 @@ class PathConstant
     const IMAGES_TEAM_MEMBER = 'images/team-members/';
     const IMAGES_TLT_REVIEW = 'images/tlt-reviews/';
     const IMAGES_TLT_TESTIMONIAL = 'images/tlt-testimonials/';
+
     const IMAGES_BOAT = 'images/boats/';
     const IMAGES_BOAT_PROMO = 'images/boats/promos/';
-    const FILES_BOAT        = 'files/boats/';
     const IMAGES_BOAT_MAPS = 'images/boats/maps/';
 
     const IMAGES_EXPERIENCE = 'images/experiences/';
     const IMAGES_EXPERIENCE_TYPE = 'images/experience-types/';
     const IMAGES_EXPERIENCE_AREA = 'images/experience-areas/';
-    const PDF_EXPERIENCE = 'PDFs/experiences/';
+
     const IMAGES_ISLAND_GUIDE = 'images/island-guides/';
     const IMAGES_ISLAND_GUIDE_TYPE = 'images/island-guide-types/';
     const IMAGES_ISLAND_GUIDE_AREA = 'images/island-guide-areas/';
-    const PDF_ISLAND_GUIDE = 'PDFs/island-guides/';
 
     const IMAGES_SEO = 'images/seo/';
 
-    const IMAGES_PROPERTY_PHOTO = 'images/property-listings/photos/';
-    const IMAGES_PROPERTY_REVIEW = 'images/property-listings/reviews/';
+    /*
+     |--------------------------------------------------------------------------
+     | FILES
+     |--------------------------------------------------------------------------
+     */
+    const FILES_BOAT = 'files/boats/';
 
     /*
      |--------------------------------------------------------------------------
-     | IMAGES
-     |-------------------------------------------------------------------------
+     | PDF
+     |--------------------------------------------------------------------------
      */
     const PDF_PROPERTY = 'PDFs/properties/';
     const PDF_PROPERTY_AGREEMENT = 'PDFs/properties/agreements/';
+    const PDF_EXPERIENCE = 'PDFs/experiences/';
+    const PDF_ISLAND_GUIDE = 'PDFs/island-guides/';
 
     /*
      |--------------------------------------------------------------------------
      | IMAGE PATH
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
-
     public static function IMAGES_LANGUAGE_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_LANGUAGE);
@@ -120,37 +127,26 @@ class PathConstant
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT);
     }
 
-    public static function IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH()
-    {
-        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_PHOTO);
-    }
-
-    public static function IMAGES_PROPERTY_REVIEW_STORAGE_PUBLIC_PATH()
-    {
-        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_REVIEW);
-    }
-
     public static function IMAGES_BOAT_PROMO_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT_PROMO);
     }
 
-    public static function IMAGES_SEO_STORAGE_PUBLIC_PATH()
-    {
-        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_SEO);
-    }
-    public static function FILES_BOAT_STORAGE_PUBLIC_PATH()
-    {
-        return storage_path(self::STORAGE_PUBLIC_BASE . self::FILES_BOAT);
-    }
     public static function IMAGES_BOAT_MAPS_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BOAT_MAPS);
     }
+
+    public static function FILES_BOAT_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::FILES_BOAT);
+    }
+
     public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
     }
+
     public static function IMAGES_OFFER_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_OFFER);
@@ -175,7 +171,6 @@ class PathConstant
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PAGE);
     }
-
 
     public static function IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH()
     {
@@ -216,10 +211,31 @@ class PathConstant
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::PDF_ISLAND_GUIDE);
     }
+
+    public static function IMAGES_SEO_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_SEO);
+    }
+
+    public static function IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_PHOTO);
+    }
+
+    public static function IMAGES_PROPERTY_REVIEW_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_REVIEW);
+    }
+
+    public static function IMAGES_PROPERTY_FLOORPLAN_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_PROPERTY_FLOORPLAN);
+    }
+
     /*
      |--------------------------------------------------------------------------
      | LANGUAGE PATH
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
     public static function LANG_STORAGE_PUBLIC_PATH($locale)
     {

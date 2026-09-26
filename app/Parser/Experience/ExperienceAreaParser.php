@@ -2,6 +2,7 @@
 
 namespace App\Parser\Experience;
 
+use App\Parser\Blog\BlogParser;
 use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
@@ -9,92 +10,143 @@ class ExperienceAreaParser extends BaseParser
 {
     public static function first($data)
     {
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
 
         return [
             'id' => $data->id,
-            'type' => optional($data->type)->only('id', 'name'),
+
+            'type' => optional($data->type)->only(
+                'id',
+                'name'
+            ),
+
             'name' => $data->name,
             'description' => $data->description,
 
             'featuredImage' => $data->featuredImageUrl(),
-            'mapsImage' => $data->mapsImageUrl(),
+            'mapImage' => $data->mapImageUrl(),
             'banner' => $data->bannerUrl(),
 
             'customInformations' => $data->customInformations,
 
-            'experiencePlayIds' => $data->experiencePlayIds,
-            'experienceEatIds' => $data->experienceEatIds,
-            'propertyIds' => $data->propertyIds,
+            'experienceSection1Ids' =>
+                $data->experienceSection1Ids,
 
-            'experiencePlay' => $data->getExperiencePlayData()
-                ->map(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                ])
-                ->values(),
+            'experienceSection2Ids' =>
+                $data->experienceSection2Ids,
 
-            'experienceEat' => $data->getExperienceEatData()
-                ->map(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                ])
-                ->values(),
+            'propertyIds' =>
+                $data->propertyIds,
 
-            'properties' => $data->getPropertyData()
-                ->map(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                ])
-                ->values(),
+            'blogIds' =>
+                $data->blogIds,
 
-            'seo' => SeoParser::first($data->seo),
-            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'experienceSection1' =>
+                $data->getExperienceSection1Data()
+                    ->map(fn ($item) => [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                    ])
+                    ->values(),
+
+            'experienceSection2' =>
+                $data->getExperienceSection2Data()
+                    ->map(fn ($item) => [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                    ])
+                    ->values(),
+
+            'properties' =>
+                $data->getPropertyData()
+                    ->map(fn ($item) => [
+                        'id' => $item->id,
+                        'name' => $item->nickname,
+                    ])
+                    ->values(),
+
+            'blogs' =>
+                BlogParser::briefs(
+                    $data->getBlogData()
+                ),
+
+            'seo' =>
+                SeoParser::first($data->seo),
+
+            'createdAt' =>
+                optional($data->createdAt)
+                    ->format('d/m/Y H:i'),
         ];
     }
 
     public static function brief($data)
     {
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
 
         return [
             'id' => $data->id,
-            'type' => optional($data->type)->only('id', 'name'),
+
+            'type' => optional($data->type)->only(
+                'id',
+                'name'
+            ),
+
             'name' => $data->name,
             'description' => $data->description,
 
             'featuredImage' => $data->featuredImageUrl(),
-            'mapsImage' => $data->mapsImageUrl(),
+            'mapImage' => $data->mapImageUrl(),
             'banner' => $data->bannerUrl(),
 
             'customInformations' => $data->customInformations,
 
-            'experiencePlayIds' => $data->experiencePlayIds,
-            'experienceEatIds' => $data->experienceEatIds,
-            'propertyIds' => $data->propertyIds,
+            'experienceSection1Ids' =>
+                $data->experienceSection1Ids,
 
-            'experiencePlay' => $data->getExperiencePlayData()
-                ->map(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                ])
-                ->values(),
+            'experienceSection2Ids' =>
+                $data->experienceSection2Ids,
 
-            'experienceEat' => $data->getExperienceEatData()
-                ->map(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                ])
-                ->values(),
+            'propertyIds' =>
+                $data->propertyIds,
 
-            'properties' => $data->getPropertyData()
-                ->map(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                ])
-                ->values(),
+            'blogIds' =>
+                $data->blogIds,
 
-            'seo' => SeoParser::first($data->seo),
+            'experienceSection1' =>
+                $data->getExperienceSection1Data()
+                    ->map(fn ($item) => [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                    ])
+                    ->values(),
+
+            'experienceSection2' =>
+                $data->getExperienceSection2Data()
+                    ->map(fn ($item) => [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                    ])
+                    ->values(),
+
+            'properties' =>
+                $data->getPropertyData()
+                    ->map(fn ($item) => [
+                        'id' => $item->id,
+                        'name' => $item->name,
+                    ])
+                    ->values(),
+
+            'blogs' =>
+                BlogParser::briefs(
+                    $data->getBlogData()
+                ),
+
+            'seo' =>
+                SeoParser::first($data->seo),
         ];
     }
 }
