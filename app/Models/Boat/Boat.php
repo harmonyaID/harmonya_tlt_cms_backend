@@ -30,6 +30,7 @@ class Boat extends BaseModel
         'boatComponentTypeId' => 'integer',
 
         'promoPhotos' => 'array',
+        'priceFiles' => 'array',
         'schedule' => 'array',
 
         'mapImage' => 'string',

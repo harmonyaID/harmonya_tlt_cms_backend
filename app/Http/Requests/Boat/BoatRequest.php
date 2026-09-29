@@ -43,8 +43,11 @@ class BoatRequest extends FormRequest
             'schedule.*.times' => 'required|array|min:1',
             'schedule.*.times.*' => 'required|string|max:50',
 
-            'priceFile' => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
-            'deletePriceFile' => 'nullable|boolean',
+            'priceFiles' => 'nullable|array',
+            'priceFiles.*' => 'file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
+
+            'deletePriceFileIds' => 'nullable|array',
+            'deletePriceFileIds.*' => 'integer',
 
             'promoPhotos' => 'nullable|array',
             'promoPhotos.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
