@@ -10,7 +10,6 @@ use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Boat\BoatParser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Boat extends BaseModel
@@ -29,14 +28,24 @@ class Boat extends BaseModel
 
     protected $casts = [
         'boatComponentTypeId' => 'integer',
-        'promoPhotos'         => 'array',
-        'mapImage'           => 'string',
-        'promoLabel'          => 'string',
-        'promoLabelUrl'       => 'string',
-        'isActive'            => 'boolean',
-        self::CREATED_AT      => 'datetime',
-        self::UPDATED_AT      => 'datetime',
-        self::DELETED_AT      => 'datetime',
+
+        'promoPhotos' => 'array',
+        'priceFiles' => 'array',
+        'schedule' => 'array',
+
+        'mapImage' => 'string',
+
+        'promoLabel' => 'string',
+        'promoLabelUrl' => 'string',
+
+        'discountLabel' => 'string',
+        'discountLabelUrl' => 'string',
+
+        'isActive' => 'boolean',
+
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+        self::DELETED_AT => 'datetime',
     ];
 
     public $parserClass = BoatParser::class;
@@ -44,38 +53,53 @@ class Boat extends BaseModel
     /*
      |--------------------------------------------------------------------------
      | Relationships
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
 
     public function photos(): HasMany
     {
-        return $this->hasMany(BoatPhoto::class, 'boatId')->orderBy('order');
+        return $this->hasMany(BoatPhoto::class, 'boatId')
+            ->orderBy('order');
     }
 
     public function customInformations(): HasMany
     {
-        return $this->hasMany(BoatCustomInformation::class, 'boatId')->orderBy('order');
+        return $this->hasMany(BoatCustomInformation::class, 'boatId')
+            ->orderBy('order');
     }
 
     public function seo()
     {
-        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+        return $this->morphOne(
+            ContentSeo::class,
+            'contentable',
+            'contentableType',
+            'contentableId'
+        );
     }
 
     public function acf()
     {
-        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+        return $this->morphMany(
+            \App\Models\Acf\ContentAcf::class,
+            'contentable',
+            'contentableType',
+            'contentableId'
+        );
     }
 
     public function type(): BelongsTo
     {
-        return $this->belongsTo(BoatComponentType::class, 'boatComponentTypeId');
+        return $this->belongsTo(
+            BoatComponentType::class,
+            'boatComponentTypeId'
+        );
     }
 
     /*
      |--------------------------------------------------------------------------
      | Scopes
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
 
     public function scopeFilter($query, $request)
@@ -84,21 +108,40 @@ class Boat extends BaseModel
 
             if ($request->has('search') && strlen($request->search) > 1) {
                 $query->where(function ($search) use ($request) {
-                    $search->where('name', 'LIKE', "%$request->search%")
-                        ->orWhere('description', 'LIKE', "%$request->search%");
+                    $search->where(
+                        'name',
+                        'LIKE',
+                        "%$request->search%"
+                    )->orWhere(
+                        'description',
+                        'LIKE',
+                        "%$request->search%"
+                    );
                 });
             }
 
-            if ($request->has('boatComponentTypeIds') && $request->boatComponentTypeIds) {
-                $query->whereIn('boatComponentTypeId', $this->toValueArray($request->boatComponentTypeIds));
+            if (
+                $request->has('boatComponentTypeIds') &&
+                $request->boatComponentTypeIds
+            ) {
+                $query->whereIn(
+                    'boatComponentTypeId',
+                    $this->toValueArray($request->boatComponentTypeIds)
+                );
             }
+
             if ($request->has('locale') && $request->locale) {
                 $query->where('locale', $request->locale);
             }
 
-            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
+            if (
+                $request->has('isActive') &&
+                $request->isActive !== null &&
+                $request->isActive !== ''
+            ) {
                 $query->where('isActive', $request->isActive);
             }
+
             $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
     }

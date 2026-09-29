@@ -19,6 +19,7 @@ class BoatAlgo
     {
         if (is_int($this->boat)) {
             $this->boat = Boat::find($this->boat);
+
             if (!$this->boat) {
                 errBoatGet();
             }
@@ -28,15 +29,15 @@ class BoatAlgo
     public function create(Request $request)
     {
         try {
-
             DB::transaction(function () use ($request) {
-
                 $this->boat = Boat::create($request->except([
                     'photos',
                     'promoPhotos',
-                    'priceFile',
+                    'priceFiles',
                     'mapImage',
                     'deletePhotoIds',
+                    'deletePromoPhotoIds',
+                    'deletePriceFileIds',
                     'deleteMapImage',
                     'customInformations',
                     'seo',
@@ -52,8 +53,8 @@ class BoatAlgo
                     $this->boat->save();
                 }
 
-                if ($request->hasFile('priceFile')) {
-                    $this->boat->priceFile = $this->uploadPriceFile($request);
+                if ($request->hasFile('priceFiles')) {
+                    $this->boat->priceFiles = $this->uploadPriceFiles($request);
                     $this->boat->save();
                 }
 
@@ -80,7 +81,14 @@ class BoatAlgo
                     ->log("Create new Boat. ID: " . $this->boat->id);
             });
 
-            return success($this->boat->load(['photos', 'customInformations', 'seo', 'acf']));
+            return success(
+                $this->boat->load([
+                    'photos',
+                    'customInformations',
+                    'seo',
+                    'acf',
+                ])
+            );
         } catch (\Error $error) {
             exception($error);
         }
@@ -91,16 +99,15 @@ class BoatAlgo
         DB::beginTransaction();
 
         try {
-
             $this->boat->update(
                 $request->except([
                     'photos',
                     'promoPhotos',
-                    'priceFile',
+                    'priceFiles',
                     'mapImage',
                     'deletePhotoIds',
                     'deletePromoPhotoIds',
-                    'deletePriceFile',
+                    'deletePriceFileIds',
                     'deleteMapImage',
                     'customInformations',
                     'seo',
@@ -117,16 +124,15 @@ class BoatAlgo
             }
 
             if ($request->filled('deletePromoPhotoIds')) {
-
                 $promoPhotos = $this->boat->promoPhotos ?? [];
 
                 foreach ($promoPhotos as $key => $promoPhoto) {
-
                     if (!in_array($promoPhoto['id'], $request->deletePromoPhotoIds)) {
                         continue;
                     }
 
-                    $file = PathConstant::IMAGES_BOAT_PROMO_STORAGE_PUBLIC_PATH() . $promoPhoto['file'];
+                    $file = PathConstant::IMAGES_BOAT_PROMO_STORAGE_PUBLIC_PATH()
+                        . $promoPhoto['file'];
 
                     if (file_exists($file)) {
                         unlink($file);
@@ -139,11 +145,7 @@ class BoatAlgo
                 $this->boat->save();
             }
 
-            // ===========================
-            // Upload promo photos
-            // ===========================
             if ($request->hasFile('promoPhotos')) {
-
                 $promoPhotos = $this->boat->promoPhotos ?? [];
 
                 $promoPhotos = array_merge(
@@ -155,24 +157,20 @@ class BoatAlgo
                 $this->boat->save();
             }
 
-            if ($request->boolean('deletePriceFile')) {
-
-                $this->deletePriceFile();
-
-                $this->boat->priceFile = null;
-                $this->boat->save();
+            if ($request->filled('deletePriceFileIds')) {
+                $this->deletePriceFiles($request->deletePriceFileIds);
             }
 
-            if ($request->hasFile('priceFile')) {
+            if ($request->hasFile('priceFiles')) {
+                $priceFiles = $this->boat->priceFiles ?? [];
 
-                $this->deletePriceFile();
+                $priceFiles = array_merge(
+                    $priceFiles,
+                    $this->uploadPriceFiles($request)
+                );
 
-                $this->boat->priceFile = $this->uploadPriceFile($request);
+                $this->boat->priceFiles = $priceFiles;
                 $this->boat->save();
-            }
-
-            if ($request->has('customInformations')) {
-                $this->syncCustomInformations($request);
             }
 
             if ($request->boolean('deleteMapImage')) {
@@ -188,6 +186,11 @@ class BoatAlgo
                 $this->boat->mapImage = $this->uploadMapImage($request);
                 $this->boat->save();
             }
+
+            if ($request->has('customInformations')) {
+                $this->syncCustomInformations($request);
+            }
+
             (new ContentSeoAlgo($this->boat))->save($request);
             (new ContentAcfAlgo($this->boat))->save($request);
 
@@ -205,31 +208,32 @@ class BoatAlgo
                 )
             );
         } catch (\Throwable $e) {
-
             DB::rollBack();
 
             throw $e;
         }
     }
+
     public function delete()
     {
         try {
-
             DB::transaction(function () {
-
                 $this->boat->acf()->delete();
 
                 $dirPath = PathConstant::IMAGES_BOAT_STORAGE_PUBLIC_PATH();
+
                 foreach ($this->boat->photos as $photo) {
                     if (file_exists($dirPath . $photo->photo)) {
                         unlink($dirPath . $photo->photo);
                     }
+
                     $photo->delete();
                 }
 
                 $this->deletePromoPhotos();
-                $this->deletePriceFile();
+                $this->deletePriceFiles();
                 $this->deleteMapImage();
+
                 $this->boat->customInformations()->delete();
 
                 if (!$this->boat->delete()) {
@@ -249,29 +253,30 @@ class BoatAlgo
         }
     }
 
-    /*
-     |--------------------------------------------------------------------------
-     | Private Helpers
-     |-------------------------------------------------------------------------
-     */
-
     private function uploadPhotos(Request $request): void
     {
         $dirPath = PathConstant::IMAGES_BOAT_STORAGE_PUBLIC_PATH();
+
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0777, true);
         }
 
         foreach ($request->file('photos') as $index => $photo) {
-            if (!$photo->isValid()) continue;
+            if (!$photo->isValid()) {
+                continue;
+            }
 
-            $filename = filename($photo, 'boat-' . $this->boat->id);
+            $filename = filename(
+                $photo,
+                'boat-' . $this->boat->id
+            );
+
             $photo->move($dirPath, $filename);
 
             BoatPhoto::create([
                 'boatId' => $this->boat->id,
-                'photo'  => $filename,
-                'order'  => $index,
+                'photo' => $filename,
+                'order' => $index,
             ]);
         }
     }
@@ -288,6 +293,7 @@ class BoatAlgo
             if (file_exists($dirPath . $photo->photo)) {
                 unlink($dirPath . $photo->photo);
             }
+
             $photo->delete();
         }
     }
@@ -312,12 +318,15 @@ class BoatAlgo
         $uploaded = [];
 
         foreach ($request->file('promoPhotos') as $photo) {
-
             if (!$photo->isValid()) {
                 continue;
             }
 
-            $filename = filename($photo, 'boat-promo-' . $this->boat->id);
+            $filename = filename(
+                $photo,
+                'boat-promo-' . $this->boat->id
+            );
+
             $photo->move($dirPath, $filename);
 
             $uploaded[] = [
@@ -328,12 +337,12 @@ class BoatAlgo
 
         return $uploaded;
     }
+
     private function deletePromoPhotos(): void
     {
         $dirPath = PathConstant::IMAGES_BOAT_PROMO_STORAGE_PUBLIC_PATH();
 
         foreach ($this->boat->promoPhotos ?? [] as $photo) {
-
             if (!isset($photo['file'])) {
                 continue;
             }
@@ -346,28 +355,75 @@ class BoatAlgo
         $this->boat->promoPhotos = [];
     }
 
-    private function uploadPriceFile(Request $request): string
+    private function uploadPriceFiles(Request $request): array
     {
         $dirPath = PathConstant::FILES_BOAT_STORAGE_PUBLIC_PATH();
+
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0777, true);
         }
 
-        $file = $request->file('priceFile');
-        $filename = filename($file, 'boat-price-' . $this->boat->id);
-        $file->move($dirPath, $filename);
+        $priceFiles = $this->boat->priceFiles ?? [];
 
-        return $filename;
+        $nextId = 1;
+
+        if (!empty($priceFiles)) {
+            $ids = array_column($priceFiles, 'id');
+            $nextId = empty($ids) ? 1 : max($ids) + 1;
+        }
+
+        $uploaded = [];
+
+        foreach ($request->file('priceFiles') as $file) {
+            if (!$file->isValid()) {
+                continue;
+            }
+
+            $filename = filename(
+                $file,
+                'boat-price-' . $this->boat->id
+            );
+
+            $file->move($dirPath, $filename);
+
+            $uploaded[] = [
+                'id' => $nextId++,
+                'file' => $filename,
+            ];
+        }
+
+        return $uploaded;
     }
 
-    private function deletePriceFile(): void
+    private function deletePriceFiles(?array $priceFileIds = null): void
     {
-        if (!$this->boat->priceFile) return;
+        $dirPath = PathConstant::FILES_BOAT_STORAGE_PUBLIC_PATH();
 
-        $path = PathConstant::FILES_BOAT_STORAGE_PUBLIC_PATH() . $this->boat->priceFile;
-        if (file_exists($path)) {
-            unlink($path);
+        $priceFiles = $this->boat->priceFiles ?? [];
+
+        foreach ($priceFiles as $key => $priceFile) {
+            if (!isset($priceFile['file'])) {
+                continue;
+            }
+
+            if (
+                $priceFileIds !== null &&
+                !in_array($priceFile['id'] ?? null, $priceFileIds)
+            ) {
+                continue;
+            }
+
+            $path = $dirPath . $priceFile['file'];
+
+            if (file_exists($path)) {
+                unlink($path);
+            }
+
+            unset($priceFiles[$key]);
         }
+
+        $this->boat->priceFiles = array_values($priceFiles);
+        $this->boat->save();
     }
 
     private function uploadMapImage(Request $request): string
@@ -379,7 +435,12 @@ class BoatAlgo
         }
 
         $file = $request->file('mapImage');
-        $filename = filename($file, 'boat-maps-' . $this->boat->id);
+
+        $filename = filename(
+            $file,
+            'boat-maps-' . $this->boat->id
+        );
+
         $file->move($dirPath, $filename);
 
         return $filename;
@@ -391,7 +452,8 @@ class BoatAlgo
             return;
         }
 
-        $path = PathConstant::IMAGES_BOAT_MAPS_STORAGE_PUBLIC_PATH() . $this->boat->mapImage;
+        $path = PathConstant::IMAGES_BOAT_MAPS_STORAGE_PUBLIC_PATH()
+            . $this->boat->mapImage;
 
         if (file_exists($path)) {
             unlink($path);
@@ -400,9 +462,16 @@ class BoatAlgo
 
     private function syncCustomInformations(Request $request): void
     {
-        $groups = collect($request->input('customInformations', []));
+        $groups = collect(
+            $request->input('customInformations', [])
+        );
+
         $incomingIds = $groups
-            ->flatMap(fn($group) => collect($group['customInformations'] ?? []))
+            ->flatMap(
+                fn($group) => collect(
+                    $group['customInformations'] ?? []
+                )
+            )
             ->pluck('id')
             ->filter()
             ->values()
@@ -419,13 +488,16 @@ class BoatAlgo
         foreach ($groups as $group) {
             $groupName = $group['name'];
 
-            foreach (collect($group['customInformations'] ?? []) as $index => $item) {
+            foreach (
+                collect($group['customInformations'] ?? [])
+                as $index => $item
+            ) {
                 $attributes = [
-                    'boatId'    => $this->boat->id,
+                    'boatId' => $this->boat->id,
                     'groupName' => $groupName,
-                    'name'      => $item['name'],
-                    'value'     => $item['value'],
-                    'order'     => $item['order'] ?? $index,
+                    'name' => $item['name'],
+                    'value' => $item['value'],
+                    'order' => $item['order'] ?? $index,
                 ];
 
                 if (!empty($item['id'])) {
@@ -433,7 +505,8 @@ class BoatAlgo
                         ->whereKey($item['id'])
                         ->update($attributes);
                 } else {
-                    $this->boat->customInformations()->create($attributes);
+                    $this->boat->customInformations()
+                        ->create($attributes);
                 }
             }
         }
