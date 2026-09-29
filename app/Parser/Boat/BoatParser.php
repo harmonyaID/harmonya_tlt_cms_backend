@@ -12,13 +12,15 @@ class BoatParser extends BaseParser
 {
     public static function first($data)
     {
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
 
         $photos = [];
 
         foreach ($data->photos as $photo) {
             $photos[] = [
-                'id'    => $photo->id,
+                'id' => $photo->id,
                 'photo' => $photo->photoUrl(),
                 'order' => $photo->order,
             ];
@@ -34,8 +36,8 @@ class BoatParser extends BaseParser
                         ->values()
                         ->map(function ($info) {
                             return [
-                                'id'    => $info->id,
-                                'name'  => $info->name,
+                                'id' => $info->id,
+                                'name' => $info->name,
                                 'value' => $info->value,
                                 'order' => $info->order,
                             ];
@@ -50,7 +52,7 @@ class BoatParser extends BaseParser
 
         foreach ($data->promoPhotos ?? [] as $photo) {
             $promoPhotos[] = [
-                'id'   => $photo['id'],
+                'id' => $photo['id'],
                 'file' => Storage::disk('public')->url(
                     PathConstant::IMAGES_BOAT_PROMO . $photo['file']
                 ),
@@ -61,19 +63,28 @@ class BoatParser extends BaseParser
 
         if (isset($data->type)) {
             $boatComponentType = [
-                'id'   => $data->boatComponentTypeId,
+                'id' => $data->boatComponentTypeId,
                 'name' => optional($data->type)->name,
             ];
         }
 
         return [
-            'id'                 => $data->id,
-            'name'               => $data->name,
-            'promoLabel'         => $data->promoLabel,
-            'promoLabelUrl'      => $data->promoLabelUrl,
-            'boatComponentType'  => $boatComponentType,
-            'description'        => $data->description,
-            'promoPhotos'        => $promoPhotos,
+            'id' => $data->id,
+            'name' => $data->name,
+
+            'promoLabel' => $data->promoLabel,
+            'promoLabelUrl' => $data->promoLabelUrl,
+
+            'discountLabel' => $data->discountLabel,
+            'discountLabelUrl' => $data->discountLabelUrl,
+
+            'schedule' => $data->schedule ?? [],
+
+            'boatComponentType' => $boatComponentType,
+
+            'description' => $data->description,
+
+            'promoPhotos' => $promoPhotos,
 
             'priceFile' => $data->priceFile
                 ? Storage::disk('public')->url(
@@ -87,25 +98,34 @@ class BoatParser extends BaseParser
                 )
                 : null,
 
-            'photos'              => $photos,
-            'customInformations'  => $customInformations,
-            'locale'              => $data->locale,
-            'isActive'            => $data->isActive,
-            'seo'                 => SeoParser::first($data->seo),
-            'acf'                 => AcfParser::forContent($data->acf),
-            'createdAt'           => optional($data->createdAt)->format('d/m/Y H:i'),
+            'photos' => $photos,
+
+            'customInformations' => $customInformations,
+
+            'locale' => $data->locale,
+
+            'isActive' => $data->isActive,
+
+            'seo' => SeoParser::first($data->seo),
+
+            'acf' => AcfParser::forContent($data->acf),
+
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
         ];
     }
 
     public static function brief($data)
     {
-        if (!$data) return null;
+        if (!$data) {
+            return null;
+        }
 
         $photos = [];
 
         foreach ($data->photos as $photo) {
             $photos[] = [
-                'id'    => $photo->id,
+                'id' => $photo->id,
                 'photo' => $photo->photoUrl(),
                 'order' => $photo->order,
             ];
@@ -116,14 +136,14 @@ class BoatParser extends BaseParser
         foreach ($data->promoPhotos ?? [] as $key => $photo) {
             if (is_array($photo)) {
                 $promoPhotos[] = [
-                    'id'   => $photo['id'] ?? $key,
+                    'id' => $photo['id'] ?? $key,
                     'file' => Storage::disk('public')->url(
                         PathConstant::IMAGES_BOAT_PROMO . $photo['file']
                     ),
                 ];
             } else {
                 $promoPhotos[] = [
-                    'id'   => $key,
+                    'id' => $key,
                     'file' => Storage::disk('public')->url(
                         PathConstant::IMAGES_BOAT_PROMO . $photo
                     ),
@@ -132,12 +152,21 @@ class BoatParser extends BaseParser
         }
 
         return [
-            'id'                    => $data->id,
-            'name'                  => $data->name,
-            'promoLabel'            => $data->promoLabel,
-            'boatComponentTypeId'   => $data->boatComponentTypeId,
+            'id' => $data->id,
+            'name' => $data->name,
+
+            'promoLabel' => $data->promoLabel,
+
+            'discountLabel' => $data->discountLabel,
+            'discountLabelUrl' => $data->discountLabelUrl,
+
+            'schedule' => $data->schedule ?? [],
+
+            'boatComponentTypeId' => $data->boatComponentTypeId,
+
             'boatComponentTypeName' => optional($data->type)->name,
-            'promoPhotos'           => $promoPhotos,
+
+            'promoPhotos' => $promoPhotos,
 
             'mapImage' => $data->mapImage
                 ? Storage::disk('public')->url(
@@ -145,10 +174,14 @@ class BoatParser extends BaseParser
                 )
                 : null,
 
-            'photos'    => $photos,
-            'locale'    => $data->locale,
-            'isActive'  => $data->isActive,
-            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'photos' => $photos,
+
+            'locale' => $data->locale,
+
+            'isActive' => $data->isActive,
+
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
         ];
     }
 }
