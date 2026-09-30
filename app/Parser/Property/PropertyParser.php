@@ -22,6 +22,8 @@ class PropertyParser extends BaseParser
         if (!$data) {
             return null;
         }
+        
+        $cover = $data->photos->first();
 
         return [
             'id' => $data->id,
@@ -132,6 +134,8 @@ class PropertyParser extends BaseParser
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'coverPhoto' => $cover ? $cover->pathUrl() : null,
+
         ];
     }
 
