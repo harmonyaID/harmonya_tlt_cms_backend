@@ -18,77 +18,174 @@ class WordPressBlogImporter
         $this->baseUrl = rtrim($baseUrl, '/');
     }
 
-    public function fetchPage(int $page = 1, int $perPage = 20): array
+    public function fetchPage(int $page = 1, int $perPage = 5): array
     {
-        $response = Http::timeout(30)->get("{$this->baseUrl}/wp-json/wp/v2/posts", [
-            'page' => $page,
-            'per_page' => $perPage,
-            '_embed' => 1,
-        ]);
+        $perPage = min(max($perPage, 1), 5);
 
-        // WordPress returns 400 with code=rest_post_invalid_page_number once you're past the last page
+        $response = Http::timeout(120)
+            ->connectTimeout(20)
+            ->get(
+                "{$this->baseUrl}/wp-json/wp/v2/posts",
+                [
+                    'page' => $page,
+                    'per_page' => $perPage,
+                    '_embed' => 1,
+                ]
+            );
+
         if ($response->status() === 400) {
             return [];
         }
 
         if (!$response->successful()) {
-            throw new \Exception("Unable to fetch WordPress posts (page $page): " . $response->body());
+            throw new \Exception(
+                "Unable to fetch WordPress posts (page {$page}): " .
+                $response->body()
+            );
         }
 
-        return $response->json();
+        $data = $response->json();
+
+        if (!is_array($data)) {
+            throw new \Exception(
+                "Invalid WordPress response on page {$page}"
+            );
+        }
+
+        return $data;
     }
 
     public function importPost(array $post): Blog
     {
-        $slug = $post['slug'];
-        $title = html_entity_decode(strip_tags($post['title']['rendered'] ?? ''), ENT_QUOTES);
+        $slug = $post['slug'] ?? null;
 
-        $contentHtml = $this->fetchRenderedContent($post['link'] ?? null)
-            ?? $this->cleanShortcodes($post['content']['rendered'] ?? '');
+        if (!$slug) {
+            throw new \Exception(
+                'WordPress post does not have a slug'
+            );
+        }
 
-        $excerpt = html_entity_decode(strip_tags($this->cleanShortcodes($post['excerpt']['rendered'] ?? '')), ENT_QUOTES);
-        $excerpt = trim(preg_replace('/\s+/', ' ', $excerpt));
+        $title = html_entity_decode(
+            strip_tags(
+                $post['title']['rendered'] ?? ''
+            ),
+            ENT_QUOTES
+        );
 
-        $categoryId = $this->resolveCategory($post);
+        $contentHtml = $this->fetchRenderedContent(
+            $post['link'] ?? null
+        ) ?? $this->cleanShortcodes(
+            $post['content']['rendered'] ?? ''
+        );
+
+        $excerpt = html_entity_decode(
+            strip_tags(
+                $this->cleanShortcodes(
+                    $post['excerpt']['rendered'] ?? ''
+                )
+            ),
+            ENT_QUOTES
+        );
+
+        $excerpt = trim(
+            preg_replace(
+                '/\s+/',
+                ' ',
+                $excerpt
+            ) ?? ''
+        );
+
+        /*
+         * WordPress categories can be multiple.
+         */
+        $categoryIds = $this->resolveCategories($post);
+
+        /*
+         * WordPress tags can also be multiple.
+         */
         $tagIds = $this->resolveTags($post);
 
         $blog = Blog::updateOrCreate(
-            ['slug' => $slug],
             [
-                'categoryId' => $categoryId,
+                'slug' => $slug,
+            ],
+            [
                 'title' => $title,
-                'excerpt' => Str::limit($excerpt, 500, ''),
-                // 'content' => $contentHtml,
-                'author' => $this->resolveAuthorName($post),
+
+                'excerpt' => Str::limit(
+                    $excerpt,
+                    500,
+                    ''
+                ),
+
+                'content' => $contentHtml,
+
+                'author' => $this->resolveAuthorName(
+                    $post
+                ),
+
                 'publishedAt' => $post['date'] ?? now(),
-                'isActive' => ($post['status'] ?? 'publish') === 'publish',
+
+                'isActive' => (
+                    $post['status'] ?? 'publish'
+                ) === 'publish',
             ]
         );
 
-        $thumbnailUrl = $this->resolveFeaturedImageUrl($post);
-        if ($thumbnailUrl && !$blog->thumbnail) {
-            $filename = $this->downloadThumbnail($thumbnailUrl, $slug);
+        /*
+         * Featured image.
+         */
+        $thumbnailUrl = $this->resolveFeaturedImageUrl(
+            $post
+        );
+
+        if (
+            $thumbnailUrl &&
+            !$blog->thumbnail
+        ) {
+            $filename = $this->downloadThumbnail(
+                $thumbnailUrl,
+                $slug
+            );
+
             if ($filename) {
                 $blog->thumbnail = $filename;
                 $blog->save();
             }
         }
 
-        if (!empty($tagIds)) {
-            $blog->tags()->sync($tagIds);
-        }
+        /*
+         * Sync ALL categories.
+         *
+         * This will remove old relationships that no longer
+         * exist in WordPress and insert the current categories.
+         */
+        $blog->categories()->sync(
+            $categoryIds
+        );
+
+        /*
+         * Sync ALL tags.
+         */
+        $blog->tags()->sync(
+            $tagIds
+        );
 
         return $blog;
     }
 
-    private function fetchRenderedContent(?string $postUrl): ?string
-    {
+    private function fetchRenderedContent(
+        ?string $postUrl
+    ): ?string {
         if (!$postUrl) {
             return null;
         }
 
         try {
-            $response = Http::timeout(30)->get($postUrl);
+            $response = Http::timeout(60)
+                ->connectTimeout(20)
+                ->get($postUrl);
+
             if (!$response->successful()) {
                 return null;
             }
@@ -96,120 +193,254 @@ class WordPressBlogImporter
             $html = $response->body();
 
             libxml_use_internal_errors(true);
+
             $dom = new \DOMDocument();
-            $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+
+            $dom->loadHTML(
+                '<?xml encoding="UTF-8">' . $html
+            );
+
             libxml_clear_errors();
 
             $xpath = new \DOMXPath($dom);
 
             $queries = [
                 "//div[contains(concat(' ', normalize-space(@class), ' '), ' entry-content ')]",
+
                 "//div[contains(concat(' ', normalize-space(@class), ' '), ' post-content ')]",
+
                 "//article//div[contains(concat(' ', normalize-space(@class), ' '), ' content ')]",
+
                 "//main//article",
             ];
 
             foreach ($queries as $query) {
                 $nodes = $xpath->query($query);
-                if ($nodes && $nodes->length > 0) {
-                    $node = $nodes->item(0);
-                    $innerHtml = $this->innerHtml($node);
 
-                    // Guard against matching an empty/near-empty wrapper
-                    if (strlen(trim(strip_tags($innerHtml))) > 100) {
-                        return $this->cleanShortcodes($innerHtml);
+                if (
+                    $nodes &&
+                    $nodes->length > 0
+                ) {
+                    $node = $nodes->item(0);
+
+                    $innerHtml = $this->innerHtml(
+                        $node
+                    );
+
+                    if (
+                        strlen(
+                            trim(
+                                strip_tags(
+                                    $innerHtml
+                                )
+                            )
+                        ) > 100
+                    ) {
+                        return $this->cleanShortcodes(
+                            $innerHtml
+                        );
                     }
                 }
             }
 
             return null;
         } catch (\Throwable $e) {
-            logger()->warning("Failed to fetch rendered content from {$postUrl}: " . $e->getMessage());
+            logger()->warning(
+                "Failed to fetch rendered content from {$postUrl}: " .
+                $e->getMessage()
+            );
+
             return null;
         }
     }
 
-    /**
-     * @param \DOMNode $node
-     *
-     * @return string
-     */
-    private function innerHtml(\DOMNode $node): string
-    {
+    private function innerHtml(
+        \DOMNode $node
+    ): string {
         $html = '';
+
         foreach ($node->childNodes as $child) {
-            $html .= $node->ownerDocument->saveHTML($child);
+            $html .= $node
+                ->ownerDocument
+                ->saveHTML($child);
         }
 
         return $html;
     }
 
-    private function cleanShortcodes(string $content): string
-    {
-        $cleaned = preg_replace('/\[\/?[a-zA-Z0-9_\-]+(?:\s[^\]]*)?\]/', '', $content);
+    private function cleanShortcodes(
+        string $content
+    ): string {
+        $cleaned = preg_replace(
+            '/\[\/?[a-zA-Z0-9_-]+(?:\s[^\]]*)?\]/',
+            '',
+            $content
+        );
 
-        return trim($cleaned);
+        return trim(
+            $cleaned ?? $content
+        );
     }
 
-    private function resolveCategory(array $post): ?int
-    {
+    /**
+     * Resolve ALL WordPress categories.
+     *
+     * WordPress REST API with _embed returns:
+     *
+     * _embedded
+     *   wp:term
+     *     0 = categories
+     *     1 = tags
+     */
+    private function resolveCategories(
+        array $post
+    ): array {
         $terms = $post['_embedded']['wp:term'][0] ?? [];
-        $name = $terms[0]['name'] ?? null;
 
-        // WordPress's default "Uncategorized" isn't worth creating a BlogCategory for
-        if (!$name || $name === 'Uncategorized') {
-            return null;
+        if (!is_array($terms)) {
+            return [];
         }
 
-        return BlogCategory::firstOrCreate(['name' => $name])->id;
-    }
+        $categoryIds = [];
 
-    private function resolveTags(array $post): array
-    {
-        $terms = $post['_embedded']['wp:term'][1] ?? [];
-
-        $ids = [];
         foreach ($terms as $term) {
-            if (empty($term['name'])) {
+            $name = trim(
+                $term['name'] ?? ''
+            );
+
+            if ($name === '') {
                 continue;
             }
-            $ids[] = BlogTag::firstOrCreate(['name' => $term['name']])->id;
+
+            /*
+             * Don't import WordPress default category.
+             */
+            if (
+                strcasecmp(
+                    $name,
+                    'Uncategorized'
+                ) === 0
+            ) {
+                continue;
+            }
+
+            $category = BlogCategory::firstOrCreate(
+                [
+                    'name' => $name,
+                ]
+            );
+
+            $categoryIds[] = $category->id;
         }
 
-        return $ids;
+        return array_values(
+            array_unique($categoryIds)
+        );
     }
 
-    private function resolveAuthorName(array $post): ?string
-    {
-        return $post['_embedded']['author'][0]['name'] ?? null;
+    /**
+     * Resolve ALL WordPress tags.
+     */
+    private function resolveTags(
+        array $post
+    ): array {
+        $terms = $post['_embedded']['wp:term'][1] ?? [];
+
+        if (!is_array($terms)) {
+            return [];
+        }
+
+        $tagIds = [];
+
+        foreach ($terms as $term) {
+            $name = trim(
+                $term['name'] ?? ''
+            );
+
+            if ($name === '') {
+                continue;
+            }
+
+            $tag = BlogTag::firstOrCreate(
+                [
+                    'name' => $name,
+                ]
+            );
+
+            $tagIds[] = $tag->id;
+        }
+
+        return array_values(
+            array_unique($tagIds)
+        );
     }
 
-    private function resolveFeaturedImageUrl(array $post): ?string
-    {
-        return $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+    private function resolveAuthorName(
+        array $post
+    ): ?string {
+        return $post['_embedded']['author'][0]['name']
+            ?? null;
     }
 
-    private function downloadThumbnail(string $url, string $slug): ?string
-    {
+    private function resolveFeaturedImageUrl(
+        array $post
+    ): ?string {
+        return $post['_embedded']['wp:featuredmedia'][0]['source_url']
+            ?? null;
+    }
+
+    private function downloadThumbnail(
+        string $url,
+        string $slug
+    ): ?string {
         try {
-            $response = Http::timeout(30)->get($url);
+            $response = Http::timeout(60)
+                ->connectTimeout(20)
+                ->get($url);
+
             if (!$response->successful()) {
                 return null;
             }
 
             $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
+
             if (!file_exists($dirPath)) {
-                mkdir($dirPath, 0777, true);
+                mkdir(
+                    $dirPath,
+                    0777,
+                    true
+                );
             }
 
-            $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
-            $filename = $slug . '-' . time() . '.' . $extension;
+            $extension = pathinfo(
+                parse_url(
+                    $url,
+                    PHP_URL_PATH
+                ),
+                PATHINFO_EXTENSION
+            );
 
-            file_put_contents($dirPath . $filename, $response->body());
+            $extension = $extension ?: 'jpg';
+
+            $filename =
+                $slug .
+                '-' .
+                time() .
+                '.' .
+                $extension;
+
+            file_put_contents(
+                $dirPath . $filename,
+                $response->body()
+            );
 
             return $filename;
         } catch (\Throwable $e) {
-            logger()->warning("Failed to download WP thumbnail for {$slug}: " . $e->getMessage());
+            logger()->warning(
+                "Failed to download WP thumbnail for {$slug}: " .
+                $e->getMessage()
+            );
+
             return null;
         }
     }
