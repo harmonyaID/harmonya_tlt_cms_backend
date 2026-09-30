@@ -29,33 +29,53 @@ class ImportBlogsFromWordPressCommand extends Command
         $skipped = 0;
 
         while (true) {
+            $this->line("");
+            $this->info("== Page {$page} (per_page={$perPage}) ==");
+
+            $t = microtime(true);
+
             try {
                 $posts = $importer->fetchPage($page, $perPage);
             } catch (\Throwable $e) {
                 $this->error("Failed to fetch page {$page}: " . $e->getMessage());
-                $this->line('');
-                $this->line('If this is a 404 or connection error, the WordPress REST API may be disabled');
-                $this->line('on this site (some security plugins turn it off). In that case, use');
-                $this->line('WordPress\'s built-in exporter instead: wp-admin > Tools > Export > All content,');
-                $this->line('which downloads a WXR (XML) file you can send me to write a one-off importer for.');
+                $this->line('Resume dengan: php artisan blogs:import-wordpress --per-page=' . $perPage . ' --start-page=' . $page);
                 return self::FAILURE;
             }
+
+            $this->line("   fetched " . count($posts) . " posts in " . round(microtime(true) - $t, 2) . "s");
 
             if (empty($posts)) {
                 break;
             }
 
-            foreach ($posts as $post) {
+            foreach ($posts as $i => $post) {
                 if ($max && $imported >= $max) {
                     break 2;
                 }
 
+                $slug = $post['slug'] ?? '?';
+                $title = html_entity_decode(strip_tags($post['title']['rendered'] ?? ''), ENT_QUOTES);
+                $number = $imported + $skipped + 1;
+
+                $this->line("[{$number}] (page {$page}, " . ($i + 1) . "/" . count($posts) . ") {$title}");
+                $this->line("     slug: {$slug}");
+
+                $start = microtime(true);
+
                 try {
+                    $this->line("     - importing post...");
                     $blog = $importer->importPost($post);
+                    $this->line("     - post done (" . round(microtime(true) - $start, 2) . "s)");
+
+                    $seoStart = microtime(true);
+                    $this->line("     - importing SEO...");
                     $this->importSeo($blog, $post);
+                    $this->line("     - SEO done (" . round(microtime(true) - $seoStart, 2) . "s)");
+
                     $imported++;
+                    $this->info("     OK total " . round(microtime(true) - $start, 2) . "s");
                 } catch (\Throwable $e) {
-                    $this->warn("  [SKIP] " . ($post['slug'] ?? '?') . " - " . $e->getMessage());
+                    $this->warn("     [SKIP] {$slug} - " . $e->getMessage());
                     $skipped++;
                 }
             }

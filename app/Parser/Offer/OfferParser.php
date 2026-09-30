@@ -3,6 +3,7 @@
 namespace App\Parser\Offer;
 
 use App\Parser\Acf\AcfParser;
+use App\Parser\Property\PropertyParser;
 use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
@@ -15,18 +16,26 @@ class OfferParser extends BaseParser
         }
 
         $properties = [];
-        foreach ($data->properties as $property) {
-            $properties[] = ['id' => $property->id, 'nickname' => $property->nickname];
+
+        foreach ($data->properties ?? [] as $property) {
+            $properties[] = PropertyParser::brief($property);
         }
 
         $tags = [];
-        foreach ($data->tags as $tag) {
-            $tags[] = ['id' => $tag->id, 'name' => $tag->name];
+
+        foreach ($data->tags ?? [] as $tag) {
+            $tags[] = [
+                'id' => $tag->id,
+                'name' => $tag->name,
+            ];
         }
 
         return [
             'id' => $data->id,
-            'category' => optional($data->category)->only('id', 'name'),
+            'category' => optional($data->category)->only(
+                'id',
+                'name'
+            ),
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),
@@ -34,12 +43,16 @@ class OfferParser extends BaseParser
             'content' => $data->content,
             'properties' => $properties,
             'tags' => $tags,
-            'startDate' => optional($data->startDate)->format('d/m/Y'),
-            'endDate' => optional($data->endDate)->format('d/m/Y'),
+            'startDate' => optional($data->startDate)
+                ->format('d/m/Y'),
+            'endDate' => optional($data->endDate)
+                ->format('d/m/Y'),
             'locale' => $data->locale,
             'isActive' => $data->isActive,
-            'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
-            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'publishedAt' => optional($data->publishedAt)
+                ->format('d/m/Y H:i'),
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
         ];
@@ -53,18 +66,25 @@ class OfferParser extends BaseParser
 
         return [
             'id' => $data->id,
-            'category' => optional($data->category)->only('id', 'name'),
+            'category' => optional($data->category)->only(
+                'id',
+                'name'
+            ),
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),
             'excerpt' => $data->excerpt,
             'propertyCount' => $data->properties->count(),
-            'startDate' => optional($data->startDate)->format('d/m/Y'),
-            'endDate' => optional($data->endDate)->format('d/m/Y'),
+            'startDate' => optional($data->startDate)
+                ->format('d/m/Y'),
+            'endDate' => optional($data->endDate)
+                ->format('d/m/Y'),
             'locale' => $data->locale,
             'isActive' => $data->isActive,
-            'publishedAt' => optional($data->publishedAt)->format('d/m/Y H:i'),
-            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'publishedAt' => optional($data->publishedAt)
+                ->format('d/m/Y H:i'),
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
             'seo' => SeoParser::first($data->seo),
         ];
     }
