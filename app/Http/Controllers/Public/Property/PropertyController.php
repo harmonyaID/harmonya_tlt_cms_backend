@@ -62,7 +62,6 @@ class PropertyController extends Controller
         $radiusKm = (float)(Setting::ofName('property_nearby_radius_km')->value('value') ?? 5);
         $limit = (int)(Setting::ofName('property_nearby_limit')->value('value') ?? 10);
 
-        // Haversine formula to compute distance (in km) between two lat/lng points
         $haversine = "(6371 * acos(cos(radians($origin->latitude))
             * cos(radians(property_addresses.latitude))
             * cos(radians(property_addresses.longitude) - radians($origin->longitude))
