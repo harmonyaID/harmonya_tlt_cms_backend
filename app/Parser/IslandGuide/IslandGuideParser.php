@@ -43,7 +43,7 @@ class IslandGuideParser extends BaseParser
             'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
             'isPage' => $data->isPage,
-            'pageReference' => $data->pageReference,
+            'pageReference' => PageParser::first($data->page),
         ];
     }
 
@@ -64,6 +64,8 @@ class IslandGuideParser extends BaseParser
             'isActive' => $data->isActive,
             'showInquiry' => $data->showInquiry,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
         ];
     }
 }
