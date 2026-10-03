@@ -3,6 +3,7 @@
 namespace App\Parser\IslandGuide;
 
 use App\Parser\Acf\AcfParser;
+use App\Parser\Page\PageParser;
 use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
