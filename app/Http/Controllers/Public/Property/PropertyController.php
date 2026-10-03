@@ -30,7 +30,7 @@ class PropertyController extends Controller
                 'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
                 'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
             ])
-            ->find($idOrSlug);
+            ->first();
 
         if (!$property) {
             errPropertyGet();
