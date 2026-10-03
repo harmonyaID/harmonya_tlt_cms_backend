@@ -32,7 +32,8 @@ class IslandGuideRequest extends FormRequest
             'isActive' => 'required|boolean',
             'locale' => 'nullable|string|exists:languages,code',
             'showInquiry' => 'required|boolean',
-
+            'isPage' => 'required|boolean',
+            'pageId' => 'nullable|integer|exists:pages,id',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'mapImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
 

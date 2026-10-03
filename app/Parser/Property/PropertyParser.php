@@ -22,7 +22,7 @@ class PropertyParser extends BaseParser
         if (!$data) {
             return null;
         }
-        
+
         $cover = $data->photos->first();
 
         return [
@@ -155,6 +155,12 @@ class PropertyParser extends BaseParser
             'isNewVilla' => $data->sourceCreatedAt
                 ? Carbon::parse($data->sourceCreatedAt)->gte(now()->subMonth())
                 : false,
+            'tags' => $data->tags->map(function ($tag) {
+                return [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                ];
+            }),
             'type' => optional($data->type)->only('id', 'name'),
             'unitType' => PropertyUnitType::idName($data->unitTypeId),
             'occupancy' => $data->occupancy,

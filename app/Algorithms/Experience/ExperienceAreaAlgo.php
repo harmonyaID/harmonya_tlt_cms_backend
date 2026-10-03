@@ -93,7 +93,7 @@ class ExperienceAreaAlgo
                     ->setAction(ActivityAction::CREATE)
                     ->log(
                         "Enter new experience area: " .
-                        $this->experienceArea->name
+                            $this->experienceArea->name
                     );
             });
 
@@ -209,7 +209,7 @@ class ExperienceAreaAlgo
                     ->setAction(ActivityAction::UPDATE)
                     ->log(
                         "Update experience area: " .
-                        $this->experienceArea->name
+                            $this->experienceArea->name
                     );
             });
 
@@ -240,6 +240,10 @@ class ExperienceAreaAlgo
                     $this->experienceArea->banner
                 );
 
+                if ($this->experienceArea->seo) {
+                    $this->experienceArea->seo()->delete();
+                }
+
                 if (!$this->experienceArea->delete()) {
                     errExperienceAreaDelete();
                 }
@@ -251,7 +255,7 @@ class ExperienceAreaAlgo
                     ->setAction(ActivityAction::DELETE)
                     ->log(
                         "Delete experience area: " .
-                        $this->experienceArea->name
+                            $this->experienceArea->name
                     );
             });
 

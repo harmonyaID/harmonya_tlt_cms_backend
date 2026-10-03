@@ -266,6 +266,10 @@ class BlogAlgo
 
                 $this->deletePromoBanner();
 
+                if ($this->blog->seo) {
+                    $this->blog->seo()->delete();
+                }
+
                 if (!$this->blog->delete()) {
                     errBlogDelete();
                 }

@@ -202,6 +202,10 @@ class ExperienceAlgo
 
                 $this->experience->tags()->detach();
 
+                if ($this->experience->seo) {
+                    $this->experience->seo()->delete();
+                }
+                
                 if (!$this->experience->delete()) {
                     errExperienceDelete();
                 }

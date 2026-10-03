@@ -28,6 +28,7 @@ use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Storage\PathConstant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GuestyPropertyImporter
 {
@@ -71,12 +72,39 @@ class GuestyPropertyImporter
             $this->syncAmenities($property, $listing);
             $this->syncTags($property, $listing);
             $this->syncFeatures($property, $listing);
-            $this->syncPhotos($property, $listing);
-
+            // $this->syncPhotos($property, $listing);
+            $this->syncSeo($property, $listing);
             return $property;
         });
     }
 
+    private function syncSeo(Property $property, array $listing): void
+    {
+        $description = $listing['publicDescription'] ?? [];
+
+        $title = $listing['title']
+            ?? $listing['nickname']
+            ?? 'Untitled';
+
+        $slug = Str::slug($listing['nickname'] ?? $title);
+
+        $property->seo()->updateOrCreate(
+            [
+                'slug' => $slug,
+            ],
+            [
+                'info' => null,
+                'title' => $title,
+                'slug' => $slug,
+                'description' => $description['summary'] ?? null,
+                'metaKeyword' => null,
+                'canonicalUrl' => null,
+                'robotIndex' => true,
+                'robotFollow' => true,
+                'schemaMarkup' => null,
+            ]
+        );
+    }
     private function syncAddress(Property $property, array $listing): void
     {
         $address = $listing['address'] ?? null;

@@ -149,6 +149,10 @@ class Property extends BaseModel
             if ($request->has('statusId') && $request->statusId) {
                 $query->where('statusId', $request->statusId);
             }
+            
+            if ($request->has('propertyIds') && $request->propertyIds) {
+                $query->whereIn('id', $this->toValueArray($request->propertyIds));
+            }
 
             if ($request->has('propertyTypeIds') && $request->propertyTypeIds) {
                 $query->whereIn('propertyTypeId', $this->toValueArray($request->propertyTypeIds));
