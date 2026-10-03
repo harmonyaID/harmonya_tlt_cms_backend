@@ -108,6 +108,10 @@ class ExperienceTypeAlgo
                 $this->deleteImage($this->experienceType->featuredImage);
                 $this->deleteImage($this->experienceType->banner);
 
+                if ($this->experienceType->seo) {
+                    $this->experienceType->seo()->delete();
+                }
+
                 if (!$this->experienceType->delete()) errExperienceTypeDelete();
 
                 activity()->setCausedBy()->setReference($this->experienceType)

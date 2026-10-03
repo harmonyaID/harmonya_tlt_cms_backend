@@ -42,6 +42,8 @@ class IslandGuideParser extends BaseParser
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'isPage' => $data->isPage,
+            'pageReference' => $data->pageReference,
         ];
     }
 

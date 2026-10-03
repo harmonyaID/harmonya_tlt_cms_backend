@@ -236,6 +236,10 @@ class BoatAlgo
 
                 $this->boat->customInformations()->delete();
 
+                if ($this->boat->seo) {
+                    $this->boat->seo()->delete();
+                }
+
                 if (!$this->boat->delete()) {
                     errBoatDelete();
                 }

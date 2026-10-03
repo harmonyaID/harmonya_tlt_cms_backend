@@ -37,6 +37,8 @@ class PageParser extends BaseParser
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
         ];
     }
 
@@ -61,6 +63,8 @@ class PageParser extends BaseParser
             'groupId' => $data->groupId,
             'createdBy' => optional($data->createdBy)->only('id', 'fullName'),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
         ];
     }
 
