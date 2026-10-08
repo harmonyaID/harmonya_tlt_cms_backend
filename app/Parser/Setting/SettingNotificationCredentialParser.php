@@ -16,8 +16,7 @@ class SettingNotificationCredentialParser extends BaseParser
 
         return [
             'id' => $data->id,
-            'providerId' => $data->providerId,
-            'provider' => NotificationProvider::OPTION[$data->providerId] ?? null,
+            'provider' => NotificationProvider::idName($data->providerId) ?? null,
             'name' => $data->name,
             'credentials' => $data->credentials,
             'isActive' => $data->isActive,
@@ -32,9 +31,9 @@ class SettingNotificationCredentialParser extends BaseParser
 
         return [
             'id' => $data->id,
-            'providerId' => $data->providerId,
-            'provider' => NotificationProvider::OPTION[$data->providerId] ?? null,
+            'provider' => NotificationProvider::idName($data->providerId) ?? null,
             'name' => $data->name,
+            'credentials' => $data->credentials,
             'isActive' => $data->isActive,
         ];
     }
