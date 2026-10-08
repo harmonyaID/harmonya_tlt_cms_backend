@@ -19,7 +19,6 @@ class BlogController extends Controller
     public function __construct()
     {
         if (config('auth.with-permission')) {
-
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_BLOG_VIEW);
                 return $next($request);
@@ -39,7 +38,6 @@ class BlogController extends Controller
                 has_permission_staff(AccessPermissionName::STAFF_BLOG_DELETE);
                 return $next($request);
             })->only(['delete', 'restore', 'forceDelete']);
-
         }
     }
 
@@ -65,13 +63,33 @@ class BlogController extends Controller
 
     public function get(Request $request)
     {
-        $blogs = Blog::filter($request)->with('category', 'tags', 'properties', 'properties', 'seo', 'acf')->orderBy('publishedAt', 'desc')->getOrPaginate($request);
-        return success(BlogParser::briefs($blogs), pagination: pagination($blogs));
+        $blogs = Blog::filter($request)
+            ->with(
+                'categories',
+                'tags',
+                'properties',
+                'seo',
+                'acf'
+            )
+            ->orderBy('publishedAt', 'desc')
+            ->getOrPaginate($request);
+
+        return success(
+            BlogParser::briefs($blogs),
+            pagination: pagination($blogs)
+        );
     }
 
     public function detail($id)
     {
-        $blog = Blog::with('category', 'tags', 'properties', 'properties', 'seo', 'acf')->find($id);
+        $blog = Blog::with(
+            'categories',
+            'tags',
+            'properties',
+            'seo',
+            'acf'
+        )->find($id);
+
         if (!$blog) {
             errBlogGet();
         }
@@ -82,18 +100,21 @@ class BlogController extends Controller
     public function create(BlogRequest $request)
     {
         $algo = new BlogAlgo();
+
         return $algo->create($request);
     }
 
     public function update($id, BlogRequest $request)
     {
-        $algo = new BlogAlgo((int)$id);
+        $algo = new BlogAlgo((int) $id);
+
         return $algo->update($request);
     }
 
     public function delete($id)
     {
-        $algo = new BlogAlgo((int)$id);
+        $algo = new BlogAlgo((int) $id);
+
         return $algo->delete();
     }
 }

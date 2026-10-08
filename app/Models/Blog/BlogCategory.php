@@ -25,6 +25,15 @@ class BlogCategory extends BaseModel
 
     public $parserClass = BlogCategoryParser::class;
 
+    public function blogs()
+    {
+        return $this->belongsToMany(
+            Blog::class,
+            'blog_category',
+            'categoryId',
+            'blogId'
+        );
+    }
     /*
      |--------------------------------------------------------------------------
      | Scopes
@@ -38,7 +47,6 @@ class BlogCategory extends BaseModel
             if ($request->has('search') && strlen($request->search) > 1) {
                 $query->where('name', 'LIKE', "%$request->search%");
             }
-
         })->orderBy('id', 'DESC');
     }
 }

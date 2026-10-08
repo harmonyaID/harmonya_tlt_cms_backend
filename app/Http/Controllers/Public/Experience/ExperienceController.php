@@ -13,13 +13,13 @@ class ExperienceController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $experiences = Experience::filter($request)->with(['type', 'area', 'photos'])->getOrPaginate($request);
+        $experiences = Experience::filter($request)->with(['type', 'area', 'photos', 'seo'])->getOrPaginate($request);
         return success(ExperienceParser::briefs($experiences), pagination: pagination($experiences));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $experience = Experience::where('isActive', true)->with(['type', 'area', 'photos', 'acf'])->find($id);
+        $experience = Experience::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'seo','acf'])->first();
         if (!$experience) {
             errExperienceGet();
         }

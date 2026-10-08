@@ -21,6 +21,7 @@ class TeamMember extends BaseModel
 
     protected $casts = [
         'order' => 'integer',
+        'level' => 'integer',
         'isActive' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
@@ -53,7 +54,6 @@ class TeamMember extends BaseModel
             if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
             }
-
         })->orderBy('order', 'ASC')->orderBy('id', 'ASC');
     }
 

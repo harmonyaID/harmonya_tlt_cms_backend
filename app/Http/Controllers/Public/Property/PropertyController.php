@@ -16,20 +16,21 @@ class PropertyController extends Controller
         $request->merge(['statusId' => PropertyStatus::ACTIVE_ID]);
 
         $properties = Property::filter($request)
-            ->with(['type', 'photos', 'addresses'])
+            ->with(['type', 'photos', 'addresses','seo'])
             ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
         $property = Property::where('statusId', PropertyStatus::ACTIVE_ID)
-            ->with([
+        ->bySlugOrId($idOrSlug)    
+        ->with([
                 'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
                 'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
             ])
-            ->find($id);
+            ->first();
 
         if (!$property) {
             errPropertyGet();
@@ -61,7 +62,6 @@ class PropertyController extends Controller
         $radiusKm = (float)(Setting::ofName('property_nearby_radius_km')->value('value') ?? 5);
         $limit = (int)(Setting::ofName('property_nearby_limit')->value('value') ?? 10);
 
-        // Haversine formula to compute distance (in km) between two lat/lng points
         $haversine = "(6371 * acos(cos(radians($origin->latitude))
             * cos(radians(property_addresses.latitude))
             * cos(radians(property_addresses.longitude) - radians($origin->longitude))

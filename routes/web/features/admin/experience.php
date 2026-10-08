@@ -4,6 +4,8 @@ use App\Http\Controllers\Web\Admin\Experience\ExperienceAreaController;
 use App\Http\Controllers\Web\Admin\Experience\ExperienceController;
 use App\Http\Controllers\Web\Admin\Experience\ExperienceInquiryFormController;
 use App\Http\Controllers\Web\Admin\Experience\ExperienceTypeController;
+use App\Http\Controllers\Web\Admin\Experience\ExperienceTagController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("experiences")
@@ -57,6 +59,15 @@ Route::prefix("experiences")
                 Route::get('', [ExperienceController::class, 'trash']);
                 Route::post('{id}/restore', [ExperienceController::class, 'restore']);
                 Route::delete('{id}', [ExperienceController::class, 'forceDelete']);
+            });
+
+        Route::prefix("tags")
+            ->group(function () {
+                Route::get('', [ExperienceTagController::class, 'get']);
+                Route::post('', [ExperienceTagController::class, 'create']);
+                Route::get('{id}', [ExperienceTagController::class, 'detail']);
+                Route::put('{id}', [ExperienceTagController::class, 'update']);
+                Route::delete('{id}', [ExperienceTagController::class, 'delete']);
             });
 
         Route::get('{id}', [ExperienceController::class, 'detail']);

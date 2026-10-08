@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('question')->nullable();
             $table->text('answer')->nullable();
             $table->integer('order')->default(0);
+            $table->integer('level')->default(0);
             $table->boolean('isActive')->default(true);
 
             $this->getDefaultTimestamps($table);

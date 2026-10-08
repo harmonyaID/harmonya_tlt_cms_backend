@@ -7,6 +7,8 @@ use App\Models\BaseModel;
 use App\Models\HasActivation;
 use App\Models\Setting\SettingCountry;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasSeoSlugScope;
+use App\Models\Traits\HasSlugLookup;
 use App\Parser\Page\PageParser;
 use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Storage\PathConstant;
@@ -19,6 +21,7 @@ class Page extends BaseModel
     use HasActivation;
     use HasAccession;
     use HasDateRangeFilter;
+    use HasSeoSlugScope;
 
     protected $table = 'pages';
     protected $guarded = ['id'];
@@ -29,6 +32,7 @@ class Page extends BaseModel
         self::DELETED_AT => 'datetime',
         'isActive' => 'boolean',
         'isSuperadmin' => 'boolean',
+        'content' => 'array',
     ];
 
     public $parserClass = PageParser::class;
@@ -63,7 +67,6 @@ class Page extends BaseModel
 
 
     /** --- SCOPES --- */
-
     public function scopeFilter($query, $request)
     {
         return $query
@@ -78,26 +81,25 @@ class Page extends BaseModel
             ->orderBy('groupId', 'ASC')
             ->where(function ($query) use ($request) {
 
-            if ($request->has('search') && strlen($request->search) > 1) {
+                if ($request->has('search') && strlen($request->search) > 1) {
 
-                $query->where(function ($search) use ($request) {
-                    $search->where("title", "LIKE", "%$request->search%")
-                        ->orWhere("shortDescription", "LIKE", "%$request->search%")
-                        ->orWhere("status", "LIKE", "%$request->search%");
-                });
-            }
+                    $query->where(function ($search) use ($request) {
+                        $search->where("title", "LIKE", "%$request->search%")
+                            ->orWhere("shortDescription", "LIKE", "%$request->search%")
+                            ->orWhere("status", "LIKE", "%$request->search%");
+                    });
+                }
 
-            if ($request->has('status') && $request->status) {
-                $query->where('status', $request->status);
-            }
+                if ($request->has('status') && $request->status) {
+                    $query->where('status', $request->status);
+                }
 
-            if ($request->has('locale') && $request->locale) {
-                $query->where('locale', $request->locale);
-            }
+                if ($request->has('locale') && $request->locale) {
+                    $query->where('locale', $request->locale);
+                }
 
-            $this->applyDateRangeFilter($query, $request);
-
-        });
+                $this->applyDateRangeFilter($query, $request);
+            });
     }
 
     public function scopeLanguage($query, $request)

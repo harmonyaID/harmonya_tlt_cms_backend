@@ -33,6 +33,7 @@ class ActivityType extends BaseCodeName
     const ISLAND_GUIDE_TYPE = 'island_guide_type';
     const ISLAND_GUIDE_AREA = 'island_guide_area';
     const ISLAND_GUIDE = 'island_guide';
+    const EXPERIENCE_TAG = 'experience-tag';
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
     const MENU = 'menu';
     const HOMEPAGE = 'homepage';
@@ -50,6 +51,7 @@ class ActivityType extends BaseCodeName
     const PROPERTY_REVIEW = 'property_review';
     const API_CONFIGURATION = 'api_configuration';
     const SYSTEM_CACHE = 'system_cache';
+    const REDIRECTION = 'redirection';
 
     const OPTION = [
         self::ACCESS,
@@ -97,5 +99,6 @@ class ActivityType extends BaseCodeName
         self::PROPERTY_INQUIRY_FORM,
         self::API_CONFIGURATION,
         self::SYSTEM_CACHE,
+        self::REDIRECTION
     ];
 }

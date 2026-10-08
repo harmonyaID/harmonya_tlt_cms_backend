@@ -4,7 +4,6 @@ namespace App\Parser\Page;
 
 use App\Parser\Acf\AcfParser;
 use App\Parser\Seo\SeoParser;
-use App\Parser\Staff\StaffParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Support\Facades\Storage;
 use Logia\Core\Parser\BaseParser;

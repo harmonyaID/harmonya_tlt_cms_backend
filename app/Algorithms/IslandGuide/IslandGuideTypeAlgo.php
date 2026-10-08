@@ -100,6 +100,10 @@ class IslandGuideTypeAlgo
                 $this->deleteImage($this->islandGuideType->featuredImage);
                 $this->deleteImage($this->islandGuideType->banner);
 
+                if ($this->islandGuideType->seo) {
+                    $this->islandGuideType->seo()->delete();
+                }
+                
                 if (!$this->islandGuideType->delete()) errIslandGuideTypeDelete();
 
                 activity()->setCausedBy()->setReference($this->islandGuideType)

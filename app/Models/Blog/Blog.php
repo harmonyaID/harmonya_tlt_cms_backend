@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Models\Traits\HasSlugLookup;
 use App\Parser\Blog\BlogParser;
 use App\Services\Constant\Storage\PathConstant;
@@ -19,7 +20,7 @@ class Blog extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
-    use HasSlugLookup;
+    use HasSeoSlugScope;
 
 
     protected $table = 'blogs';
@@ -30,11 +31,13 @@ class Blog extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
+        'visibility' => 'boolean',
         'isActive' => 'boolean',
         'publishedAt' => 'datetime',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
+
     ];
 
     public $parserClass = BlogParser::class;
@@ -48,6 +51,16 @@ class Blog extends BaseModel
     public function category(): BelongsTo
     {
         return $this->belongsTo(BlogCategory::class, 'categoryId');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(
+            BlogCategory::class,
+            'blog_category',
+            'blogId',
+            'categoryId'
+        );
     }
 
     public function tags(): BelongsToMany
@@ -115,7 +128,6 @@ class Blog extends BaseModel
             }
 
             $this->applyDateRangeFilter($query, $request, 'publishedAt');
-
         })->orderBy('id', 'DESC');
     }
 

@@ -8,7 +8,9 @@ use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Property\PropertyParser;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,7 +22,7 @@ class Property extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
-
+    use HasSeoSlugScope;
 
     protected $table = 'properties';
     protected $guarded = ['id'];
@@ -41,6 +43,7 @@ class Property extends BaseModel
         'cleaningStatusId' => 'integer',
         'sourceTypeId' => 'integer',
         'guestyImportedAt' => 'datetime',
+        'isPopular' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -127,6 +130,14 @@ class Property extends BaseModel
         return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
     }
 
+    public function floorplanImageUrl(): ?string
+    {
+        if (!$this->floorplanImage) {
+            return null;
+        }
+
+        return asset('storage/' . PathConstant::IMAGES_PROPERTY_FLOORPLAN . $this->floorplanImage);
+    }
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($query) use ($request) {
@@ -137,6 +148,10 @@ class Property extends BaseModel
 
             if ($request->has('statusId') && $request->statusId) {
                 $query->where('statusId', $request->statusId);
+            }
+            
+            if ($request->has('propertyIds') && $request->propertyIds) {
+                $query->whereIn('id', $this->toValueArray($request->propertyIds));
             }
 
             if ($request->has('propertyTypeIds') && $request->propertyTypeIds) {
@@ -176,7 +191,6 @@ class Property extends BaseModel
             }
 
             $this->applyDateRangeFilter($query, $request);
-
         })->orderBy('id', 'DESC');
     }
 }

@@ -135,6 +135,10 @@ class OfferAlgo
                 $this->offer->properties()->detach();
                 $this->offer->acf()->delete();
 
+                if ($this->offer->seo) {
+                    $this->offer->seo()->delete();
+                }
+
                 if (!$this->offer->delete()) {
                     errOfferDelete();
                 }

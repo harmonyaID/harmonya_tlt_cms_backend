@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityCategoryController;
 use App\Http\Controllers\Web\Admin\Setting\SettingAmenityController;
+use App\Http\Controllers\Web\Admin\Setting\SettingAnalyticsController;
 use App\Http\Controllers\Web\Admin\Setting\SettingApiConfigurationController;
 use App\Http\Controllers\Web\Admin\Setting\SettingController;
 
@@ -42,6 +43,15 @@ Route::prefix("settings")
                 Route::get('{id}', [SettingApiConfigurationController::class, 'detail']);
                 Route::put('{id}', [SettingApiConfigurationController::class, 'update']);
                 Route::delete('{id}', [SettingApiConfigurationController::class, 'delete']);
+            });
+
+            Route::prefix("analytics")
+            ->group(function () {
+                Route::get('', [SettingAnalyticsController::class, 'get']);
+                Route::post('', [SettingAnalyticsController::class, 'create']);
+                Route::get('{id}', [SettingAnalyticsController::class, 'detail']);
+                Route::put('{id}', [SettingAnalyticsController::class, 'update']);
+                Route::delete('{id}', [SettingAnalyticsController::class, 'delete']);
             });
 
         Route::get('{id}', [SettingController::class, 'detail']);

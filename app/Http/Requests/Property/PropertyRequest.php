@@ -4,6 +4,7 @@ namespace App\Http\Requests\Property;
 
 use App\Http\Requests\Acf\AcfRule;
 use App\Http\Requests\Seo\SeoRule;
+use App\Models\Property\Property;
 use Logia\Core\Validation\Support\FormRequest;
 
 class PropertyRequest extends FormRequest
@@ -15,6 +16,10 @@ class PropertyRequest extends FormRequest
 
     public function rules()
     {
+        $propertyId = $this->route('id');
+        $property = Property::with('seo')->find($propertyId);
+
+
         return array_merge([
             'nickname' => 'required|string',
             'propertyTypeId' => 'nullable|integer|exists:property_types,id',
@@ -27,6 +32,7 @@ class PropertyRequest extends FormRequest
             'cleaningStatusId' => 'nullable|integer',
             'sourceTypeId' => 'nullable|integer|exists:property_source_types,id',
             'currency' => 'nullable|string|max:10',
+            'isPopular' => 'nullable|boolean',
 
             'addresses' => 'nullable|array',
             'addresses.*.typeId' => 'required|integer',
@@ -97,7 +103,9 @@ class PropertyRequest extends FormRequest
             'features.*.featureId' => 'required_with:features|integer|exists:setting_property_features,id',
             'features.*.value' => 'nullable|string',
 
+            'floorplanImage' => [ 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', ],
+            
             'seo' => 'nullable|array',
-        ], SeoRule::rules(), AcfRule::rules());
+        ], SeoRule::rules('seo.', $property?->seo), AcfRule::rules());
     }
 }

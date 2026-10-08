@@ -11,17 +11,31 @@ class ExperienceAreaController extends Controller
 {
     public function get(Request $request)
     {
-        $areas = ExperienceArea::filter($request)->with('type', 'seo')->getOrPaginate($request);
-        return success(ExperienceAreaParser::briefs($areas), pagination: pagination($areas));
+        $areas = ExperienceArea::filter($request)
+            ->with('type', 'seo')
+            ->getOrPaginate($request);
+
+        return success(
+            ExperienceAreaParser::briefs($areas),
+            pagination: pagination($areas)
+        );
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $area = ExperienceArea::with('type', 'seo')->find($id);
+        $area = ExperienceArea::with([
+            'type',
+            'seo',
+        ])
+            ->bySlugOrId($idOrSlug)
+            ->first();
+
         if (!$area) {
             errExperienceAreaGet();
         }
 
-        return success(ExperienceAreaParser::first($area));
+        return success(
+            ExperienceAreaParser::first($area)
+        );
     }
 }

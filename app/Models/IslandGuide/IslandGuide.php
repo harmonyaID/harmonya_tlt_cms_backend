@@ -3,9 +3,11 @@
 namespace App\Models\IslandGuide;
 
 use App\Models\BaseModel;
+use App\Models\Page\Page;
 use App\Models\SEO\ContentSeo;
 use App\Models\Traits\HasDateRangeFilter;
 use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\IslandGuide\IslandGuideParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +20,8 @@ class IslandGuide extends BaseModel
     use SoftDeletes;
     use HasDateRangeFilter;
     use HasMultiValueFilter;
+    use HasSeoSlugScope;
+
 
     protected $table = 'island_guides';
     protected $guarded = ['id'];
@@ -30,6 +34,7 @@ class IslandGuide extends BaseModel
         'catalogs' => 'array',
         'isActive' => 'boolean',
         'showInquiry' => 'boolean',
+        'isPage' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -66,6 +71,11 @@ class IslandGuide extends BaseModel
     public function photos(): HasMany
     {
         return $this->hasMany(IslandGuidePhoto::class, 'islandGuideId')->orderBy('order');
+    }
+
+    public function page()
+    {
+        return $this->belongsTo(Page::class, 'pageReference');
     }
 
     /*

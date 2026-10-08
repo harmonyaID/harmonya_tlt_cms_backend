@@ -67,7 +67,9 @@
             "app/Services/Helpers/Status/offer.php",
             "app/Services/Helpers/Status/teamMember.php",
             "app/Services/Helpers/Status/tltTestimonial.php",
-            "app/Services/Helpers/Status/islandGuide.php"
+            "app/Services/Helpers/Status/islandGuide.php",
+            "app/Services/Helpers/Status/experience.php"
+
         ]
     },
     "scripts": {

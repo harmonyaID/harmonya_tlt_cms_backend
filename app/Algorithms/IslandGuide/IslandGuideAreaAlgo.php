@@ -100,6 +100,10 @@ class IslandGuideAreaAlgo
                 $this->deleteImage($this->islandGuideArea->featuredImage);
                 $this->deleteImage($this->islandGuideArea->banner);
 
+                if ($this->islandGuideArea->seo) {
+                    $this->islandGuideArea->seo()->delete();
+                }
+
                 if (!$this->islandGuideArea->delete()) errIslandGuideAreaDelete();
 
                 activity()->setCausedBy()->setReference($this->islandGuideArea)

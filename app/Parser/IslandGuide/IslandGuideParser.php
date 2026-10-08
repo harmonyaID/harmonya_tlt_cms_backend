@@ -3,6 +3,7 @@
 namespace App\Parser\IslandGuide;
 
 use App\Parser\Acf\AcfParser;
+use App\Parser\Page\PageParser;
 use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
@@ -42,6 +43,8 @@ class IslandGuideParser extends BaseParser
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
         ];
     }
 
@@ -62,6 +65,8 @@ class IslandGuideParser extends BaseParser
             'isActive' => $data->isActive,
             'showInquiry' => $data->showInquiry,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
         ];
     }
 }

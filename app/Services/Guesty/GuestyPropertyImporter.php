@@ -26,13 +26,13 @@ use App\Services\Constant\Property\PropertyListingType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Storage\PathConstant;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GuestyPropertyImporter
 {
-    public function __construct(protected GuestyClient $client)
-    {
-    }
+    public function __construct(protected GuestyClient $client) {}
 
     public function import(array $listing): Property
     {
@@ -53,6 +53,13 @@ class GuestyPropertyImporter
                     'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
                     'currency' => $listing['prices']['currency'] ?? 'USD',
                     'guestyImportedAt' => now(),
+                    'sourceCreatedAt' => !empty($listing['createdAt'])
+                        ? Carbon::parse($listing['createdAt'])
+                        : null,
+
+                    'sourceUpdatedAt' => !empty($listing['updatedAt'])
+                        ? Carbon::parse($listing['updatedAt'])
+                        : null,
                 ]
             );
 
@@ -66,11 +73,38 @@ class GuestyPropertyImporter
             $this->syncTags($property, $listing);
             $this->syncFeatures($property, $listing);
             // $this->syncPhotos($property, $listing);
-
+            $this->syncSeo($property, $listing);
             return $property;
         });
     }
 
+    private function syncSeo(Property $property, array $listing): void
+    {
+        $description = $listing['publicDescription'] ?? [];
+
+        $title = $listing['title']
+            ?? $listing['nickname']
+            ?? 'Untitled';
+
+        $slug = Str::slug($listing['nickname'] ?? $title);
+
+        $property->seo()->updateOrCreate(
+            [
+                'slug' => $slug,
+            ],
+            [
+                'info' => null,
+                'title' => $title,
+                'slug' => $slug,
+                'description' => $description['summary'] ?? null,
+                'metaKeyword' => null,
+                'canonicalUrl' => null,
+                'robotIndex' => true,
+                'robotFollow' => true,
+                'schemaMarkup' => null,
+            ]
+        );
+    }
     private function syncAddress(Property $property, array $listing): void
     {
         $address = $listing['address'] ?? null;
