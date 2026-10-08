@@ -2,12 +2,13 @@
 
 namespace App\Models\Setting;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
-class SettingNotificationCredential extends Model
+class SettingNotificationCredential extends BaseModel
 {
     use SoftDeletes;
 
