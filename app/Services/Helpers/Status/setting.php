@@ -76,3 +76,53 @@ if (!function_exists("errSettingAnalyticsKeyExists")) {
         error(422, "Setting analytics key already exists", $internalMsg);
     }
 }
+
+if (!function_exists("errSettingNotificationCredentialGet")) {
+    function errSettingNotificationCredentialGet($internalMsg = "")
+    {
+        error(
+            404,
+            "Setting notification credential not found",
+            $internalMsg
+        );
+    }
+}
+
+if (!function_exists("errSettingNotificationCredentialSave")) {
+    function errSettingNotificationCredentialSave(
+        $internalMsg = "",
+        $status = 500
+    ) {
+        error(
+            $status,
+            "Unable to save setting notification credential",
+            $internalMsg
+        );
+    }
+}
+
+if (!function_exists("errSettingNotificationCredentialUpdate")) {
+    function errSettingNotificationCredentialUpdate(
+        $internalMsg = "",
+        $status = 500
+    ) {
+        error(
+            $status,
+            "Unable to update setting notification credential",
+            $internalMsg
+        );
+    }
+}
+
+if (!function_exists("errSettingNotificationCredentialDelete")) {
+    function errSettingNotificationCredentialDelete(
+        $internalMsg = "",
+        $status = 500
+    ) {
+        error(
+            $status,
+            "Unable to delete setting notification credential",
+            $internalMsg
+        );
+    }
+}
