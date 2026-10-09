@@ -37,11 +37,7 @@ class IslandGuideAlgo
                         'deleteCatalogIds',
                         'seo',
                         'acf'
-                    ) + [
-                        'pageReference' => $request->boolean('isPage')
-                            ? $request->input('pageId')
-                            : null,
-                    ]
+                    )
                 );
                 if (!$this->islandGuide) errIslandGuideSave();
 
@@ -93,11 +89,7 @@ class IslandGuideAlgo
                         'deleteCatalogIds',
                         'seo',
                         'acf'
-                    ) + [
-                        'pageReference' => $request->boolean('isPage')
-                            ? $request->input('pageId')
-                            : null,
-                    ]
+                    )
                 );
 
                 if ($request->hasFile('thumbnail') && $request->file('thumbnail')->isValid()) {

@@ -25,7 +25,7 @@ class IslandGuideAreaAlgo
         try {
             DB::transaction(function () use ($request) {
                 $this->islandGuideArea = IslandGuideArea::create(
-                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner']) + created_by()
+                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner', 'seo']) + created_by()
                 );
                 if (!$this->islandGuideArea) errIslandGuideAreaSave();
 
@@ -55,7 +55,7 @@ class IslandGuideAreaAlgo
         try {
             DB::transaction(function () use ($request) {
                 $this->islandGuideArea->update(
-                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner'])
+                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner', 'seo'])
                 );
 
                 if ($request->boolean('deleteFeaturedImage')) {

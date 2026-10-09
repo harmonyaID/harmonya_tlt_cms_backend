@@ -2,6 +2,7 @@
 
 namespace App\Parser\IslandGuide;
 
+use App\Parser\Page\PageParser;
 use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
@@ -17,6 +18,8 @@ class IslandGuideTypeParser extends BaseParser
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
             'seo' => SeoParser::first($data->seo),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
@@ -32,6 +35,8 @@ class IslandGuideTypeParser extends BaseParser
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
+            'isPage' => $data->isPage,
+            'pageReference' => PageParser::first($data->page),
             'seo' => SeoParser::first($data->seo),
 
         ];
