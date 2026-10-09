@@ -3,9 +3,11 @@
 namespace App\Models\IslandGuide;
 
 use App\Models\BaseModel;
+use App\Models\Page\Page;
 use App\Models\SEO\ContentSeo;
 use App\Parser\IslandGuide\IslandGuideTypeParser;
 use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,12 +23,24 @@ class IslandGuideType extends BaseModel
     const DELETED_AT = 'deletedAt';
 
     protected $casts = [
+        'isPage' => 'boolean',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
     ];
 
     public $parserClass = IslandGuideTypeParser::class;
+
+    /*
+     |--------------------------------------------------------------------------
+     | Relationships
+     |-------------------------------------------------------------------------
+     */
+
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(Page::class, 'pageReference');
+    }
 
     public function scopeFilter($query, $request)
     {

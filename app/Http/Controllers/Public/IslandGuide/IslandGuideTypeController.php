@@ -11,13 +11,13 @@ class IslandGuideTypeController extends Controller
 {
     public function get(Request $request)
     {
-        $types = IslandGuideType::filter($request)->getOrPaginate($request);
+        $types = IslandGuideType::filter($request)->with('seo', 'page')->getOrPaginate($request);
         return success(IslandGuideTypeParser::briefs($types), pagination: pagination($types));
     }
 
     public function detail($id)
     {
-        $type = IslandGuideType::with('seo')->find($id);
+        $type = IslandGuideType::with('seo', 'page')->find($id);
         if (!$type) {
             errIslandGuideTypeGet();
         }

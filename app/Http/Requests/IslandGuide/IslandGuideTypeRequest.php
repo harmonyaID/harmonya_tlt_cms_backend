@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\IslandGuide;
 
+use App\Http\Requests\Seo\SeoRule;
+use App\Models\IslandGuide\IslandGuideType;
 use Logia\Core\Validation\Support\FormRequest;
 
 class IslandGuideTypeRequest extends FormRequest
@@ -10,6 +12,9 @@ class IslandGuideTypeRequest extends FormRequest
 
     public function rules()
     {
+        $islandGuideTypeId = $this->route('id');
+        $islandGuideType = IslandGuideType::with('seo')->find($islandGuideTypeId);
+
         return [
             'name' => 'required|string',
             'description' => 'nullable|string',
@@ -19,6 +24,11 @@ class IslandGuideTypeRequest extends FormRequest
 
             'banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'deleteBanner' => 'nullable|boolean',
-        ];
+
+            'isPage' => 'nullable|boolean',
+            'pageId' => 'nullable|integer|exists:pages,id',
+
+            'seo' => 'nullable|array',
+        ] + SeoRule::rules('seo.', $islandGuideType?->seo);
     }
 }

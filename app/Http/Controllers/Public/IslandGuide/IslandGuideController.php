@@ -13,13 +13,13 @@ class IslandGuideController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $islandGuides = IslandGuide::filter($request)->with(['type', 'area', 'photos'])->getOrPaginate($request);
+        $islandGuides = IslandGuide::filter($request)->with(['type', 'area', 'photos', 'seo'])->getOrPaginate($request);
         return success(IslandGuideParser::briefs($islandGuides), pagination: pagination($islandGuides));
     }
 
     public function detail($idOrSlug)
     {
-        $islandGuide = IslandGuide::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'acf'])->first();
+        $islandGuide = IslandGuide::where('isActive', true)->bySlugOrId($idOrSlug)->with(['type', 'area', 'photos', 'seo', 'acf'])->first();
         if (!$islandGuide) {
             errIslandGuideGet();
         }

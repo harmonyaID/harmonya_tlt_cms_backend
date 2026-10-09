@@ -25,7 +25,11 @@ class IslandGuideTypeAlgo
         try {
             DB::transaction(function () use ($request) {
                 $this->islandGuideType = IslandGuideType::create(
-                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner']) + created_by()
+                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner', 'pageId', 'seo']) + created_by() + [
+                        'pageReference' => $request->boolean('isPage')
+                            ? $request->input('pageId')
+                            : null,
+                    ]
                 );
                 if (!$this->islandGuideType) errIslandGuideTypeSave();
 
@@ -46,7 +50,7 @@ class IslandGuideTypeAlgo
                     ->log("Enter new island-guide type: " . $this->islandGuideType->name);
             });
 
-            return success($this->islandGuideType->load('seo'));
+            return success($this->islandGuideType->load('seo', 'page'));
         } catch (\Error $error) { exception($error); }
     }
 
@@ -55,7 +59,11 @@ class IslandGuideTypeAlgo
         try {
             DB::transaction(function () use ($request) {
                 $this->islandGuideType->update(
-                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner'])
+                    $request->except(['featuredImage', 'banner', 'deleteFeaturedImage', 'deleteBanner', 'pageId', 'seo']) + [
+                        'pageReference' => $request->boolean('isPage')
+                            ? $request->input('pageId')
+                            : null,
+                    ]
                 );
 
                 if ($request->boolean('deleteFeaturedImage')) {
@@ -89,7 +97,7 @@ class IslandGuideTypeAlgo
                     ->log("Update island-guide type: " . $this->islandGuideType->name);
             });
 
-            return success($this->islandGuideType->load('seo'));
+            return success($this->islandGuideType->load('seo', 'page'));
         } catch (\Error $error) { exception($error); }
     }
 
