@@ -104,7 +104,11 @@ class PropertyRequest extends FormRequest
             'features.*.value' => 'nullable|string',
 
             'floorplanImage' => [ 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', ],
-            
+
+            'whyYoullLoveThis' => 'nullable|array',
+            'whyYoullLoveThis.*.title' => 'required_with:whyYoullLoveThis|string|max:255',
+            'whyYoullLoveThis.*.value' => 'nullable|string',
+
             'seo' => 'nullable|array',
         ], SeoRule::rules('seo.', $property?->seo), AcfRule::rules());
     }

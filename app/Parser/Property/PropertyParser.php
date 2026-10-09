@@ -97,6 +97,12 @@ class PropertyParser extends BaseParser
                 'monthlyDiscount' => $data->pricing->monthlyDiscount,
                 'markupPercent' => $data->pricing->markupPercent,
             ] : null,
+            'whyYoullLoveThis' => collect($data->whyYoullLoveThis ?? [])->map(function ($item) {
+                return [
+                    'title' => $item['title'] ?? null,
+                    'value' => $item['value'] ?? null,
+                ];
+            })->values(),
             'descriptions' => $data->descriptions->map(function ($description) {
                 return [
                     'id' => $description->id,
@@ -150,6 +156,7 @@ class PropertyParser extends BaseParser
         return [
             'id' => $data->id,
             'nickname' => $data->nickname,
+            'occupancy' => $data->occupancy,
             'floorplanImage' => $data->floorplanImageUrl(),
             'isPopular' => $data->isPopular,
             'isNewVilla' => $data->sourceCreatedAt
@@ -159,6 +166,22 @@ class PropertyParser extends BaseParser
                 return [
                     'id' => $tag->id,
                     'name' => $tag->name,
+                ];
+            }),
+            'amenities' => $data->amenities->map(function ($amenity) {
+                return [
+                    'id' => $amenity->id,
+                    'name' => $amenity->name,
+                ];
+            }),
+            'rooms' => $data->rooms->map(function ($room) {
+                return [
+                    'id' => $room->id,
+                    'roomType' => optional($room->roomType)->only('id', 'name'),
+                    'label' => $room->label,
+                    'bedType' => optional($room->bedType)->only('id', 'name'),
+                    'bedCount' => $room->bedCount,
+                    'order' => $room->order,
                 ];
             }),
             'type' => optional($data->type)->only('id', 'name'),
