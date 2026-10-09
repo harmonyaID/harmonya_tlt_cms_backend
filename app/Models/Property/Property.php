@@ -44,6 +44,7 @@ class Property extends BaseModel
         'sourceTypeId' => 'integer',
         'guestyImportedAt' => 'datetime',
         'isPopular' => 'boolean',
+        'whyYoullLoveThis' => 'array',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
