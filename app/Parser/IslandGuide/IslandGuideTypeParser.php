@@ -15,6 +15,7 @@ class IslandGuideTypeParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'excerpt' => $data->excerpt,
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),
@@ -32,6 +33,7 @@ class IslandGuideTypeParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'excerpt' => $data->excerpt,
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'banner' => $data->bannerUrl(),

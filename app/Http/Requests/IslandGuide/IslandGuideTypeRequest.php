@@ -17,6 +17,7 @@ class IslandGuideTypeRequest extends FormRequest
 
         return [
             'name' => 'required|string',
+            'excerpt' => 'nullable|string|max:500',
             'description' => 'nullable|string',
 
             'featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
