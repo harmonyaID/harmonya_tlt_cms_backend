@@ -304,6 +304,20 @@ class AccessPermissionName
     const STAFF_PROPERTY_REVIEW_UPDATE = AccessGroup::STAFF . '.property-review.update';
     const STAFF_PROPERTY_REVIEW_DELETE = AccessGroup::STAFF . '.property-review.delete';
 
+    // Property Variant
+    const STAFF_PROPERTY_VARIANT = AccessGroup::STAFF . '.property-variant.*';
+    const STAFF_PROPERTY_VARIANT_VIEW = AccessGroup::STAFF . '.property-variant.view';
+    const STAFF_PROPERTY_VARIANT_CREATE = AccessGroup::STAFF . '.property-variant.create';
+    const STAFF_PROPERTY_VARIANT_UPDATE = AccessGroup::STAFF . '.property-variant.update';
+    const STAFF_PROPERTY_VARIANT_DELETE = AccessGroup::STAFF . '.property-variant.delete';
+
+    // Property Variant Review
+    const STAFF_PROPERTY_VARIANT_REVIEW = AccessGroup::STAFF . '.property-variant-review.*';
+    const STAFF_PROPERTY_VARIANT_REVIEW_VIEW = AccessGroup::STAFF . '.property-variant-review.view';
+    const STAFF_PROPERTY_VARIANT_REVIEW_CREATE = AccessGroup::STAFF . '.property-variant-review.create';
+    const STAFF_PROPERTY_VARIANT_REVIEW_UPDATE = AccessGroup::STAFF . '.property-variant-review.update';
+    const STAFF_PROPERTY_VARIANT_REVIEW_DELETE = AccessGroup::STAFF . '.property-variant-review.delete';
+
     // API Configuration (Open API Features)
     const STAFF_API_CONFIGURATION = AccessGroup::STAFF . '.api-configuration.*';
     const STAFF_API_CONFIGURATION_VIEW = AccessGroup::STAFF . '.api-configuration.view';
@@ -544,6 +558,18 @@ class AccessPermissionName
         self::STAFF_PROPERTY_REVIEW_CREATE,
         self::STAFF_PROPERTY_REVIEW_UPDATE,
         self::STAFF_PROPERTY_REVIEW_DELETE,
+
+        self::STAFF_PROPERTY_VARIANT,
+        self::STAFF_PROPERTY_VARIANT_VIEW,
+        self::STAFF_PROPERTY_VARIANT_CREATE,
+        self::STAFF_PROPERTY_VARIANT_UPDATE,
+        self::STAFF_PROPERTY_VARIANT_DELETE,
+
+        self::STAFF_PROPERTY_VARIANT_REVIEW,
+        self::STAFF_PROPERTY_VARIANT_REVIEW_VIEW,
+        self::STAFF_PROPERTY_VARIANT_REVIEW_CREATE,
+        self::STAFF_PROPERTY_VARIANT_REVIEW_UPDATE,
+        self::STAFF_PROPERTY_VARIANT_REVIEW_DELETE,
 
         self::STAFF_PROPERTY_CONTACT_FORM,
         self::STAFF_PROPERTY_CONTACT_FORM_VIEW,

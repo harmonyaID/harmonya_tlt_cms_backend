@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog\Blog;
-use App\Models\Property\Property;
+use App\Models\Property\PropertyVariant;
 use App\Services\Constant\Access\AccessPermissionName;
 
 class DashboardController extends Controller
@@ -27,10 +27,10 @@ class DashboardController extends Controller
     public function metrics()
     {
         // Generic breakdown - automatically includes any source type admins add later
-        $bySourceType = Property::query()
-            ->join('property_source_types', 'property_source_types.id', '=', 'properties.sourceTypeId')
+        $bySourceType = PropertyVariant::query()
+            ->join('property_source_types', 'property_source_types.id', '=', 'property_variants.sourceTypeId')
             ->select('property_source_types.id', 'property_source_types.name')
-            ->selectRaw('count(properties.id) as total')
+            ->selectRaw('count(property_variants.id) as total')
             ->groupBy('property_source_types.id', 'property_source_types.name')
             ->get();
 

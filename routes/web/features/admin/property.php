@@ -12,6 +12,10 @@ use App\Http\Controllers\Web\Admin\Property\PropertyRoomTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertySourceTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTagController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTypeController;
+use App\Http\Controllers\Web\Admin\Property\PropertyVariantController;
+use App\Http\Controllers\Web\Admin\Property\PropertyVariantPhotoController;
+use App\Http\Controllers\Web\Admin\Property\PropertyVariantRelatedController;
+use App\Http\Controllers\Web\Admin\Property\PropertyVariantReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("properties")
@@ -177,4 +181,47 @@ Route::prefix("properties")
         Route::get('{id}', [PropertyController::class, 'detail']);
         Route::post('{id}', [PropertyController::class, 'update']);
         Route::delete('{id}', [PropertyController::class, 'delete']);
+    });
+
+// Property Variant - the concrete listing (Guesty / Bookeasy unit) that belongs to a parent Property
+Route::prefix("property-variants")
+    ->middleware('auth.web.admin')
+    ->group(function () {
+
+        Route::get('', [PropertyVariantController::class, 'get']);
+        Route::post('', [PropertyVariantController::class, 'create']);
+
+        Route::post('{propertyVariantId}/photos', [PropertyVariantPhotoController::class, 'upload']);
+        Route::delete('{propertyVariantId}/photos/{photoId}', [PropertyVariantPhotoController::class, 'delete']);
+
+        Route::prefix('reviews')
+            ->group(function () {
+                Route::get('', [PropertyVariantReviewController::class, 'get']);
+                Route::post('', [PropertyVariantReviewController::class, 'create']);
+
+                Route::prefix('trash')
+                    ->group(function () {
+                        Route::get('', [PropertyVariantReviewController::class, 'trash']);
+                        Route::post('{id}/restore', [PropertyVariantReviewController::class, 'restore']);
+                        Route::delete('{id}', [PropertyVariantReviewController::class, 'forceDelete']);
+                    });
+
+                Route::get('{id}', [PropertyVariantReviewController::class, 'detail']);
+                Route::post('{id}', [PropertyVariantReviewController::class, 'update']);
+                Route::delete('{id}', [PropertyVariantReviewController::class, 'delete']);
+            });
+
+        Route::prefix('trash')
+            ->group(function () {
+                Route::get('', [PropertyVariantController::class, 'trash']);
+                Route::post('{id}/restore', [PropertyVariantController::class, 'restore']);
+                Route::delete('{id}', [PropertyVariantController::class, 'forceDelete']);
+            });
+
+        Route::get('{propertyVariantId}/related', [PropertyVariantRelatedController::class, 'get']);
+        Route::put('{propertyVariantId}/related', [PropertyVariantRelatedController::class, 'sync']);
+
+        Route::get('{id}', [PropertyVariantController::class, 'detail']);
+        Route::post('{id}', [PropertyVariantController::class, 'update']);
+        Route::delete('{id}', [PropertyVariantController::class, 'delete']);
     });

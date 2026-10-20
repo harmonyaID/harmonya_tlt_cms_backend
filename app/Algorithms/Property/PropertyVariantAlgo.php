@@ -1,0 +1,290 @@
+<?php
+
+namespace App\Algorithms\Property;
+
+use App\Algorithms\Acf\ContentAcfAlgo;
+use App\Algorithms\Seo\ContentSeoAlgo;
+use App\Models\Property\PropertyVariant;
+use App\Models\Property\PropertyVariantAddress;
+use App\Models\Property\PropertyVariantAvailability;
+use App\Models\Property\PropertyVariantDescription;
+use App\Models\Property\PropertyVariantGuestInfo;
+use App\Models\Property\PropertyVariantPricing;
+use App\Models\Property\PropertyVariantRoom;
+use App\Services\Constant\Activity\ActivityAction;
+use App\Services\Constant\Activity\ActivityType;
+use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class PropertyVariantAlgo
+{
+    protected array $nestedKeys = [
+        'addresses',
+        'guestInfo',
+        'rooms',
+        'availability',
+        'pricing',
+        'descriptions',
+        'amenityIds',
+        'tagIds',
+        'features',
+        'seo',
+        'acf',
+        'deleteFloorplanImage',
+    ];
+
+    public function __construct(protected PropertyVariant|int|null $property = null)
+    {
+        if (is_int($this->property)) {
+            $this->property = PropertyVariant::find($this->property);
+
+            if (!$this->property) {
+                errPropertyVariantGet();
+            }
+        }
+    }
+
+    public function create(Request $request)
+    {
+        try {
+            DB::transaction(function () use ($request) {
+                $data = $request->except($this->nestedKeys);
+
+                if ($request->hasFile('floorplanImage')) {
+                    $data['floorplanImage'] = $this->uploadFloorplanImage($request);
+                }
+
+                $this->property = PropertyVariant::create($data + created_by());
+
+                if (!$this->property) {
+                    errPropertyVariantSave();
+                }
+
+                $this->syncNested($request);
+
+                (new ContentSeoAlgo($this->property))->save($request);
+                (new ContentAcfAlgo($this->property))->save($request);
+
+                activity()->setCausedBy()
+                    ->setReference($this->property)
+                    ->setType(ActivityType::PROPERTY_VARIANT)
+                    ->setAction(ActivityAction::CREATE)
+                    ->log("Enter new property variant: " . $this->property->nickname);
+            });
+
+            return success($this->property->load($this->relations()));
+        } catch (\Error $error) {
+            exception($error);
+        }
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            DB::transaction(function () use ($request) {
+                $data = $request->except($this->nestedKeys);
+
+                if ($request->hasFile('floorplanImage')) {
+                    $this->deleteFloorplanImage();
+
+                    $data['floorplanImage'] = $this->uploadFloorplanImage($request);
+                } elseif ($request->boolean('deleteFloorplanImage')) {
+                    $this->deleteFloorplanImage();
+
+                    $data['floorplanImage'] = null;
+                }
+
+                $this->property->update($data);
+
+                $this->syncNested($request);
+
+                (new ContentSeoAlgo($this->property))->save($request);
+                (new ContentAcfAlgo($this->property))->save($request);
+
+                activity()->setCausedBy()
+                    ->setReference($this->property)
+                    ->setType(ActivityType::PROPERTY_VARIANT)
+                    ->setAction(ActivityAction::UPDATE)
+                    ->log("Update property variant: " . $this->property->nickname);
+            });
+
+            return success($this->property->load($this->relations()));
+        } catch (\Error $error) {
+            exception($error);
+        }
+    }
+
+    public function delete()
+    {
+        try {
+            DB::transaction(function () {
+                $dirPath = PathConstant::IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH();
+
+                foreach ($this->property->photos as $photo) {
+                    if ($photo->path && file_exists($dirPath . $photo->path)) {
+                        unlink($dirPath . $photo->path);
+                    }
+                }
+
+                $this->deleteFloorplanImage();
+
+                $this->property->addresses()->delete();
+                $this->property->guestInfo()->delete();
+                $this->property->rooms()->delete();
+                $this->property->availability()->delete();
+                $this->property->pricing()->delete();
+                $this->property->descriptions()->delete();
+                $this->property->photos()->delete();
+                $this->property->amenities()->detach();
+                $this->property->tags()->detach();
+
+                if ($this->property->seo) {
+                    $this->property->seo()->delete();
+                }
+
+                $this->property->acf()->delete();
+
+                if (!$this->property->delete()) {
+                    errPropertyVariantDelete();
+                }
+
+                activity()->setCausedBy()
+                    ->setReference($this->property)
+                    ->setType(ActivityType::PROPERTY_VARIANT)
+                    ->setAction(ActivityAction::DELETE)
+                    ->log("Delete property variant: " . $this->property->nickname);
+            });
+
+            return success();
+        } catch (\Error $error) {
+            exception($error);
+        }
+    }
+
+    private function relations(): array
+    {
+        return [
+            'parent',
+            'type',
+            'sourceType',
+            'addresses',
+            'guestInfo',
+            'rooms.roomType',
+            'rooms.bedType',
+            'availability',
+            'pricing',
+            'descriptions',
+            'photos',
+            'amenities',
+            'tags',
+            'seo',
+            'features',
+            'acf',
+        ];
+    }
+
+    private function uploadFloorplanImage(Request $request): string
+    {
+        $dirPath = PathConstant::IMAGES_PROPERTY_FLOORPLAN_STORAGE_PUBLIC_PATH();
+
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        $file = $request->file('floorplanImage');
+        $filename = uniqid('floorplan_') . '.' . $file->getClientOriginalExtension();
+
+        $file->move($dirPath, $filename);
+
+        return $filename;
+    }
+
+    private function deleteFloorplanImage(): void
+    {
+        if (!$this->property?->floorplanImage) {
+            return;
+        }
+
+        $dirPath = PathConstant::IMAGES_PROPERTY_FLOORPLAN_STORAGE_PUBLIC_PATH();
+        $filePath = $dirPath . $this->property->floorplanImage;
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
+    private function syncNested(Request $request)
+    {
+        if ($request->has('addresses') && is_array($request->addresses)) {
+            $this->property->addresses()->delete();
+
+            foreach ($request->addresses as $address) {
+                PropertyVariantAddress::create([
+                    'propertyVariantId' => $this->property->id,
+                ] + $address);
+            }
+        }
+
+        if ($request->has('guestInfo') && is_array($request->guestInfo)) {
+            PropertyVariantGuestInfo::updateOrCreate(
+                ['propertyVariantId' => $this->property->id],
+                $request->guestInfo
+            );
+        }
+
+        if ($request->has('rooms') && is_array($request->rooms)) {
+            $this->property->rooms()->delete();
+
+            foreach ($request->rooms as $room) {
+                PropertyVariantRoom::create([
+                    'propertyVariantId' => $this->property->id,
+                ] + $room);
+            }
+        }
+
+        if ($request->has('availability') && is_array($request->availability)) {
+            PropertyVariantAvailability::updateOrCreate(
+                ['propertyVariantId' => $this->property->id],
+                $request->availability
+            );
+        }
+
+        if ($request->has('pricing') && is_array($request->pricing)) {
+            PropertyVariantPricing::updateOrCreate(
+                ['propertyVariantId' => $this->property->id],
+                $request->pricing
+            );
+        }
+
+        if ($request->has('descriptions') && is_array($request->descriptions)) {
+            $this->property->descriptions()->delete();
+
+            foreach ($request->descriptions as $description) {
+                PropertyVariantDescription::create([
+                    'propertyVariantId' => $this->property->id,
+                ] + $description);
+            }
+        }
+
+        if ($request->has('amenityIds') && is_array($request->amenityIds)) {
+            $this->property->amenities()->sync($request->amenityIds);
+        }
+
+        if ($request->has('tagIds') && is_array($request->tagIds)) {
+            $this->property->tags()->sync($request->tagIds);
+        }
+
+        if ($request->has('features') && is_array($request->features)) {
+            $syncData = [];
+
+            foreach ($request->features as $feature) {
+                $syncData[$feature['featureId']] = [
+                    'value' => $feature['value'] ?? null,
+                ];
+            }
+
+            $this->property->features()->sync($syncData);
+        }
+    }
+}
