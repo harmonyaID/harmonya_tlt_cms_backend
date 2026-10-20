@@ -52,6 +52,11 @@ class Property extends BaseModel
 
     public $parserClass = PropertyParser::class;
 
+    public function variants(): HasMany
+    {
+        return $this->hasMany(PropertyVariant::class, 'parentPropertyId');
+    }
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(PropertyType::class, 'propertyTypeId');

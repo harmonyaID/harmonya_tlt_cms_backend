@@ -13,7 +13,7 @@ class ImportPropertiesFromGuestyCommand extends Command
         {--limit=25 : How many listings to fetch per page}
         {--max= : Stop after importing this many listings total (default: all)}';
 
-    protected $description = 'Pull listings from Guesty Open API and create/update Property + PropertyPhoto records';
+    protected $description = 'Pull listings from Guesty Open API and create/update PropertyVariant + PropertyVariantPhoto records (the concrete listings; the parent Property is managed separately)';
 
     public function handle(GuestyClient $client, GuestyPropertyImporter $importer)
     {

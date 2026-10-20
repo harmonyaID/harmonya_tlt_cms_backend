@@ -2,15 +2,15 @@
 
 namespace App\Services\Guesty;
 
-use App\Models\Property\Property;
-use App\Models\Property\PropertyAddress;
-use App\Models\Property\PropertyAvailability;
+use App\Models\Property\PropertyVariant;
+use App\Models\Property\PropertyVariantAddress;
+use App\Models\Property\PropertyVariantAvailability;
 use App\Models\Property\PropertyBedType;
-use App\Models\Property\PropertyDescription;
-use App\Models\Property\PropertyGuestInfo;
-use App\Models\Property\PropertyPhoto;
-use App\Models\Property\PropertyPricing;
-use App\Models\Property\PropertyRoom;
+use App\Models\Property\PropertyVariantDescription;
+use App\Models\Property\PropertyVariantGuestInfo;
+use App\Models\Property\PropertyVariantPhoto;
+use App\Models\Property\PropertyVariantPricing;
+use App\Models\Property\PropertyVariantRoom;
 use App\Models\Property\PropertyRoomType;
 use App\Models\Property\PropertyTag;
 use App\Models\Property\PropertySourceType;
@@ -34,14 +34,14 @@ class GuestyPropertyImporter
 {
     public function __construct(protected GuestyClient $client) {}
 
-    public function import(array $listing): Property
+    public function import(array $listing): PropertyVariant
     {
         return DB::transaction(function () use ($listing) {
 
-            $property = Property::updateOrCreate(
+            $property = PropertyVariant::updateOrCreate(
                 ['guestyId' => $listing['_id']],
                 [
-                    'nickname' => $listing['nickname'] ?? $listing['title'] ?? 'Untitled',
+                    'nickname' => $listing['title'] ?? $listing['nickname'] ?? 'Untitled',
                     'propertyTypeId' => $this->resolvePropertyTypeId($listing['propertyType'] ?? null),
                     'unitTypeId' => $this->mapUnitType($listing['type'] ?? 'SINGLE'),
                     'listingTypeId' => $this->mapListingType($listing['roomType'] ?? null),
@@ -78,7 +78,7 @@ class GuestyPropertyImporter
         });
     }
 
-    private function syncSeo(Property $property, array $listing): void
+    private function syncSeo(PropertyVariant $property, array $listing): void
     {
         $description = $listing['publicDescription'] ?? [];
 
@@ -105,15 +105,15 @@ class GuestyPropertyImporter
             ]
         );
     }
-    private function syncAddress(Property $property, array $listing): void
+    private function syncAddress(PropertyVariant $property, array $listing): void
     {
         $address = $listing['address'] ?? null;
         if (!$address) {
             return;
         }
 
-        PropertyAddress::updateOrCreate(
-            ['propertyId' => $property->id, 'typeId' => PropertyAddressType::FULL_ID],
+        PropertyVariantAddress::updateOrCreate(
+            ['propertyVariantId' => $property->id, 'typeId' => PropertyAddressType::FULL_ID],
             [
                 'address' => $address['full'] ?? null,
                 'buildingName' => $address['apt'] ?? null,
@@ -124,12 +124,12 @@ class GuestyPropertyImporter
         );
     }
 
-    private function syncGuestInfo(Property $property, array $listing): void
+    private function syncGuestInfo(PropertyVariant $property, array $listing): void
     {
         $description = $listing['publicDescription'] ?? [];
 
-        PropertyGuestInfo::updateOrCreate(
-            ['propertyId' => $property->id],
+        PropertyVariantGuestInfo::updateOrCreate(
+            ['propertyVariantId' => $property->id],
             [
                 'hostName' => $listing['hostName'] ?? null,
                 'wifiName' => $listing['wifiName'] ?? null,
@@ -143,14 +143,14 @@ class GuestyPropertyImporter
         );
     }
 
-    private function syncAvailability(Property $property, array $listing): void
+    private function syncAvailability(PropertyVariant $property, array $listing): void
     {
         $terms = $listing['terms'] ?? [];
         $calendarRules = $listing['calendarRules'] ?? [];
         $advanceNotice = $calendarRules['advanceNotice']['defaultSettings']['hours'] ?? null;
 
-        PropertyAvailability::updateOrCreate(
-            ['propertyId' => $property->id],
+        PropertyVariantAvailability::updateOrCreate(
+            ['propertyVariantId' => $property->id],
             [
                 'defaultAvailabilityId' => ($calendarRules['defaultAvailability'] ?? null) === 'AVAILABLE'
                     ? PropertyAvailabilityType::ALWAYS_ID
@@ -163,13 +163,13 @@ class GuestyPropertyImporter
         );
     }
 
-    private function syncPricing(Property $property, array $listing): void
+    private function syncPricing(PropertyVariant $property, array $listing): void
     {
         $prices = $listing['prices'] ?? [];
         $cleaningFeeValue = $listing['financials']['cleaningFee']['value'] ?? null;
 
-        PropertyPricing::updateOrCreate(
-            ['propertyId' => $property->id],
+        PropertyVariantPricing::updateOrCreate(
+            ['propertyVariantId' => $property->id],
             [
                 'weekdayBasePrice' => $prices['basePrice'] ?? null,
                 'weekendBasePrice' => $prices['weekendBasePrice'] ?? null,
@@ -184,12 +184,12 @@ class GuestyPropertyImporter
         );
     }
 
-    private function syncDescriptions(Property $property, array $listing): void
+    private function syncDescriptions(PropertyVariant $property, array $listing): void
     {
         $description = $listing['publicDescription'] ?? [];
 
-        PropertyDescription::updateOrCreate(
-            ['propertyId' => $property->id, 'channel' => 'primary', 'language' => 'en'],
+        PropertyVariantDescription::updateOrCreate(
+            ['propertyVariantId' => $property->id, 'channel' => 'primary', 'language' => 'en'],
             [
                 'title' => $listing['title'] ?? null,
                 'summary' => $description['summary'] ?? null,
@@ -202,7 +202,7 @@ class GuestyPropertyImporter
         );
     }
 
-    private function syncRooms(Property $property, array $listing): void
+    private function syncRooms(PropertyVariant $property, array $listing): void
     {
         $listingRooms = $listing['listingRooms'] ?? [];
         if (empty($listingRooms)) {
@@ -222,8 +222,8 @@ class GuestyPropertyImporter
             foreach ($beds as $bed) {
                 $bedType = PropertyBedType::firstOrCreate(['name' => $this->mapBedTypeName($bed['type'] ?? null)]);
 
-                PropertyRoom::create([
-                    'propertyId' => $property->id,
+                PropertyVariantRoom::create([
+                    'propertyVariantId' => $property->id,
                     'roomTypeId' => $bedroomType->id,
                     'label' => 'Bedroom ' . (($room['roomNumber'] ?? 0) + 1),
                     'bedTypeId' => $bedType->id,
@@ -234,7 +234,7 @@ class GuestyPropertyImporter
         }
     }
 
-    private function syncAmenities(Property $property, array $listing): void
+    private function syncAmenities(PropertyVariant $property, array $listing): void
     {
         $names = $listing['amenities'] ?? [];
         if (empty($names)) {
@@ -248,7 +248,7 @@ class GuestyPropertyImporter
         $property->amenities()->sync($ids);
     }
 
-    private function syncTags(Property $property, array $listing): void
+    private function syncTags(PropertyVariant $property, array $listing): void
     {
         $names = $listing['tags'] ?? [];
         if (empty($names)) {
@@ -262,7 +262,7 @@ class GuestyPropertyImporter
         $property->tags()->sync($ids);
     }
 
-    private function syncFeatures(Property $property, array $listing): void
+    private function syncFeatures(PropertyVariant $property, array $listing): void
     {
         $values = [
             'Bedroom' => $listing['bedrooms'] ?? null,
@@ -284,7 +284,7 @@ class GuestyPropertyImporter
         }
     }
 
-    private function syncPhotos(Property $property, array $listing): void
+    private function syncPhotos(PropertyVariant $property, array $listing): void
     {
         if ($property->photos()->exists()) {
             return;
@@ -315,8 +315,8 @@ class GuestyPropertyImporter
             $filename = $property->guestyId . '-' . $index . '.' . $extension;
             file_put_contents($dirPath . $filename, $bytes);
 
-            PropertyPhoto::create([
-                'propertyId' => $property->id,
+            PropertyVariantPhoto::create([
+                'propertyVariantId' => $property->id,
                 'path' => $filename,
                 'caption' => $picture['caption'] ?? null,
                 'order' => $index,

@@ -286,3 +286,80 @@ if (!function_exists("errPropertyFeatureDelete")) {
         error($status, "Unable to delete property feature", $internalMsg);
     }
 }
+
+if (!function_exists("errPropertyVariantGet")) {
+    function errPropertyVariantGet($internalMsg = "")
+    {
+        error(404, "Property variant not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantSave")) {
+    function errPropertyVariantSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property variant", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantUpdate")) {
+    function errPropertyVariantUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property variant", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantDelete")) {
+    function errPropertyVariantDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property variant", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantPhotoGet")) {
+    function errPropertyVariantPhotoGet($internalMsg = "")
+    {
+        error(404, "Property variant photo not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantPhotoSave")) {
+    function errPropertyVariantPhotoSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property variant photo", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantPhotoDelete")) {
+    function errPropertyVariantPhotoDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property variant photo", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantReviewGet")) {
+    function errPropertyVariantReviewGet($internalMsg = "")
+    {
+        error(404, "Property variant review not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantReviewSave")) {
+    function errPropertyVariantReviewSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property variant review", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantReviewUpdate")) {
+    function errPropertyVariantReviewUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property variant review", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyVariantReviewDelete")) {
+    function errPropertyVariantReviewDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property variant review", $internalMsg);
+    }
+}

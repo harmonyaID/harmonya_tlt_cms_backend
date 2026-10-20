@@ -8,6 +8,9 @@ use App\Http\Controllers\Public\Property\PropertyReviewController;
 use App\Http\Controllers\Public\Property\PropertySourceTypeController;
 use App\Http\Controllers\Public\Property\PropertyTagController;
 use App\Http\Controllers\Public\Property\PropertyTypeController;
+use App\Http\Controllers\Public\Property\PropertyVariantController;
+use App\Http\Controllers\Public\Property\PropertyVariantRelatedController;
+use App\Http\Controllers\Public\Property\PropertyVariantReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("properties")
@@ -17,6 +20,15 @@ Route::prefix("properties")
         Route::get('{id}/nearby', [PropertyController::class, 'nearby']);
         Route::get('{id}/related', [PropertyRelatedController::class, 'get']);
         Route::get('{id}', [PropertyController::class, 'detail']);
+    });
+
+Route::prefix("property-variants")
+    ->group(function () {
+        Route::get('', [PropertyVariantController::class, 'get']);
+        Route::get('reviews', [PropertyVariantReviewController::class, 'get']);
+        Route::get('{id}/nearby', [PropertyVariantController::class, 'nearby']);
+        Route::get('{id}/related', [PropertyVariantRelatedController::class, 'get']);
+        Route::get('{id}', [PropertyVariantController::class, 'detail']);
     });
 
 Route::prefix("property-types")
