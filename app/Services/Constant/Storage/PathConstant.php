@@ -50,6 +50,7 @@ class PathConstant
 
     const IMAGES_BLOG = 'images/blogs/';
     const IMAGES_OFFER = 'images/offers/';
+    const IMAGES_AMENITY = 'images/amenities/';
     const IMAGES_LEMBONGAN_AREA = 'images/lembongan-areas/';
     const IMAGES_PAGE = 'images/pages/';
     const IMAGES_HOMEPAGE = 'images/homepages/';
@@ -145,6 +146,11 @@ class PathConstant
     public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
+    }
+
+    public static function IMAGES_AMENITY_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_AMENITY);
     }
 
     public static function IMAGES_OFFER_STORAGE_PUBLIC_PATH()

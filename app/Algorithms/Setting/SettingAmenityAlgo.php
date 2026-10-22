@@ -3,8 +3,10 @@
 namespace App\Algorithms\Setting;
 
 use App\Models\Setting\SettingAmenity;
+use App\Parser\Setting\SettingAmenityParser;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,7 +37,7 @@ class SettingAmenityAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->amenity = SettingAmenity::create($request->all() + created_by());
+                $this->amenity = SettingAmenity::create($request->except('icon') + created_by());
                 if (!$this->amenity) {
                     errAmenitySave();
                 }
@@ -67,7 +69,7 @@ class SettingAmenityAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->amenity->update($request->all());
+                $this->amenity->update($request->except('icon'));
 
                 activity()->setCausedBy()
                     ->setReference($this->amenity)
@@ -110,6 +112,63 @@ class SettingAmenityAlgo
 
         } catch (\Error $error) {
             exception($error);
+        }
+    }
+
+    /**
+     * Update only the icon image of the amenity.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed|void
+     * @throws \Logia\Core\Exception\ErrorException
+     */
+    public function updateIcon(Request $request)
+    {
+        try {
+
+            DB::transaction(function () use ($request) {
+
+                $dirPath = PathConstant::IMAGES_AMENITY_STORAGE_PUBLIC_PATH();
+
+                if ($request->hasFile('icon') && $request->file('icon')->isValid()) {
+                    if (!file_exists($dirPath)) {
+                        mkdir($dirPath, 0777, true);
+                    }
+
+                    $this->removeIconFile($dirPath);
+
+                    $image = $request->file('icon');
+                    $filename = filename($image, $this->amenity->name);
+                    $image->move($dirPath, $filename);
+
+                    $this->amenity->icon = $filename;
+                } elseif ($request->boolean('deleteIcon')) {
+                    $this->removeIconFile($dirPath);
+                    $this->amenity->icon = null;
+                }
+
+                $this->amenity->save();
+
+                activity()->setCausedBy()
+                    ->setReference($this->amenity)
+                    ->setType(ActivityType::AMENITY)
+                    ->setAction(ActivityAction::UPDATE)
+                    ->log("Update amenity icon: " . $this->amenity->name);
+
+            });
+
+            return success(SettingAmenityParser::first($this->amenity->fresh()));
+
+        } catch (\Error $error) {
+            exception($error);
+        }
+    }
+
+    private function removeIconFile(string $dirPath): void
+    {
+        if ($this->amenity->icon && file_exists($dirPath . $this->amenity->icon)) {
+            unlink($dirPath . $this->amenity->icon);
         }
     }
 }
