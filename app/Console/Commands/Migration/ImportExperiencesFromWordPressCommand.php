@@ -11,6 +11,7 @@ class ImportExperiencesFromWordPressCommand extends Command
     protected $signature = 'wp-import:experiences
         {csv? : Path to the "Select Portfolio Export" CSV (default: public/migration/wordpress/select-portfolio-export.csv)}
         {--images= : Folder with the thumbnail files (default: public/migration/wordpress/images)}
+        {--download-images : Download thumbnails that are not in the image folder from their WordPress URL}
         {--media= : WP media export (CSV with ID + URL, or JSON {id: url}) to restore images inside descriptions}
         {--without-description : Do not import the description (leave it empty)}
         {--dry-run : Only list what would be imported, write nothing}';
@@ -31,6 +32,7 @@ class ImportExperiencesFromWordPressCommand extends Command
         $imageDir = $this->option('images') ?: public_path('migration/wordpress/images');
         $dryRun = (bool) $this->option('dry-run');
         $withDescription = !$this->option('without-description');
+        $download = (bool) $this->option('download-images');
 
         if (!is_file($path)) {
             $this->error("File not found: {$path}");
@@ -61,7 +63,7 @@ class ImportExperiencesFromWordPressCommand extends Command
             }
 
             try {
-                $importer->import($row, $imageDir, $withDescription);
+                $importer->import($row, $imageDir, $withDescription, $download);
                 $imported++;
                 $this->line("  ✓ Imported: {$label}  ->  {$where}");
             } catch (\Throwable $e) {
@@ -74,7 +76,7 @@ class ImportExperiencesFromWordPressCommand extends Command
 
         if ($importer->missingThumbnails) {
             $this->warn(count($importer->missingThumbnails) . " thumbnail(s) not found in {$imageDir}. "
-                . 'Put the files in storage/app/public/images/experiences/ (same file names) when you have them.');
+                . 'Put the files in that folder (same file names) and re-run, or use --download-images.');
         }
 
         $this->info(($dryRun ? 'Dry run. Would import: ' : 'Done. Imported/updated: ') . "{$imported}, Skipped (not an Experience): {$skipped}, Failed: {$failed}");

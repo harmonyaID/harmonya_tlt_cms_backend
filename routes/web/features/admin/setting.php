@@ -32,6 +32,7 @@ Route::prefix("settings")
 
                 Route::get('{id}', [SettingAmenityController::class, 'detail']);
                 Route::put('{id}', [SettingAmenityController::class, 'update']);
+                Route::post('{id}/update-icon', [SettingAmenityController::class, 'updateIcon']);
                 Route::delete('{id}', [SettingAmenityController::class, 'delete']);
             });
 
