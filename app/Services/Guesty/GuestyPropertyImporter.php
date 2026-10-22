@@ -2,6 +2,7 @@
 
 namespace App\Services\Guesty;
 
+use App\Models\Property\Property;
 use App\Models\Property\PropertyVariant;
 use App\Models\Property\PropertyVariantAddress;
 use App\Models\Property\PropertyVariantAvailability;
@@ -32,6 +33,9 @@ use Illuminate\Support\Str;
 
 class GuestyPropertyImporter
 {
+    /** @var array<string,Property|null> parents already looked up / created during this run */
+    private array $parentCache = [];
+
     public function __construct(protected GuestyClient $client) {}
 
     public function import(array $listing): PropertyVariant
@@ -63,6 +67,7 @@ class GuestyPropertyImporter
                 ]
             );
 
+            $this->syncParent($property, $listing);
             $this->syncAddress($property, $listing);
             $this->syncGuestInfo($property, $listing);
             $this->syncAvailability($property, $listing);
@@ -331,6 +336,116 @@ class GuestyPropertyImporter
         }
 
         return PropertyType::firstOrCreate(['name' => $name])->id;
+    }
+
+    /*
+     |--------------------------------------------------------------------------
+     | Parent Property
+     |--------------------------------------------------------------------------
+     | A listing's parent Property comes from, in this order:
+     |   1. Guesty Multi-Unit: a MTL_CHILD listing points to its MTL listing in "mtl.p";
+     |   2. the title: "White Horse Resort - Poolside Lodge" belongs to "White Horse Resort".
+     | A parent that an admin already chose is never overwritten, and a listing
+     | without either (e.g. "Villa Utopia") simply has no parent.
+     */
+
+    private function syncParent(PropertyVariant $variant, array $listing): void
+    {
+        if ($variant->parentPropertyId) {
+            return;
+        }
+
+        $parent = $this->parentFromGuesty($listing) ?? $this->parentFromTitle($listing);
+
+        if ($parent) {
+            $variant->update(['parentPropertyId' => $parent->id]);
+        }
+    }
+
+    private function parentFromGuesty(array $listing): ?Property
+    {
+        if (($listing['type'] ?? null) !== 'MTL_CHILD') {
+            return null;
+        }
+
+        $parentGuestyId = $listing['mtl']['p'] ?? null;
+
+        // the listings list does not always include "mtl", so ask for it on its own
+        if (!$parentGuestyId && !empty($listing['_id'])) {
+            try {
+                $parentGuestyId = ($this->client->get('/listings/' . $listing['_id'], ['fields' => '_id mtl'])['mtl']['p'] ?? null);
+            } catch (\Throwable $e) {
+                $parentGuestyId = null;
+            }
+        }
+
+        if (!$parentGuestyId) {
+            return null;
+        }
+
+        return $this->parentCache['g:' . $parentGuestyId] ??= $this->findOrCreateGuestyParent($parentGuestyId, $listing);
+    }
+
+    private function findOrCreateGuestyParent(string $guestyId, array $child): ?Property
+    {
+        if ($existing = Property::where('guestyId', $guestyId)->first()) {
+            return $existing;
+        }
+
+        try {
+            $data = $this->client->get('/listings/' . $guestyId, ['fields' => '_id title nickname type']);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $name = trim((string) ($data['title'] ?? $data['nickname'] ?? ''));
+
+        if ($name === '') {
+            return null;
+        }
+
+        // same name already created from a title (e.g. by a SINGLE listing): adopt it
+        if ($byName = Property::where('nickname', $name)->first()) {
+            if (!$byName->guestyId) {
+                $byName->update(['guestyId' => $guestyId]);
+            }
+
+            return $byName;
+        }
+
+        return $this->createParent($name, $child, $guestyId);
+    }
+
+    private function parentFromTitle(array $listing): ?Property
+    {
+        $parts = preg_split('/\s+[-–—]\s+/u', trim((string) ($listing['title'] ?? '')), 2);
+
+        if (!$parts || count($parts) < 2) {
+            return null;
+        }
+
+        $name = trim($parts[0]);
+
+        if (mb_strlen($name) < 2) {
+            return null;
+        }
+
+        return $this->parentCache['n:' . mb_strtolower($name)] ??=
+            Property::where('nickname', $name)->first() ?? $this->createParent($name, $listing);
+    }
+
+    private function createParent(string $name, array $child, ?string $guestyId = null): Property
+    {
+        return Property::create([
+            'guestyId' => $guestyId,
+            'nickname' => $name,
+            'propertyTypeId' => $this->resolvePropertyTypeId($child['propertyType'] ?? null),
+            'unitTypeId' => PropertyUnitType::MULTI_UNIT_ID,
+            'listingTypeId' => $this->mapListingType($child['roomType'] ?? null),
+            'statusId' => PropertyStatus::ACTIVE_ID,
+            'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
+            'currency' => $child['prices']['currency'] ?? 'USD',
+        ]);
     }
 
     private function mapUnitType(string $type): int
