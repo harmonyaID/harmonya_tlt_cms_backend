@@ -8,6 +8,7 @@ use App\Models\Experience\ExperienceType;
 use App\Models\SEO\ContentSeo;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 /**
@@ -152,7 +153,7 @@ class WordPressExperienceImporter
         return $type ? ['type' => $type, 'area' => $area ?: null] : null;
     }
 
-    public function import(array $row, ?string $imageDir = null, bool $withDescription = true): Experience
+    public function import(array $row, ?string $imageDir = null, bool $withDescription = true, bool $download = false): Experience
     {
         $target = $this->resolve($row);
 
@@ -160,7 +161,7 @@ class WordPressExperienceImporter
             throw new \InvalidArgumentException('Row ' . ($row['ID'] ?? '?') . ' is not an Experience in the migration list.');
         }
 
-        return DB::transaction(function () use ($row, $target, $imageDir, $withDescription) {
+        return DB::transaction(function () use ($row, $target, $imageDir, $withDescription, $download) {
             $type = $this->types[$target['type']] ??= ExperienceType::firstOrCreate(['name' => $target['type']]);
             $area = $target['area']
                 ? ($this->areas[$type->id . '|' . $target['area']] ??= ExperienceArea::firstOrCreate([
@@ -192,11 +193,17 @@ class WordPressExperienceImporter
                 $attributes['description'] = $this->converter->convert($row['Content'] ?? '', $title);
             }
 
+            $imageUrl = trim((string) ($row['Image URL'] ?? ''));
+            $thumbnail = $this->thumbnailName($imageUrl);
+
             if ($experience) {
                 $experience->update($attributes);
-            } else {
-                $thumbnail = $this->thumbnailName($row['Image URL'] ?? null);
 
+                // thumbnail is only filled in when the experience has none yet
+                if (!$experience->thumbnail && $thumbnail) {
+                    $experience->update(['thumbnail' => $thumbnail]);
+                }
+            } else {
                 $experience = Experience::create($attributes + [
                     'thumbnail' => $thumbnail,
                     'showInquiry' => false,
@@ -204,10 +211,11 @@ class WordPressExperienceImporter
                     'createdAt' => $this->date($row['Date'] ?? null),
                     'updatedAt' => $this->date($row['Post Modified Date'] ?? null),
                 ]);
+            }
 
-                if ($thumbnail && $imageDir && !$this->copyThumbnail($thumbnail, $imageDir)) {
-                    $this->missingThumbnails[] = $thumbnail;
-                }
+            // also on re-runs, so a thumbnail that was missing the first time gets picked up
+            if ($experience->thumbnail && !$this->placeThumbnail($experience->thumbnail, $imageUrl, $imageDir, $download)) {
+                $this->missingThumbnails[] = $experience->thumbnail;
             }
 
             $this->syncSeo($experience, $slug, $title, $row);
@@ -247,28 +255,43 @@ class WordPressExperienceImporter
     }
 
     /**
-     * Copies <imageDir>/<file> into the Experience image folder. Returns false
-     * when the file is not in the image folder (yet).
+     * Makes sure <experience image folder>/<file> exists: already there, copied
+     * from $imageDir, or (when $download) downloaded from the WordPress URL.
+     * Returns false when none of these worked.
      */
-    private function copyThumbnail(string $filename, string $imageDir): bool
+    private function placeThumbnail(string $filename, string $imageUrl, ?string $imageDir, bool $download): bool
     {
-        $source = rtrim($imageDir, '/\\') . DIRECTORY_SEPARATOR . $filename;
-
-        if (!is_file($source)) {
-            return false;
-        }
-
         $dirPath = PathConstant::IMAGES_EXPERIENCE_STORAGE_PUBLIC_PATH();
+
+        if (is_file($dirPath . $filename)) {
+            return true;
+        }
 
         if (!file_exists($dirPath)) {
             mkdir($dirPath, 0777, true);
         }
 
-        if (!is_file($dirPath . $filename)) {
-            copy($source, $dirPath . $filename);
+        if ($imageDir) {
+            $source = rtrim($imageDir, '/\\') . DIRECTORY_SEPARATOR . $filename;
+
+            if (is_file($source)) {
+                return copy($source, $dirPath . $filename);
+            }
         }
 
-        return true;
+        if ($download && preg_match('#^https?://#i', $imageUrl)) {
+            try {
+                $response = Http::timeout(30)->get($imageUrl);
+
+                if ($response->successful() && $response->body() !== '') {
+                    return file_put_contents($dirPath . $filename, $response->body()) !== false;
+                }
+            } catch (\Throwable $e) {
+                // falls through: reported as a missing thumbnail
+            }
+        }
+
+        return false;
     }
 
     private function decode(?string $value): ?string
