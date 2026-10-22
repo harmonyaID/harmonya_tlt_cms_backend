@@ -6,6 +6,8 @@ use App\Models\Blog\Blog;
 use App\Models\Blog\BlogCategory;
 use App\Models\Blog\BlogTag;
 use App\Services\Constant\Storage\PathConstant;
+use App\Services\WordPress\WordPressContentConverter;
+use App\Services\WordPress\WordPressCsvReader;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -14,13 +16,32 @@ class MigrateBlogsFromCsvCommand extends Command
     protected $signature = 'blogs:migrate-csv
         {--file= : CSV file path}
         {--max= : Stop after migrating this many posts}
+        {--media= : WP media export (CSV with ID + URL columns, or JSON {id: url}) so images inside posts can be restored}
         {--no-image : Do not download featured images}
         {--no-seo : Do not migrate SEO data}';
 
     protected $description = 'Migrate WordPress blog posts from CSV export';
 
-    public function handle()
+    private WordPressContentConverter $converter;
+
+    public function handle(WordPressContentConverter $converter, WordPressCsvReader $reader)
     {
+        $this->converter = $converter;
+
+        if ($mediaFile = $this->option('media')) {
+            if (!file_exists($mediaFile)) {
+                $this->error("Media file not found: {$mediaFile}");
+
+                return self::FAILURE;
+            }
+
+            $media = $reader->readMedia($mediaFile);
+            $converter->setMedia($media);
+            $this->line('Media map loaded: ' . count($media) . ' files');
+        } else {
+            $this->warn('No --media file: images inside post bodies (WordPress stores only their IDs) are skipped.');
+        }
+
         $file = $this->option('file');
 
         if (!$file) {
@@ -204,9 +225,11 @@ class MigrateBlogsFromCsvCommand extends Command
             'UTF-8'
         );
 
-        $content = $this->cleanContent(
-            $data['Content'] ?? ''
-        );
+        // WPBakery shortcodes -> clean HTML that keeps the original look
+        $content = $this->converter->convert(
+            $data['Content'] ?? '',
+            $title
+        ) ?? '';
 
         $excerpt = trim(
             html_entity_decode(
