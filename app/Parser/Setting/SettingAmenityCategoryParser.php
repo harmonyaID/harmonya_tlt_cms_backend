@@ -21,7 +21,7 @@ class SettingAmenityCategoryParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'icon' => $data->icon,
+            'icon' => $data->iconUrl(),
             'order' => $data->order,
             'amenities' => SettingAmenityParser::briefs($data->amenities),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
@@ -42,7 +42,7 @@ class SettingAmenityCategoryParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'icon' => $data->icon,
+            'icon' => $data->iconUrl(),
             'order' => $data->order,
         ];
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin\Setting;
 
 use App\Algorithms\Setting\SettingAmenityCategoryAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Setting\SettingAmenityCategoryIconRequest;
 use App\Http\Requests\Setting\SettingAmenityCategoryRequest;
 use App\Models\Setting\SettingAmenityCategory;
 use App\Parser\Setting\SettingAmenityCategoryParser;
@@ -32,7 +33,7 @@ class SettingAmenityCategoryController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_AMENITY_CATEGORY_UPDATE);
                 return $next($request);
-            })->only(['update']);
+            })->only(['update', 'updateIcon']);
 
             // DELETE
             $this->middleware(function ($request, $next) {
@@ -92,6 +93,21 @@ class SettingAmenityCategoryController extends Controller
     {
         $algo = new SettingAmenityCategoryAlgo((int)$id);
         return $algo->update($request);
+    }
+
+    /**
+     * Update only the icon (image upload, multipart/form-data).
+     *
+     * @param $id
+     * @param SettingAmenityCategoryIconRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed|null
+     * @throws \Logia\Core\Exception\ErrorException
+     */
+    public function updateIcon($id, SettingAmenityCategoryIconRequest $request)
+    {
+        $algo = new SettingAmenityCategoryAlgo((int)$id);
+        return $algo->updateIcon($request);
     }
 
     /**

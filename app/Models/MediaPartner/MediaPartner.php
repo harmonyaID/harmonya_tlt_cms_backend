@@ -22,6 +22,7 @@ class MediaPartner extends BaseModel
 
     protected $casts = [
         'isPublish' => 'boolean',
+        'date' => 'date',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -53,7 +54,11 @@ class MediaPartner extends BaseModel
         return $query->where(function ($query) use ($request) {
 
             if ($request->has('search') && strlen($request->search) > 1) {
-                $query->where('description', 'LIKE', "%$request->search%");
+                $query->where(function ($search) use ($request) {
+                    $search->where('title', 'LIKE', "%$request->search%")
+                        ->orWhere('name', 'LIKE', "%$request->search%")
+                        ->orWhere('description', 'LIKE', "%$request->search%");
+                });
             }
 
         })->orderBy('id', 'DESC');

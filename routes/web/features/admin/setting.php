@@ -26,13 +26,14 @@ Route::prefix("settings")
                         Route::get('', [SettingAmenityCategoryController::class, 'get']);
                         Route::post('', [SettingAmenityCategoryController::class, 'create']);
                         Route::get('{id}', [SettingAmenityCategoryController::class, 'detail']);
-                        Route::put('{id}', [SettingAmenityCategoryController::class, 'update']);
+                        Route::put('{id}', [SettingAmenityCategoryController::class, 'updateIcon']);
+                        // Route::post('{id}/update', [SettingAmenityCategoryController::class, 'updateIcon']);
                         Route::delete('{id}', [SettingAmenityCategoryController::class, 'delete']);
                     });
 
                 Route::get('{id}', [SettingAmenityController::class, 'detail']);
-                Route::put('{id}', [SettingAmenityController::class, 'update']);
-                Route::post('{id}/update-icon', [SettingAmenityController::class, 'updateIcon']);
+                Route::put('{id}', [SettingAmenityController::class, 'updateIcon']);
+                // Route::post('{id}/update', [SettingAmenityController::class, 'updateIcon']);
                 Route::delete('{id}', [SettingAmenityController::class, 'delete']);
             });
 
