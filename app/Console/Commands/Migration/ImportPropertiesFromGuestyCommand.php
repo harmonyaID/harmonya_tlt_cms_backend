@@ -11,6 +11,7 @@ class ImportPropertiesFromGuestyCommand extends Command
 {
     protected $signature = 'properties:import-guesty
         {--limit=25 : How many listings to fetch per page}
+        {--photos : Also download the listing pictures (PropertyVariantPhoto). Slower; skipped when a variant already has photos}
         {--max= : Stop after importing this many listings total (default: all)}';
 
     protected $description = 'Pull listings from Guesty Open API and create/update PropertyVariant + PropertyVariantPhoto records (the concrete listings; the parent Property is managed separately)';
@@ -27,6 +28,7 @@ class ImportPropertiesFromGuestyCommand extends Command
             return self::FAILURE;
         }
 
+        $importer->withPhotos = (bool)$this->option('photos');
         $limit = (int)$this->option('limit');
         $max = $this->option('max') ? (int)$this->option('max') : null;
         $skip = 0;

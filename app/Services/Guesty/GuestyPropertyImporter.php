@@ -33,6 +33,8 @@ use Illuminate\Support\Str;
 
 class GuestyPropertyImporter
 {
+    public bool $withPhotos = false;
+
     /** @var array<string,Property|null> parents already looked up / created during this run */
     private array $parentCache = [];
 
@@ -77,7 +79,9 @@ class GuestyPropertyImporter
             $this->syncAmenities($property, $listing);
             $this->syncTags($property, $listing);
             $this->syncFeatures($property, $listing);
-            // $this->syncPhotos($property, $listing);
+            if ($this->withPhotos) {
+                $this->syncPhotos($property, $listing);
+            }
             $this->syncSeo($property, $listing);
             return $property;
         });
