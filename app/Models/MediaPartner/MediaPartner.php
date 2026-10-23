@@ -29,6 +29,19 @@ class MediaPartner extends BaseModel
 
     public $parserClass = MediaPartnerParser::class;
 
+    protected static function booted()
+    {
+        static::forceDeleted(function (self $mediaPartner) {
+            $dirPath = PathConstant::IMAGES_MEDIA_PARTNER_STORAGE_PUBLIC_PATH();
+
+            foreach (['featuredImage', 'logo'] as $column) {
+                if ($mediaPartner->{$column} && is_file($dirPath . $mediaPartner->{$column})) {
+                    @unlink($dirPath . $mediaPartner->{$column});
+                }
+            }
+        });
+    }
+
     /*
      |--------------------------------------------------------------------------
      | Scopes

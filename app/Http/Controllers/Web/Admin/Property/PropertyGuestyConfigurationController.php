@@ -8,7 +8,10 @@ use App\Models\Setting\ApiConfiguration;
 use App\Parser\Setting\ApiConfigurationParser;
 use App\Services\Constant\Access\AccessPermissionName;
 use App\Services\Guesty\GuestyClient;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class PropertyGuestyConfigurationController extends Controller
 {
@@ -54,37 +57,64 @@ class PropertyGuestyConfigurationController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
+
     public function update(PropertyGuestyConfigurationRequest $request)
     {
         $config = ApiConfiguration::where('key', self::CONFIG_KEY)->first();
 
         $incoming = array_filter([
-            'client_id' => $request->clientId,
+            'client_id'     => $request->clientId,
             'client_secret' => $request->clientSecret,
-            'auth_url' => $request->authUrl,
-            'base_url' => $request->baseUrl,
-        ], fn ($v) => $v !== null && $v !== '');
+            'auth_url'      => $request->authUrl,
+            'base_url'      => $request->baseUrl,
+        ], fn($v) => $v !== null && $v !== '');
 
-        DB::transaction(function () use (&$config, $incoming, $request) {
+        $requiredKeys = ['client_id', 'client_secret', 'auth_url', 'base_url'];
+
+        DB::transaction(function () use (&$config, $incoming, $request, $requiredKeys) {
             if (!$config) {
                 $config = ApiConfiguration::create([
-                    'name' => 'Guesty Open API',
-                    'key' => self::CONFIG_KEY,
-                    'module' => 'property',
+                    'name'        => 'Guesty Open API',
+                    'key'         => self::CONFIG_KEY,
+                    'module'      => 'property',
                     'credentials' => $incoming,
-                    'isActive' => $request->isActive,
+                    'isActive'    => $request->isActive,
                 ] + created_by());
-            } else {
-                $merged = array_merge($config->credentials ?? [], $incoming);
-                $config->update([
-                    'credentials' => $merged,
-                    'isActive' => $request->isActive,
-                ]);
+
+                return;
             }
+
+            try {
+                $existing = $config->credentials ?? [];
+            } catch (DecryptException $e) {
+                report($e);
+
+                // Data lama tidak bisa dibaca (APP_KEY berubah), jadi semua field wajib diisi ulang
+                $missing = array_diff($requiredKeys, array_keys($incoming));
+                if ($missing) {
+                    throw ValidationException::withMessages([
+                        'credentials' => 'Credentials tersimpan tidak bisa dibaca. Silakan isi ulang semua field: '
+                            . implode(', ', $missing),
+                    ]);
+                }
+
+                $existing = [];
+
+                // Kosongkan nilai raw lama supaya dirty-check Eloquent tidak mencoba mendekripsinya lagi
+                $config->setRawAttributes(
+                    array_merge($config->getAttributes(), ['credentials' => null]),
+                    true
+                );
+            }
+
+            $config->update([
+                'credentials' => array_merge($existing, $incoming),
+                'isActive'    => $request->isActive,
+            ]);
         });
 
-        // credentials rotated - drop any cached access token so the new ones take effect immediately
-        \Illuminate\Support\Facades\Cache::forget(GuestyClient::TOKEN_CACHE_KEY);
+        // Credentials berubah, jadi hapus access token yang di-cache supaya credentials baru langsung dipakai
+        Cache::forget(GuestyClient::TOKEN_CACHE_KEY);
 
         return success(ApiConfigurationParser::first($config->fresh()));
     }
