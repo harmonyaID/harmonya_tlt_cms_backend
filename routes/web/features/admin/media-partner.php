@@ -9,6 +9,14 @@ Route::prefix("media-partners")
 
         Route::get('', [MediaPartnerController::class, 'get']);
         Route::post('', [MediaPartnerController::class, 'create']);
+
+        Route::prefix('trash')
+            ->group(function () {
+                Route::get('', [MediaPartnerController::class, 'trash']);
+                Route::post('{id}/restore', [MediaPartnerController::class, 'restore']);
+                Route::delete('{id}', [MediaPartnerController::class, 'forceDelete']);
+            });
+
         Route::get('{id}', [MediaPartnerController::class, 'detail']);
         Route::post('{id}', [MediaPartnerController::class, 'update']);
         Route::delete('{id}', [MediaPartnerController::class, 'delete']);

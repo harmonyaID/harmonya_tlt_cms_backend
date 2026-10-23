@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Web\Admin\MediaPartner;
 
 use App\Algorithms\MediaPartner\MediaPartnerAlgo;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasTrash;
 use App\Http\Requests\MediaPartner\MediaPartnerRequest;
 use App\Models\MediaPartner\MediaPartner;
 use App\Parser\MediaPartner\MediaPartnerParser;
 use App\Services\Constant\Access\AccessPermissionName;
+use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 
 class MediaPartnerController extends Controller
 {
+    use HasTrash;
+
     public function __construct()
     {
         if (config('auth.with-permission')) {
@@ -20,7 +24,7 @@ class MediaPartnerController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_MEDIA_PARTNER_VIEW);
                 return $next($request);
-            })->only(['get', 'detail']);
+            })->only(['get', 'detail', 'trash']);
 
             // CREATE
             $this->middleware(function ($request, $next) {
@@ -38,7 +42,7 @@ class MediaPartnerController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_MEDIA_PARTNER_DELETE);
                 return $next($request);
-            })->only(['delete']);
+            })->only(['delete', 'restore', 'forceDelete']);
 
         }
     }
@@ -105,5 +109,25 @@ class MediaPartnerController extends Controller
     {
         $algo = new MediaPartnerAlgo((int)$id);
         return $algo->delete();
+    }
+
+    protected function trashModel(): string
+    {
+        return MediaPartner::class;
+    }
+
+    protected function trashParser(): string
+    {
+        return MediaPartnerParser::class;
+    }
+
+    protected function trashActivityType(): string
+    {
+        return ActivityType::MEDIA_PARTNER;
+    }
+
+    protected function trashLabel($item): string
+    {
+        return (string) ($item->name ?: $item->description);
     }
 }
