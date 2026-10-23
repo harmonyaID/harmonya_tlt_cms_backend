@@ -12,13 +12,25 @@
         <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
             <tr><td style="padding: 6px 0; width: 200px; color: #777;">Name</td><td style="padding: 6px 0;"><b>{{ $contactForm->name }}</b></td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Email</td><td style="padding: 6px 0;">{{ $contactForm->email }}</td></tr>
-            <tr><td style="padding: 6px 0; color: #777;">Phone</td><td style="padding: 6px 0;">{{ $contactForm->phone ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Phone</td><td style="padding: 6px 0;">{{ trim($contactForm->phoneCountryCode . ' ' . $contactForm->phone) ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Ticket Type</td><td style="padding: 6px 0;">{{ $contactForm->ticketType }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Boat</td><td style="padding: 6px 0;">{{ optional($contactForm->boat)->name ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Adults / Children / Infants</td><td style="padding: 6px 0;">{{ $contactForm->adultCount }} / {{ $contactForm->childCount }} / {{ $contactForm->infantCount }}</td></tr>
-            <tr><td style="padding: 6px 0; color: #777;">Departure from Bali</td><td style="padding: 6px 0;">{{ $contactForm->departureDateFromBali ?: '-' }} {{ $contactForm->departureTimeFromBali }}</td></tr>
-            <tr><td style="padding: 6px 0; color: #777;">Departure from Lembongan</td><td style="padding: 6px 0;">{{ $contactForm->departureDateFromLembongan ?: '-' }} {{ $contactForm->departureTimeFromLembongan }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Route</td><td style="padding: 6px 0;">{{ $contactForm->fromLocation ?: '-' }} &rarr; {{ $contactForm->toLocation ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Departure</td><td style="padding: 6px 0;">{{ optional($contactForm->departureDate)->format('d/m/Y') ?: '-' }} {{ $contactForm->departureTime }}</td></tr>
+            @if($contactForm->ticketType === 'return')
+            <tr><td style="padding: 6px 0; color: #777;">Return</td><td style="padding: 6px 0;">{{ optional($contactForm->returnDate)->format('d/m/Y') ?: '-' }} {{ $contactForm->returnTime }}</td></tr>
+            @endif
+            @if($contactForm->needLandTransport)
+            <tr><td style="padding: 6px 0; color: #777;">Land transport - pick up point</td><td style="padding: 6px 0;">{{ \App\Models\Boat\BoatContactForm::PICK_UP_POINTS[$contactForm->pickUpPoint] ?? $contactForm->pickUpPoint }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Flight number / Arrival time</td><td style="padding: 6px 0;">{{ $contactForm->flightNumber ?: '-' }} / {{ $contactForm->arrivalTime ?: '-' }}</td></tr>
+            @else
+            <tr><td style="padding: 6px 0; color: #777;">Land transport</td><td style="padding: 6px 0;">No</td></tr>
+            @endif
             <tr><td style="padding: 6px 0; color: #777;">Booked through TLT</td><td style="padding: 6px 0;">{{ $contactForm->bookedThroughTlt ? 'Yes' : 'No' }}</td></tr>
+            @if($contactForm->bookedThroughTlt)
+            <tr><td style="padding: 6px 0; color: #777;">Property name / Booking info</td><td style="padding: 6px 0;">{{ $contactForm->tltBookingRefName ?: '-' }}</td></tr>
+            @endif
             <tr><td style="padding: 6px 0; color: #777;">Has Surfboard</td><td style="padding: 6px 0;">{{ $contactForm->hasSurfboard ? 'Yes' : 'No' }}</td></tr>
         </table>
 

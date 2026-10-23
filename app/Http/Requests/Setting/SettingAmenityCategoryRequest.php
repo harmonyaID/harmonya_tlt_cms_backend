@@ -25,7 +25,6 @@ class SettingAmenityCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'icon' => 'nullable|string',
             'order' => 'nullable|integer',
         ];
     }

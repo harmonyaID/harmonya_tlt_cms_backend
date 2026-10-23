@@ -5,7 +5,9 @@ namespace App\Models\Setting;
 use App\Models\BaseModel;
 use App\Parser\Setting\SettingAmenityCategoryParser;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class SettingAmenityCategory extends BaseModel
 {
@@ -36,6 +38,18 @@ class SettingAmenityCategory extends BaseModel
     public function amenities(): HasMany
     {
         return $this->hasMany(SettingAmenity::class, 'categoryId')->orderBy('order');
+    }
+
+    /**
+     * Public URL of the uploaded icon image (null when no icon was uploaded).
+     */
+    public function iconUrl(): ?string
+    {
+        if (!$this->icon) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_AMENITY_CATEGORY . $this->icon);
     }
 
     /*

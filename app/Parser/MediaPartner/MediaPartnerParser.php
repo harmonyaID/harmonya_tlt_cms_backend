@@ -22,6 +22,8 @@ class MediaPartnerParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'title' => $data->title,
+            'date' => optional($data->date)->format('d/m/Y'),
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'logo' => $data->logoUrl(),
@@ -46,6 +48,8 @@ class MediaPartnerParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'title' => $data->title,
+            'date' => optional($data->date)->format('d/m/Y'),
             'description' => $data->description,
             'featuredImage' => $data->featuredImageUrl(),
             'logo' => $data->logoUrl(),

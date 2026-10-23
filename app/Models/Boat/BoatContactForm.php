@@ -28,11 +28,23 @@ class BoatContactForm extends BaseModel
         'adultCount' => 'integer',
         'childCount' => 'integer',
         'infantCount' => 'integer',
-        'departureDateFromBali' => 'date',
-        'departureDateFromLembongan' => 'date',
+        'needLandTransport' => 'boolean',
+        'departureDate' => 'date',
+        'returnDate' => 'date',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
+    ];
+
+    public const PICK_UP_AIRPORT = 'airport';
+    public const PICK_UP_HOTEL_VILLA = 'hotel_villa';
+    public const PICK_UP_NOT_APPLICABLE = 'not_applicable';
+
+    /** Options of "Pick up location in Bali" (value => label). */
+    public const PICK_UP_POINTS = [
+        self::PICK_UP_AIRPORT => 'Airport',
+        self::PICK_UP_HOTEL_VILLA => 'Hotel / Villa',
+        self::PICK_UP_NOT_APPLICABLE => 'Not Applicable',
     ];
 
     public $parserClass = BoatContactFormParser::class;
