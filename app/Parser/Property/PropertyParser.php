@@ -140,8 +140,7 @@ class PropertyParser extends BaseParser
             'seo' => SeoParser::first($data->seo),
             'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
-            'coverPhoto' => $cover ? $cover->pathUrl() : null,
-
+            'coverPhoto' => $data->coverPhotoUrl(),
         ];
     }
 
@@ -190,7 +189,7 @@ class PropertyParser extends BaseParser
             'status' => PropertyStatus::idName($data->statusId),
             'cleaningStatus' => PropertyCleaningStatus::idName($data->cleaningStatusId),
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
-            'coverPhoto' => $cover ? $cover->pathUrl() : null,
+            'coverPhoto' => $data->coverPhotoUrl(),
             'address' => optional($data->addresses->first())->address,
             'seo' => SeoParser::first($data->seo),
         ];

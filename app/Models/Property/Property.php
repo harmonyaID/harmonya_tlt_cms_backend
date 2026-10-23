@@ -136,6 +136,21 @@ class Property extends BaseModel
         return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
     }
 
+    public function coverPhotoUrl(): ?string
+    {
+        if ($own = $this->photos->first()) {
+            return $own->pathUrl();
+        }
+
+        foreach ($this->variants as $variant) {
+            if ($photo = $variant->photos->first()) {
+                return $photo->pathUrl();
+            }
+        }
+
+        return null;
+    }
+    
     public function floorplanImageUrl(): ?string
     {
         if (!$this->floorplanImage) {
