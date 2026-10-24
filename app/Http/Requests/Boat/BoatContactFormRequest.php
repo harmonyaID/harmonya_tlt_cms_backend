@@ -13,46 +13,44 @@ class BoatContactFormRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Boat Transfer Booking Form.
-     *
-     * - ticketType one_way: returnDate / returnTime are ignored
-     * - needLandTransport = true: pickUpPoint required: airport | hotel_villa | not_applicable
-     *   (flightNumber / arrivalTime are only kept for airport)
-     * - bookedThroughTlt = true: tltBookingRefName (Property name / booking info) required
-     */
     public function rules()
     {
+        $points = Rule::in(array_keys(BoatContactForm::PICK_UP_POINTS));
+
         return [
             'boatId' => 'nullable|integer|exists:boats,id',
 
-            // Route
             'ticketType' => 'required|in:one_way,return',
             'fromLocation' => 'required|string|max:255',
             'toLocation' => 'required|string|max:255',
 
-            // Departure / return
             'departureDate' => 'required|date',
             'departureTime' => 'required|string|max:50',
             'returnDate' => 'required_if:ticketType,return|nullable|date|after_or_equal:departureDate',
             'returnTime' => 'required_if:ticketType,return|nullable|string|max:50',
 
-            // Passengers
             'adultCount' => 'required|integer|min:1',
             'childCount' => 'required|integer|min:0',
             'infantCount' => 'nullable|integer|min:0',
 
-            // Your details
             'name' => 'required|string|max:255',
             'phoneCountryCode' => 'nullable|string|max:10',
             'phone' => 'required|string|max:50',
             'email' => 'required|email|max:255',
 
-            // Land transport
             'needLandTransport' => 'required|boolean',
-            'pickUpPoint' => ['required_if:needLandTransport,true,1', 'nullable', Rule::in(array_keys(BoatContactForm::PICK_UP_POINTS))],
-            'flightNumber' => 'nullable|string|max:100',
-            'arrivalTime' => 'nullable|string|max:50',
+            'departurePickupPoint' => ['required_if:needLandTransport,true,1', 'nullable', $points],
+            'departurePickupFlightNumber' => 'nullable|string|max:100',
+            'departurePickupArrivalTime' => 'nullable|string|max:50',
+            'departureDropOffPoint' => ['nullable', $points],
+            'departureDropOffLocation' => 'nullable|string|max:255',
+            'departureDropOffArrivalTime' => 'nullable|string|max:50',
+            // return leg (only for ticketType = return)
+            'returnPickupPoint' => ['nullable', $points],
+            'returnPickupLocation' => 'nullable|string|max:255',
+            'returnPickupCheckoutTime' => 'nullable|string|max:50',
+            'returnDropOffPoint' => ['nullable', $points],
+            'returnDropOffLocation' => 'nullable|string|max:255',
 
             // Extras
             'bookedThroughTlt' => 'required|boolean',
@@ -62,9 +60,6 @@ class BoatContactFormRequest extends FormRequest
         ];
     }
 
-    /**
-     * Fields that belong to a closed toggle are not stored.
-     */
     protected function passedValidation()
     {
         $clean = [];
@@ -73,16 +68,27 @@ class BoatContactFormRequest extends FormRequest
             $clean += ['returnDate' => null, 'returnTime' => null];
         }
 
+        if (!$this->boolean('needLandTransport') || $this->ticketType !== 'return') {
+            $returnLeg = array_fill_keys([
+                'returnPickupPoint', 'returnPickupLocation', 'returnPickupCheckoutTime',
+                'returnDropOffPoint', 'returnDropOffLocation',
+            ], null);
+            $clean += $returnLeg;
+        }
+
         if (!$this->boolean('needLandTransport')) {
-            $clean += ['pickUpPoint' => null, 'flightNumber' => null, 'arrivalTime' => null];
+            $clean += array_fill_keys([
+                'departurePickupPoint', 'departurePickupFlightNumber', 'departurePickupArrivalTime',
+                'departureDropOffPoint', 'departureDropOffLocation', 'departureDropOffArrivalTime',
+            ], null);
         }
 
         if (!$this->boolean('bookedThroughTlt')) {
             $clean += ['tltBookingRefName' => null];
         }
 
-        if ($this->boolean('needLandTransport') && $this->pickUpPoint !== BoatContactForm::PICK_UP_AIRPORT) {
-            $clean += ['flightNumber' => null, 'arrivalTime' => null];
+        if ($this->boolean('needLandTransport') && $this->departurePickupPoint !== BoatContactForm::PICK_UP_AIRPORT) {
+            $clean += ['departurePickupFlightNumber' => null, 'departurePickupArrivalTime' => null];
         }
 
         $this->merge($clean + ['infantCount' => $this->infantCount ?? 0]);
