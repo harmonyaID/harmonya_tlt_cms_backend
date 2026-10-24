@@ -40,12 +40,16 @@ class BoatContactForm extends BaseModel
     public const PICK_UP_HOTEL_VILLA = 'hotel_villa';
     public const PICK_UP_NOT_APPLICABLE = 'not_applicable';
 
-    /** Options of "Pick up location in Bali" (value => label). */
     public const PICK_UP_POINTS = [
         self::PICK_UP_AIRPORT => 'Airport',
         self::PICK_UP_HOTEL_VILLA => 'Hotel / Villa',
         self::PICK_UP_NOT_APPLICABLE => 'Not Applicable',
     ];
+
+    public static function pointLabel(?string $point): ?string
+    {
+        return $point ? (self::PICK_UP_POINTS[$point] ?? $point) : null;
+    }
 
     public $parserClass = BoatContactFormParser::class;
 
