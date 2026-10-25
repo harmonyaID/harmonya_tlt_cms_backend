@@ -189,6 +189,14 @@ class Property extends BaseModel
                 $query->whereIn('sourceTypeId', $this->toValueArray($request->sourceTypeIds));
             }
 
+            if ($request->has('guestyId') && $request->guestyId) {
+                $query->where('guestyId', trim((string) $request->guestyId));
+            }
+
+            if ($request->has('guestyIds') && $request->guestyIds) {
+                $query->whereIn('guestyId', $this->toValueArray($request->guestyIds));
+            }
+
             // "Area" = free-text search against the property's address (e.g. "Jungutbatu")
             if ($request->has('area') && strlen($request->area) > 1) {
                 $query->whereHas('addresses', function ($address) use ($request) {

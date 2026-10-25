@@ -66,7 +66,7 @@ class PropertyVariantController extends Controller
     public function get(Request $request)
     {
         $properties = PropertyVariant::filter($request)
-            ->with(['parent', 'type', 'photos', 'addresses'])
+            ->with(['parent', 'type', 'photos', 'addresses', 'features'])
             ->getOrPaginate($request);
 
         return success(PropertyVariantParser::briefs($properties), pagination: pagination($properties));
@@ -76,7 +76,7 @@ class PropertyVariantController extends Controller
     {
         $property = PropertyVariant::with([
             'parent', 'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
+            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'features', 'seo', 'acf',
         ])->find($id);
 
         if (!$property) {

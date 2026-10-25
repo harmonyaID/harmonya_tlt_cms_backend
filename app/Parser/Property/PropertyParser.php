@@ -27,6 +27,7 @@ class PropertyParser extends BaseParser
 
         return [
             'id' => $data->id,
+            'guestyId' => $data->guestyId,
             'nickname' => $data->nickname,
             'floorplanImage' => $data->floorplanImageUrl(),
             'isPopular' => $data->isPopular,
@@ -150,10 +151,10 @@ class PropertyParser extends BaseParser
             return null;
         }
 
-        $cover = $data->photos->first();
 
         return [
             'id' => $data->id,
+            'guestyId' => $data->guestyId,
             'nickname' => $data->nickname,
             'occupancy' => $data->occupancy,
             'floorplanImage' => $data->floorplanImageUrl(),

@@ -26,6 +26,7 @@ Route::prefix("property-variants")
     ->group(function () {
         Route::get('', [PropertyVariantController::class, 'get']);
         Route::get('reviews', [PropertyVariantReviewController::class, 'get']);
+        Route::get('collections', [PropertyVariantController::class, 'collections']);
         Route::get('{id}/nearby', [PropertyVariantController::class, 'nearby']);
         Route::get('{id}/related', [PropertyVariantRelatedController::class, 'get']);
         Route::get('{id}', [PropertyVariantController::class, 'detail']);
