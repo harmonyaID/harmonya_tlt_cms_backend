@@ -27,6 +27,7 @@ class PropertyVariantParser extends BaseParser
 
         return [
             'id' => $data->id,
+            'guestyId' => $data->guestyId,
             'parentPropertyId' => $data->parentPropertyId,
             'parentProperty' => $data->relationLoaded('parent') ? optional($data->parent)->only('id', 'nickname') : null,
             'nickname' => $data->nickname,
@@ -40,6 +41,16 @@ class PropertyVariantParser extends BaseParser
             'listingType' => PropertyListingType::idName($data->listingTypeId),
             'roomType' => $data->roomType,
             'occupancy' => $data->occupancy,
+            'bedrooms' => $data->featureValue('Bedroom'),
+            'bathrooms' => $data->featureValue('Bathroom'),
+            'features' => $data->features->map(function ($feature) {
+                return [
+                    'id' => $feature->id,
+                    'name' => $feature->name,
+                    'icon' => $feature->icon,
+                    'value' => $feature->pivot->value,
+                ];
+            })->values(),
             'propertySize' => $data->propertySize,
             'status' => PropertyStatus::idName($data->statusId),
             'cleaningStatus' => PropertyCleaningStatus::idName($data->cleaningStatusId),
@@ -157,10 +168,13 @@ class PropertyVariantParser extends BaseParser
 
         return [
             'id' => $data->id,
+            'guestyId' => $data->guestyId,
             'parentPropertyId' => $data->parentPropertyId,
             'parentProperty' => $data->relationLoaded('parent') ? optional($data->parent)->only('id', 'nickname') : null,
             'nickname' => $data->nickname,
             'occupancy' => $data->occupancy,
+            'bedrooms' => $data->featureValue('Bedroom'),
+            'bathrooms' => $data->featureValue('Bathroom'),
             'floorplanImage' => $data->floorplanImageUrl(),
             'isPopular' => $data->isPopular,
             'isNewVilla' => $data->sourceCreatedAt

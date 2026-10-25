@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Public\Property;
 
 use App\Http\Controllers\Controller;
+use App\Models\Property\PropertyTag;
 use App\Models\Property\PropertyVariant;
 use App\Models\Setting\Setting;
+use App\Parser\Property\PropertyTagParser;
 use App\Parser\Property\PropertyVariantParser;
 use App\Services\Constant\Property\PropertyStatus;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class PropertyVariantController extends Controller
         $request->merge(['statusId' => PropertyStatus::ACTIVE_ID]);
 
         $properties = PropertyVariant::filter($request)
-            ->with(['parent', 'type', 'photos', 'addresses','seo'])
+            ->with(['parent', 'type', 'photos', 'addresses', 'features', 'tags', 'seo'])
             ->getOrPaginate($request);
 
         return success(PropertyVariantParser::briefs($properties), pagination: pagination($properties));
@@ -24,11 +26,14 @@ class PropertyVariantController extends Controller
 
     public function detail($idOrSlug)
     {
+        // $idOrSlug = id, SEO slug or the unique id from Guesty
         $property = PropertyVariant::where('statusId', PropertyStatus::ACTIVE_ID)
-        ->bySlugOrId($idOrSlug)    
-        ->with([
+            ->where(function ($query) use ($idOrSlug) {
+                $query->bySlugOrId($idOrSlug)->orWhere('guestyId', $idOrSlug);
+            })
+            ->with([
                 'parent', 'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-                'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
+                'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'features', 'seo', 'acf',
             ])
             ->first();
 
@@ -37,6 +42,12 @@ class PropertyVariantController extends Controller
         }
 
         return success(PropertyVariantParser::first($property));
+    }
+
+    public function collections(Request $request)
+    {
+        $tags = PropertyTag::filter($request)->getOrPaginate($request);
+        return success(PropertyTagParser::briefs($tags), pagination: pagination($tags));
     }
 
     /**
@@ -78,7 +89,7 @@ class PropertyVariantController extends Controller
             ->havingRaw("$haversine <= ?", [$radiusKm])
             ->orderBy('distanceKm')
             ->limit($limit)
-            ->with(['type', 'photos', 'addresses'])
+            ->with(['type', 'photos', 'addresses', 'features'])
             ->get();
 
         return success($nearby->map(function ($item) {

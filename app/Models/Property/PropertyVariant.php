@@ -150,8 +150,22 @@ class PropertyVariant extends BaseModel
         return $query->where(function ($query) use ($request) {
 
             if ($request->has('search') && strlen($request->search) > 1) {
-                $query->where('nickname', 'LIKE', "%$request->search%");
+                $query->where(function ($search) use ($request) {
+                    $search->where('nickname', 'LIKE', "%$request->search%")
+                        ->orWhere('guestyId', $request->search);
+                });
             }
+
+            if ($request->has('guestyId') && $request->guestyId) {
+                $query->where('guestyId', trim((string) $request->guestyId));
+            }
+
+            if ($request->has('guestyIds') && $request->guestyIds) {
+                $query->whereIn('guestyId', $this->toValueArray($request->guestyIds));
+            }
+
+            $this->applyFeatureFilter($query, $request, 'bedrooms', 'bedroomsMin', 'Bedroom');
+            $this->applyFeatureFilter($query, $request, 'bathrooms', 'bathroomsMin', 'Bathroom');
 
             if ($request->has('statusId') && $request->statusId) {
                 $query->where('statusId', $request->statusId);
@@ -169,9 +183,11 @@ class PropertyVariant extends BaseModel
                 $query->whereIn('propertyTypeId', $this->toValueArray($request->propertyTypeIds));
             }
 
-            if ($request->has('tagIds') && $request->tagIds) {
-                $query->whereHas('tags', function ($tag) use ($request) {
-                    $tag->whereIn('property_tags.id', $this->toValueArray($request->tagIds));
+            // Collection = tag (collectionIds is an alias of tagIds)
+            $collectionIds = $request->tagIds ?: $request->collectionIds;
+            if ($collectionIds) {
+                $query->whereHas('tags', function ($tag) use ($collectionIds) {
+                    $tag->whereIn('property_tags.id', $this->toValueArray($collectionIds));
                 });
             }
 
@@ -203,5 +219,46 @@ class PropertyVariant extends BaseModel
 
             $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
+    }
+
+    /**
+     * Value of a feature (e.g. "Bedroom", "Bathroom") as a number, null when not set.
+     * Uses the loaded "features" relation.
+     */
+    public function featureValue(string $name): int|float|null
+    {
+        $feature = $this->features->firstWhere('name', $name);
+        $value = $feature?->pivot?->value;
+
+        if ($value === null || $value === '' || !is_numeric($value)) {
+            return null;
+        }
+
+        return $value + 0;
+    }
+
+    private function applyFeatureFilter($query, $request, string $exactParam, string $minParam, string $featureName): void
+    {
+        if ($request->has($exactParam) && $request->{$exactParam} !== null && $request->{$exactParam} !== '') {
+            $numbers = array_filter($this->toValueArray($request->{$exactParam}), 'is_numeric');
+
+            if ($numbers) {
+                $query->whereHas('features', function ($feature) use ($featureName, $numbers) {
+                    $feature->where('setting_property_features.name', $featureName)
+                        ->where(function ($or) use ($numbers) {
+                            foreach ($numbers as $number) {
+                                $or->orWhereRaw('CAST(property_variant_feature.value AS DECIMAL(6,1)) = ?', [(float) $number]);
+                            }
+                        });
+                });
+            }
+        }
+
+        if ($request->has($minParam) && is_numeric($request->{$minParam})) {
+            $query->whereHas('features', function ($feature) use ($featureName, $request, $minParam) {
+                $feature->where('setting_property_features.name', $featureName)
+                    ->whereRaw('CAST(property_variant_feature.value AS DECIMAL(6,1)) >= ?', [(float) $request->{$minParam}]);
+            });
+        }
     }
 }
