@@ -10,6 +10,8 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Models\Staff\StaffUser;
 use App\Models\Staff\StaffUserPassword;
+use App\Services\Auth\StaffSessionManager;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,6 +52,8 @@ class AuthenticationController extends Controller
      */
     public function logout()
     {
+        app(StaffSessionManager::class)->revokeByJti($this->currentJti());
+
         $algo = new AuthenticationAlgo($this->guard);
         return $algo->logout();
     }
@@ -89,6 +93,32 @@ class AuthenticationController extends Controller
     {
         $algo = new AuthenticationAlgo($this->guard);
         return $algo->resetPassword(StaffUserPassword::class, $token, $request);
+    }
+
+    public function sessions(StaffSessionManager $sessions)
+    {
+        return success($sessions->list(Auth::guard($this->guard)->id(), $this->currentJti()));
+    }
+
+    public function revokeSession(int $id, StaffSessionManager $sessions)
+    {
+        if (!$sessions->revoke(Auth::guard($this->guard)->id(), $id)) {
+            error(404, "Session not found!!");
+        }
+
+        return success();
+    }
+
+    public function revokeOtherSessions(StaffSessionManager $sessions)
+    {
+        $count = $sessions->revokeOthers(Auth::guard($this->guard)->id(), $this->currentJti());
+
+        return success(['revoked' => $count]);
+    }
+
+    private function currentJti(): ?string
+    {
+        return JWTAuth::getPayload()['jti'] ?? null;
     }
 
 }

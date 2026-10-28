@@ -17,6 +17,10 @@ Route::prefix("auths")
                 Route::post('logout', [AuthenticationController::class, "logout"]);
                 Route::patch('change-password', [AuthenticationController::class, "changePassword"]);
 
+                Route::get('sessions', [AuthenticationController::class, "sessions"]);
+                Route::delete('sessions', [AuthenticationController::class, "revokeOtherSessions"]);
+                Route::delete('sessions/{id}', [AuthenticationController::class, "revokeSession"]);
+
             });
 
     });
