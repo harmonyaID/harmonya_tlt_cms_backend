@@ -24,6 +24,7 @@ class ExperienceAreaParser extends BaseParser
 
             'name' => $data->name,
             'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
 
             'featuredImage' => $data->featuredImageUrl(),
             'mapImage' => $data->mapImageUrl(),
@@ -97,6 +98,7 @@ class ExperienceAreaParser extends BaseParser
 
             'name' => $data->name,
             'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
 
             'featuredImage' => $data->featuredImageUrl(),
             'mapImage' => $data->mapImageUrl(),

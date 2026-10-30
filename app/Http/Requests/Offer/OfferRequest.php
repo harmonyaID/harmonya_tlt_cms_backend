@@ -32,6 +32,7 @@ class OfferRequest extends FormRequest
             ],
             'excerpt' => 'nullable|string',
             'content' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
             'startDate' => 'nullable|date',
             'endDate' => 'nullable|date|after_or_equal:startDate',
             'publishedAt' => 'nullable|date',

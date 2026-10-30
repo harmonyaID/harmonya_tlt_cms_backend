@@ -31,6 +31,7 @@ class BoatParser extends BaseParser
             'boatComponentType' => self::boatComponentType($data),
 
             'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
 
             'promoPhotos' => self::promoPhotos($data),
 
@@ -96,6 +97,8 @@ class BoatParser extends BaseParser
             'locale' => $data->locale,
 
             'isActive' => $data->isActive,
+
+            'seo' => SeoParser::first($data->seo),
 
             'createdAt' => optional($data->createdAt)
                 ->format('d/m/Y H:i'),

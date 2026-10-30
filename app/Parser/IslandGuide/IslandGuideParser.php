@@ -28,6 +28,7 @@ class IslandGuideParser extends BaseParser
             'name' => $data->name,
             'openHours' => $data->openHours,
             'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
             'thumbnail' => $data->thumbnailUrl(),
             'mapImage' => $data->mapImageUrl(),
             'mapLocationUrl' => $data->mapLocationUrl,
