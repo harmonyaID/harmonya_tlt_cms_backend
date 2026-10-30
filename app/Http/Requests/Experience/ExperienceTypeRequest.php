@@ -13,6 +13,7 @@ class ExperienceTypeRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
 
             'blogIds' => 'nullable|array|max:2',
             'blogIds.*' => 'integer|distinct|exists:blogs,id',

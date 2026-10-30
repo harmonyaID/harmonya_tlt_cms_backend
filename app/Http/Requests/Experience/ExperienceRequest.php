@@ -25,6 +25,7 @@ class ExperienceRequest extends FormRequest
             'name' => 'required|string',
             'excerpt' => 'nullable|string',
             'description' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
             'address' => 'nullable|string',
             'openHours' => 'nullable|string',
             'mapLocationUrl' => 'nullable|string',

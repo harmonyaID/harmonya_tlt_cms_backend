@@ -13,13 +13,13 @@ class BoatController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $boats = Boat::filter($request)->with(['photos', 'type'])->getOrPaginate($request);
+        $boats = Boat::filter($request)->with(['photos', 'type', 'seo'])->getOrPaginate($request);
         return success(BoatParser::briefs($boats), pagination: pagination($boats));
     }
 
     public function detail($idOrSlug)
     {
-        $boat = Boat::where('isActive', true)->bySlugOrId($idOrSlug)->with(['photos', 'type', 'customInformations', 'acf'])->first();
+        $boat = Boat::where('isActive', true)->bySlugOrId($idOrSlug)->with(['photos', 'type', 'customInformations', 'seo', 'acf'])->first();
         if (!$boat) {
             errBoatGet();
         }

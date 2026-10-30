@@ -25,6 +25,7 @@ class IslandGuideRequest extends FormRequest
             'name' => 'required|string',
             'openHours' => 'nullable|string',
             'description' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
             'mapLocationUrl' => 'nullable|string',
             'whatsapp' => 'nullable|string',
             'instagram' => 'nullable|string',

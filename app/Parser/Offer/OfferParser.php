@@ -41,6 +41,7 @@ class OfferParser extends BaseParser
             'thumbnail' => $data->thumbnailUrl(),
             'excerpt' => $data->excerpt,
             'content' => $data->content,
+            'additionalContent' => $data->additionalContent,
             'properties' => $properties,
             'tags' => $tags,
             'startDate' => optional($data->startDate)

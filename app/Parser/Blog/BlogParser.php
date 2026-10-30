@@ -38,6 +38,7 @@ class BlogParser extends BaseParser
             'promoBannerUrl' => $data->promoBannerUrl,
             'excerpt' => $data->excerpt,
             'content' => $data->content,
+            'additionalContent' => $data->additionalContent,
             'author' => $data->author,
             'tags' => $tags,
             'properties' => $data->properties
@@ -89,6 +90,7 @@ class BlogParser extends BaseParser
             'promoBanner' => $data->promoBannerUrl(),
             'promoBannerUrl' => $data->promoBannerUrl,
             'content' => $data->content,
+            'additionalContent' => $data->additionalContent,
             'excerpt' => $data->excerpt,
             'author' => $data->author,
             'tags' => $tags,

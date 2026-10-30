@@ -31,6 +31,7 @@ class ExperienceParser extends BaseParser
             'name' => $data->name,
             'excerpt' => $data->excerpt,
             'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
             'address' => $data->address,
             'openHours' => $data->openHours,
             'thumbnail' => $data->thumbnailUrl(),

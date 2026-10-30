@@ -28,6 +28,7 @@ class BoatRequest extends FormRequest
             ],
             'name' => 'required|string',
             'description' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
             'isActive' => 'required|boolean',
             'locale' => 'nullable|string|exists:languages,code',
 

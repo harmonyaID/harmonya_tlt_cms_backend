@@ -27,6 +27,7 @@ class LembonganAreaRequest extends FormRequest
             'name' => 'required|string',
             'description' => 'nullable|string',
             'content' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
             'url' => 'nullable|string',
             'order' => 'nullable|integer',
             'isActive' => 'required|boolean',

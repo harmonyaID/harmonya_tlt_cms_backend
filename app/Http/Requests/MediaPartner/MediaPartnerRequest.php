@@ -28,6 +28,7 @@ class MediaPartnerRequest extends FormRequest
             'title' => 'nullable|string|max:255',
             'date' => 'nullable|date',
             'description' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
             'url' => 'nullable|string|url',
             'featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
