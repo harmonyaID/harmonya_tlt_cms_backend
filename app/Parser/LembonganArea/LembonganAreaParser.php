@@ -2,6 +2,7 @@
 
 namespace App\Parser\LembonganArea;
 
+use App\Parser\Seo\SeoParser;
 use Logia\Core\Parser\BaseParser;
 
 class LembonganAreaParser extends BaseParser
@@ -23,6 +24,7 @@ class LembonganAreaParser extends BaseParser
             'url' => $data->url,
             'order' => $data->order,
             'isActive' => $data->isActive,
+            'seo' => SeoParser::first($data->seo),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -42,6 +44,7 @@ class LembonganAreaParser extends BaseParser
             'url' => $data->url,
             'order' => $data->order,
             'isActive' => $data->isActive,
+            'seo' => SeoParser::first($data->seo),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Algorithms\LembonganArea;
 
+use App\Algorithms\Seo\ContentSeoAlgo;
 use App\Models\LembonganArea\LembonganArea;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
@@ -31,7 +32,7 @@ class LembonganAreaAlgo
             DB::transaction(function () use ($request) {
 
                 $this->lembonganArea = LembonganArea::create(
-                    $request->except(['featuredImage', 'deleteFeaturedImage']) + created_by()
+                    $request->except(['featuredImage', 'deleteFeaturedImage', 'seo']) + created_by()
                 );
                 if (!$this->lembonganArea) {
                     errLembonganAreaSave();
@@ -42,6 +43,8 @@ class LembonganAreaAlgo
                     $this->lembonganArea->save();
                 }
 
+                (new ContentSeoAlgo($this->lembonganArea))->save($request);
+
                 activity()->setCausedBy()
                     ->setReference($this->lembonganArea)
                     ->setType(ActivityType::LEMBONGAN_AREA)
@@ -50,7 +53,7 @@ class LembonganAreaAlgo
 
             });
 
-            return success($this->lembonganArea);
+            return success($this->lembonganArea->load('seo'));
 
         } catch (\Error $error) {
             exception($error);
@@ -63,7 +66,7 @@ class LembonganAreaAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->lembonganArea->update($request->except(['featuredImage', 'deleteFeaturedImage']));
+                $this->lembonganArea->update($request->except(['featuredImage', 'deleteFeaturedImage', 'seo']));
 
                 if ($request->boolean('deleteFeaturedImage')) {
                     $this->deleteImage($this->lembonganArea->featuredImage);
@@ -77,6 +80,8 @@ class LembonganAreaAlgo
                     $this->lembonganArea->save();
                 }
 
+                (new ContentSeoAlgo($this->lembonganArea))->save($request);
+
                 activity()->setCausedBy()
                     ->setReference($this->lembonganArea)
                     ->setType(ActivityType::LEMBONGAN_AREA)
@@ -85,7 +90,7 @@ class LembonganAreaAlgo
 
             });
 
-            return success($this->lembonganArea);
+            return success($this->lembonganArea->load('seo'));
 
         } catch (\Error $error) {
             exception($error);
@@ -99,6 +104,8 @@ class LembonganAreaAlgo
             DB::transaction(function () {
 
                 $this->deleteImage($this->lembonganArea->featuredImage);
+
+                $this->lembonganArea->seo()->delete();
 
                 if (!$this->lembonganArea->delete()) {
                     errLembonganAreaDelete();
