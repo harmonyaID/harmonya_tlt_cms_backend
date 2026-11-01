@@ -55,6 +55,13 @@ class AccessPermissionName
     const STAFF_MEDIA_PARTNER_UPDATE = AccessGroup::STAFF . '.media-partner.update';
     const STAFF_MEDIA_PARTNER_DELETE = AccessGroup::STAFF . '.media-partner.delete';
 
+    // Lembongan Area
+    const STAFF_LEMBONGAN_AREA = AccessGroup::STAFF . '.lembongan-area.*';
+    const STAFF_LEMBONGAN_AREA_VIEW = AccessGroup::STAFF . '.lembongan-area.view';
+    const STAFF_LEMBONGAN_AREA_CREATE = AccessGroup::STAFF . '.lembongan-area.create';
+    const STAFF_LEMBONGAN_AREA_UPDATE = AccessGroup::STAFF . '.lembongan-area.update';
+    const STAFF_LEMBONGAN_AREA_DELETE = AccessGroup::STAFF . '.lembongan-area.delete';
+
     // Website Contact Form
     const STAFF_WEBSITE_CONTACT_FORM = AccessGroup::STAFF . '.website-contact-form.*';
     const STAFF_WEBSITE_CONTACT_FORM_VIEW = AccessGroup::STAFF . '.website-contact-form.view';
@@ -371,6 +378,12 @@ class AccessPermissionName
         self::STAFF_MEDIA_PARTNER_UPDATE,
         self::STAFF_MEDIA_PARTNER_DELETE,
 
+        self::STAFF_LEMBONGAN_AREA,
+        self::STAFF_LEMBONGAN_AREA_VIEW,
+        self::STAFF_LEMBONGAN_AREA_CREATE,
+        self::STAFF_LEMBONGAN_AREA_UPDATE,
+        self::STAFF_LEMBONGAN_AREA_DELETE,
+
         self::STAFF_WEBSITE_CONTACT_FORM,
         self::STAFF_WEBSITE_CONTACT_FORM_VIEW,
         self::STAFF_WEBSITE_CONTACT_FORM_CREATE,
@@ -407,11 +420,23 @@ class AccessPermissionName
         self::STAFF_BOAT_COMPONENT_TYPE_UPDATE,
         self::STAFF_BOAT_COMPONENT_TYPE_DELETE,
 
+        self::STAFF_BOAT_CONTACT_FORM,
+        self::STAFF_BOAT_CONTACT_FORM_VIEW,
+        self::STAFF_BOAT_CONTACT_FORM_CREATE,
+        self::STAFF_BOAT_CONTACT_FORM_UPDATE,
+        self::STAFF_BOAT_CONTACT_FORM_DELETE,
+
         self::STAFF_BLOG,
         self::STAFF_BLOG_VIEW,
         self::STAFF_BLOG_CREATE,
         self::STAFF_BLOG_UPDATE,
         self::STAFF_BLOG_DELETE,
+
+        self::STAFF_OFFER,
+        self::STAFF_OFFER_VIEW,
+        self::STAFF_OFFER_CREATE,
+        self::STAFF_OFFER_UPDATE,
+        self::STAFF_OFFER_DELETE,
 
         self::STAFF_OFFER_CATEGORY,
         self::STAFF_OFFER_CATEGORY_VIEW,
@@ -500,6 +525,7 @@ class AccessPermissionName
         self::STAFF_MENU_VIEW,
         self::STAFF_MENU_CREATE,
         self::STAFF_MENU_UPDATE,
+        self::STAFF_MENU_DELETE,
 
         self::STAFF_HOMEPAGE,
         self::STAFF_HOMEPAGE_VIEW,

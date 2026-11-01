@@ -79,7 +79,7 @@ class IslandGuide extends BaseModel
 
     public function scopeFilter($query, $request)
     {
-        return $query->where(function ($query) use ($request) {
+        $query->where(function ($query) use ($request) {
 
             if ($request->has('search') && strlen($request->search) > 1) {
                 $query->where(function ($q) use ($request) {
@@ -104,7 +104,11 @@ class IslandGuide extends BaseModel
                 $query->where('locale', $request->locale);
             }
             $this->applyDateRangeFilter($query, $request);
-        })->orderBy('id', 'DESC');
+        });
+
+        return $request->boolean('isRandom')
+            ? $query->inRandomOrder()
+            : $query->orderBy('id', 'DESC');
     }
 
     /*
