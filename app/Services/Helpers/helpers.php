@@ -137,7 +137,9 @@ if (!function_exists('filename')) {
      */
     function filename($file, $text)
     {
-        return Str::random(20) . str_shuffle(str_replace(' ', '', $text)) . '.' . $file->getClientOriginalExtension();
+        $name = Str::limit(Str::slug((string) $text), 60, '');
+
+        return Str::random(20) . ($name ? '-' . $name : '') . '.' . strtolower($file->getClientOriginalExtension());
     }
 
 }

@@ -10,11 +10,13 @@ use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Traits\HasSeoSlugScope;
 
 class IslandGuideType extends BaseModel
 {
     use SoftDeletes;
-
+    use HasSeoSlugScope;
+    
     protected $table = 'island_guide_types';
     protected $guarded = ['id'];
 

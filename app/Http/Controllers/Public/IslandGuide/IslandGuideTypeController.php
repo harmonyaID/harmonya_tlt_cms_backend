@@ -15,9 +15,9 @@ class IslandGuideTypeController extends Controller
         return success(IslandGuideTypeParser::briefs($types), pagination: pagination($types));
     }
 
-    public function detail($id)
+    public function detail($idOrSlug)
     {
-        $type = IslandGuideType::with('seo', 'page')->find($id);
+        $type = IslandGuideType::bySlugOrId($idOrSlug)->with('seo', 'page')->first();
         if (!$type) {
             errIslandGuideTypeGet();
         }
