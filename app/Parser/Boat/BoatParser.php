@@ -69,10 +69,10 @@ class BoatParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-
             'promoLabel' => $data->promoLabel,
             'promoLabelUrl' => $data->promoLabelUrl,
-
+            'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
             'discountLabel' => $data->discountLabel,
             'discountLabelUrl' => $data->discountLabelUrl,
 
