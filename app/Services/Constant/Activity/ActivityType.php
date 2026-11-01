@@ -33,6 +33,7 @@ class ActivityType extends BaseCodeName
     const ISLAND_GUIDE_TYPE = 'island_guide_type';
     const ISLAND_GUIDE_AREA = 'island_guide_area';
     const ISLAND_GUIDE = 'island_guide';
+    const LEMBONGAN_AREA = 'lembongan_area';
     const EXPERIENCE_TAG = 'experience-tag';
     const EXPERIENCE_INQUIRY_FORM = 'experience_inquiry_form';
     const MENU = 'menu';
@@ -73,7 +74,6 @@ class ActivityType extends BaseCodeName
         self::BLOG_TAG,
         self::BLOG,
         self::OFFER,
-        self::OFFER,
         self::OFFER_CATEGORY,
         self::OFFER_TAG,
         self::TEAM_MEMBER,
@@ -84,6 +84,7 @@ class ActivityType extends BaseCodeName
         self::ISLAND_GUIDE_TYPE,
         self::ISLAND_GUIDE_AREA,
         self::ISLAND_GUIDE,
+        self::LEMBONGAN_AREA,
         self::EXPERIENCE_INQUIRY_FORM,
         self::MENU,
         self::HOMEPAGE,

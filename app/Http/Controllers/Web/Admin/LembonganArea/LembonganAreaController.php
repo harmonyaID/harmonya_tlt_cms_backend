@@ -41,13 +41,13 @@ class LembonganAreaController extends Controller
 
     public function get(Request $request)
     {
-        $areas = LembonganArea::filter($request)->getOrPaginate($request);
+        $areas = LembonganArea::filter($request)->with('seo')->getOrPaginate($request);
         return success(LembonganAreaParser::briefs($areas), pagination: pagination($areas));
     }
 
     public function detail($id)
     {
-        $area = LembonganArea::find($id);
+        $area = LembonganArea::with('seo')->find($id);
         if (!$area) {
             errLembonganAreaGet();
         }

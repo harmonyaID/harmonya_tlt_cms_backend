@@ -3,6 +3,8 @@
 namespace App\Models\LembonganArea;
 
 use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
+use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\LembonganArea\LembonganAreaParser;
 use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class LembonganArea extends BaseModel
 {
     use SoftDeletes;
+    use HasSeoSlugScope;
 
     protected $table = 'lembongan_areas';
     protected $guarded = ['id'];
@@ -28,6 +31,17 @@ class LembonganArea extends BaseModel
     ];
 
     public $parserClass = LembonganAreaParser::class;
+
+    /*
+     |--------------------------------------------------------------------------
+     | Relationships
+     |-------------------------------------------------------------------------
+     */
+
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
 
     /*
      |--------------------------------------------------------------------------
