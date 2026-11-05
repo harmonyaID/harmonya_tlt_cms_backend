@@ -14,7 +14,7 @@ class BlogController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $blogs = Blog::filter($request)->with(['category', 'tags', 'categories', 'properties'])->orderBy('publishedAt', 'desc')->getOrPaginate($request);
+        $blogs = Blog::filter($request)->with(['category', 'tags', 'categories', 'properties'])->reorder('publishedAt', 'desc')->getOrPaginate($request);
         return success(BlogParser::briefs($blogs), pagination: pagination($blogs));
     }
 
