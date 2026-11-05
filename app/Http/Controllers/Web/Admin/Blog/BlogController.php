@@ -71,7 +71,7 @@ class BlogController extends Controller
                 'seo',
                 'acf'
             )
-            ->orderBy('publishedAt', 'desc')
+            ->reorder('publishedAt', 'desc')
             ->getOrPaginate($request);
 
         return success(
