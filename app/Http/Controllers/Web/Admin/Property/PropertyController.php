@@ -66,8 +66,8 @@ class PropertyController extends Controller
     public function get(Request $request)
     {
         $properties = Property::filter($request)
-            ->with(['type', 'photos', 'addresses'])
-            ->getOrPaginate($request);
+        ->with(['type', 'photos', 'variants.photos', 'addresses', 'seo'])
+        ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
     }
