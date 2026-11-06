@@ -16,6 +16,7 @@ use App\Models\Property\PropertyRoomType;
 use App\Models\Property\PropertyTag;
 use App\Models\Property\PropertySourceType;
 use App\Models\Property\PropertyType;
+use App\Models\SEO\ContentSeo;
 use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Services\Constant\Property\PropertyAddressType;
@@ -440,7 +441,7 @@ class GuestyPropertyImporter
 
     private function createParent(string $name, array $child, ?string $guestyId = null): Property
     {
-        return Property::create([
+        $parent = Property::create([
             'guestyId' => $guestyId,
             'nickname' => $name,
             'propertyTypeId' => $this->resolvePropertyTypeId($child['propertyType'] ?? null),
@@ -450,8 +451,34 @@ class GuestyPropertyImporter
             'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
             'currency' => $child['prices']['currency'] ?? 'USD',
         ]);
+
+        $this->syncParentSeo($parent);
+
+        return $parent;
     }
 
+    private function syncParentSeo(Property $parent): void
+    {
+        if ($parent->seo()->exists()) {
+            return;
+        }
+
+        $base = Str::slug($parent->nickname) ?: 'property-' . $parent->id;
+        $slug = $base;
+        $i = 2;
+
+        while (ContentSeo::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $i++;
+        }
+
+        $parent->seo()->create([
+            'title' => $parent->nickname,
+            'slug' => $slug,
+            'robotIndex' => true,
+            'robotFollow' => true,
+        ]);
+    }
+    
     private function mapUnitType(string $type): int
     {
         return match ($type) {

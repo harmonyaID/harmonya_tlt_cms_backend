@@ -13,6 +13,10 @@ class BoatController extends Controller
     {
         $request->merge(['isActive' => true]);
 
+        if ($request->has('limit') && !$request->has('page')) {
+            $request->merge(['page' => 1]);
+        }
+
         $boats = Boat::filter($request)->with(['photos', 'type', 'seo'])->getOrPaginate($request);
         return success(BoatParser::briefs($boats), pagination: pagination($boats));
     }
