@@ -14,6 +14,7 @@ use App\Models\Property\PropertyVariantRoom;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use App\Services\Constant\Storage\PathConstant;
+use App\Services\Guesty\GuestyListingPusher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -73,6 +74,8 @@ class PropertyVariantAlgo
                     ->log("Enter new property variant: " . $this->property->nickname);
             });
 
+            app(GuestyListingPusher::class)->push($this->property);
+
             return success($this->property->load($this->relations()));
         } catch (\Error $error) {
             exception($error);
@@ -108,6 +111,8 @@ class PropertyVariantAlgo
                     ->setAction(ActivityAction::UPDATE)
                     ->log("Update property variant: " . $this->property->nickname);
             });
+
+            app(GuestyListingPusher::class)->push($this->property);
 
             return success($this->property->load($this->relations()));
         } catch (\Error $error) {
