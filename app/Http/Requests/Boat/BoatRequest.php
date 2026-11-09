@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Requests\Boat;
+
+use App\Http\Requests\Acf\AcfRule;
+use App\Http\Requests\Seo\SeoRule;
+use App\Models\Boat\Boat;
+use Illuminate\Validation\Rule;
+use Logia\Core\Validation\Support\FormRequest;
+
+class BoatRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        $boatId = $this->route('id');
+        $boat = Boat::with('seo')->find($boatId);
+
+        return [
+            'boatComponentTypeId' => [
+                'required',
+                'integer',
+                Rule::exists('boat_component_types', 'id')->whereNull('deletedAt'),
+            ],
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            'additionalContent' => 'nullable|string',
+            'isActive' => 'required|boolean',
+            'locale' => 'nullable|string|exists:languages,code',
+
+            'promoLabel' => 'nullable|string|max:255',
+            'promoLabelUrl' => 'nullable|string|max:500',
+
+            'discountLabel' => 'nullable|string|max:255',
+            'discountLabelUrl' => 'nullable|string|max:500',
+
+            'schedule' => 'nullable|array',
+            'schedule.*.from' => 'required|string|max:255',
+            'schedule.*.to' => 'required|string|max:255',
+            'schedule.*.times' => 'required|array|min:1',
+            'schedule.*.times.*' => 'required|string|max:50',
+
+            'priceFiles' => 'nullable|array',
+            'priceFiles.*' => 'file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
+
+            'deletePriceFileIds' => 'nullable|array',
+            'deletePriceFileIds.*' => 'integer',
+
+            'promoPhotos' => 'nullable|array',
+            'promoPhotos.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+            'deletePromoPhotoIds' => 'nullable|array',
+            'deletePromoPhotoIds.*' => 'integer',
+
+            'photos' => 'nullable|array',
+            'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+
+            'deletePhotoIds' => 'nullable|array',
+            'deletePhotoIds.*' => 'integer|exists:boat_photos,id',
+
+            'mapImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'deleteMapImage' => 'nullable|boolean',
+
+            'customInformations' => 'nullable|array',
+            'customInformations.*.name' => 'required|string',
+            'customInformations.*.customInformations' => 'required|array',
+            'customInformations.*.customInformations.*.id' => 'nullable|integer',
+            'customInformations.*.customInformations.*.name' => 'required|string',
+            'customInformations.*.customInformations.*.value' => 'required|string',
+            'customInformations.*.customInformations.*.order' => 'nullable|integer',
+
+            'seo' => 'nullable|array',
+        ] + SeoRule::rules('seo.', $boat?->seo) + AcfRule::rules();
+    }
+}

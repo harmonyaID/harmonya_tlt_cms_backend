@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Parser\Setting;
+
+use Logia\Core\Parser\BaseParser;
+
+class SettingAmenityParser extends BaseParser
+{
+    public static function first($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'categoryId' => $data->categoryId,
+            'category' => SettingAmenityCategoryParser::brief($data->category),
+            'name' => $data->name,
+            'icon' => $data->iconUrl(),
+            'isPopular' => $data->isPopular,
+            'order' => $data->order,
+            'isPublish' => $data->isPublish,
+            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+        ];
+    }
+
+    public static function brief($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'categoryId' => $data->categoryId,
+            'category' => SettingAmenityCategoryParser::brief($data->category),
+            'name' => $data->name,
+            'icon' => $data->iconUrl(),
+            'isPopular' => $data->isPopular,
+            'order' => $data->order,
+            'isPublish' => $data->isPublish,
+        ];
+    }
+}

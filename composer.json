@@ -1,0 +1,108 @@
+{
+    "name": "globalxtreme/laravel-backend-service-v2",
+    "type": "project",
+    "description": "GlobalXtreme Default Backend Service V2.",
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "^2.9",
+        "yusologia/lara-core": "^1.0",
+        "php-open-source-saver/jwt-auth": "^2.3"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.26",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.0",
+        "phpunit/phpunit": "^11.0.1",
+        "spatie/laravel-ignition": "^2.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/",
+            "Database\\Migrations\\": "database/migrations/"
+        },
+        "files": [
+            "app/Services/Helpers/activity.php",
+            "app/Services/Helpers/helpers.php",
+            "app/Services/Helpers/Status/globals.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        },
+        "files": [
+            "app/Services/Helpers/activity.php",
+            "app/Services/Helpers/helpers.php",
+            "app/Services/Helpers/Status/globals.php",
+            "app/Services/Helpers/Status/auth.php",
+            "app/Services/Helpers/Status/access.php",
+            "app/Services/Helpers/Status/staff.php",
+            "app/Services/Helpers/Status/setting.php",
+            "app/Services/Helpers/Status/mediaPartner.php",
+            "app/Services/Helpers/Status/configuration.php",
+            "app/Services/Helpers/Status/language.php",
+            "app/Services/Helpers/Status/page.php",
+            "app/Services/Helpers/Status/websiteContactForm.php",
+            "app/Services/Helpers/Status/tltReview.php",
+            "app/Services/Helpers/Status/faq.php",
+            "app/Services/Helpers/Status/boat.php",
+            "app/Services/Helpers/Status/boatContactForm.php",
+            "app/Services/Helpers/Status/blog.php",
+            "app/Services/Helpers/Status/menu.php",
+            "app/Services/Helpers/Status/homepage.php",
+            "app/Services/Helpers/Status/amenity.php",
+            "app/Services/Helpers/Status/property.php",
+            "app/Services/Helpers/Status/lembonganArea.php",
+            "app/Services/Helpers/Status/apiConfiguration.php",
+            "app/Services/Helpers/Status/offer.php",
+            "app/Services/Helpers/Status/teamMember.php",
+            "app/Services/Helpers/Status/tltTestimonial.php",
+            "app/Services/Helpers/Status/islandGuide.php",
+            "app/Services/Helpers/Status/experience.php"
+
+        ]
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

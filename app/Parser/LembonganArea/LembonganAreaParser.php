@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Parser\LembonganArea;
+
+use App\Parser\Seo\SeoParser;
+use Logia\Core\Parser\BaseParser;
+
+class LembonganAreaParser extends BaseParser
+{
+    public static function first($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'name' => $data->name,
+            'description' => $data->description,
+            'content' => $data->content,
+            'additionalContent' => $data->additionalContent,
+            'featuredImage' => $data->featuredImageUrl(),
+            'url' => $data->url,
+            'order' => $data->order,
+            'isActive' => $data->isActive,
+            'seo' => SeoParser::first($data->seo),
+            'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
+        ];
+    }
+
+    public static function brief($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'name' => $data->name,
+            'description' => $data->description,
+            'additionalContent' => $data->additionalContent,
+            'featuredImage' => $data->featuredImageUrl(),
+            'url' => $data->url,
+            'order' => $data->order,
+            'isActive' => $data->isActive,
+            'seo' => SeoParser::first($data->seo),
+        ];
+    }
+}

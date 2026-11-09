@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Parser\Setting;
+
+use App\Services\Constant\Setting\NotificationProvider;
+use Logia\Core\Parser\BaseParser;
+
+class SettingNotificationCredentialParser extends BaseParser
+{
+    public static function first($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'provider' => NotificationProvider::idName($data->providerId) ?? null,
+            'name' => $data->name,
+            'credentials' => $data->credentials,
+            'isActive' => $data->isActive,
+        ];
+    }
+
+    public static function brief($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'provider' => NotificationProvider::idName($data->providerId) ?? null,
+            'name' => $data->name,
+            'credentials' => $data->credentials,
+            'isActive' => $data->isActive,
+        ];
+    }
+}

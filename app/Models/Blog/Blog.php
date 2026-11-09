@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Models\Blog;
+
+use App\Models\BaseModel;
+use App\Models\SEO\ContentSeo;
+use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasMultiValueFilter;
+use App\Models\Traits\HasSeoSlugScope;
+use App\Parser\Blog\BlogParser;
+use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+
+class Blog extends BaseModel
+{
+    use SoftDeletes;
+    use HasDateRangeFilter;
+    use HasMultiValueFilter;
+    use HasSeoSlugScope;
+
+    protected $table = 'blogs';
+
+    protected $guarded = ['id'];
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
+    const DELETED_AT = 'deletedAt';
+
+    protected $casts = [
+        'visibility' => 'boolean',
+        'isActive' => 'boolean',
+        'publishedAt' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+        self::DELETED_AT => 'datetime',
+    ];
+
+    public $parserClass = BlogParser::class;
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(BlogCategory::class, 'categoryId');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(
+            BlogCategory::class,
+            'blog_category',
+            'blogId',
+            'categoryId'
+        );
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(BlogTag::class, 'blog_tag', 'blogId', 'tagId');
+    }
+
+    public function properties(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Property\Property::class, 'blog_property', 'blogId', 'propertyId')
+            ->withPivot('order')
+            ->orderBy('blog_property.order');
+    }
+
+    public function seo()
+    {
+        return $this->morphOne(ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function visitors()
+    {
+        return $this->morphMany(\App\Models\Visitor\ContentVisitor::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function uniqueVisitorCount(): int
+    {
+        return $this->visitors()->count();
+    }
+
+    public function scopeFilter($query, $request)
+    {
+        return $query->where(function ($query) use ($request) {
+            if ($request->has('search') && strlen($request->search) > 1) {
+                $query->where(function ($search) use ($request) {
+                    $search->where('title', 'LIKE', "%$request->search%")
+                        ->orWhere('excerpt', 'LIKE', "%$request->search%");
+                });
+            }
+
+            if ($request->has('categoryIds') && $request->categoryIds) {
+                $query->whereIn('categoryId', $this->toValueArray($request->categoryIds));
+            }
+
+            if ($request->has('tagIds') && $request->tagIds) {
+                $query->whereHas('tags', function ($tag) use ($request) {
+                    $tag->whereIn('blog_tags.id', $this->toValueArray($request->tagIds));
+                });
+            }
+
+            if ($request->has('locale') && $request->locale) {
+                $query->where('locale', $request->locale);
+            }
+
+            if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
+                $query->where('isActive', $request->isActive);
+            }
+
+            $this->applyDateRangeFilter($query, $request, 'publishedAt');
+        })->orderBy('id', 'DESC');
+    }
+
+    public function promoBannerUrl()
+    {
+        if (!$this->promoBanner) return null;
+        return Storage::disk('public')->url(PathConstant::IMAGES_BLOG . $this->promoBanner);
+    }
+
+    public function thumbnailUrl()
+    {
+        if (!$this->thumbnail) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_BLOG . $this->thumbnail);
+    }
+}

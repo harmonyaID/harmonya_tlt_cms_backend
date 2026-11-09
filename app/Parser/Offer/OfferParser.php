@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Parser\Offer;
+
+use App\Parser\Acf\AcfParser;
+use App\Parser\Property\PropertyParser;
+use App\Parser\Seo\SeoParser;
+use Logia\Core\Parser\BaseParser;
+
+class OfferParser extends BaseParser
+{
+    public static function first($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        $properties = [];
+
+        foreach ($data->properties ?? [] as $property) {
+            $properties[] = PropertyParser::brief($property);
+        }
+
+        $tags = [];
+
+        foreach ($data->tags ?? [] as $tag) {
+            $tags[] = [
+                'id' => $tag->id,
+                'name' => $tag->name,
+            ];
+        }
+
+        return [
+            'id' => $data->id,
+            'category' => optional($data->category)->only(
+                'id',
+                'name'
+            ),
+            'title' => $data->title,
+            'slug' => $data->slug,
+            'thumbnail' => $data->thumbnailUrl(),
+            'excerpt' => $data->excerpt,
+            'content' => $data->content,
+            'additionalContent' => $data->additionalContent,
+            'properties' => $properties,
+            'tags' => $tags,
+            'startDate' => optional($data->startDate)
+                ->format('d/m/Y'),
+            'endDate' => optional($data->endDate)
+                ->format('d/m/Y'),
+            'locale' => $data->locale,
+            'isActive' => $data->isActive,
+            'publishedAt' => optional($data->publishedAt)
+                ->format('d/m/Y H:i'),
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
+            'seo' => SeoParser::first($data->seo),
+            'acf' => AcfParser::forContent($data->acf),
+        ];
+    }
+
+    public static function brief($data)
+    {
+        if (!$data) {
+            return null;
+        }
+
+        return [
+            'id' => $data->id,
+            'category' => optional($data->category)->only(
+                'id',
+                'name'
+            ),
+            'title' => $data->title,
+            'slug' => $data->slug,
+            'thumbnail' => $data->thumbnailUrl(),
+            'excerpt' => $data->excerpt,
+            'propertyCount' => $data->properties->count(),
+            'startDate' => optional($data->startDate)
+                ->format('d/m/Y'),
+            'endDate' => optional($data->endDate)
+                ->format('d/m/Y'),
+            'locale' => $data->locale,
+            'isActive' => $data->isActive,
+            'publishedAt' => optional($data->publishedAt)
+                ->format('d/m/Y H:i'),
+            'createdAt' => optional($data->createdAt)
+                ->format('d/m/Y H:i'),
+            'seo' => SeoParser::first($data->seo),
+        ];
+    }
+}

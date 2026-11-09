@@ -1,0 +1,518 @@
+<?php
+
+namespace App\Services\Guesty;
+
+use App\Models\Property\Property;
+use App\Models\Property\PropertyBedType;
+use App\Models\Property\PropertyRoomType;
+use App\Models\Property\PropertySourceType;
+use App\Models\Property\PropertyTag;
+use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyVariant;
+use App\Models\Property\PropertyVariantAddress;
+use App\Models\Property\PropertyVariantAvailability;
+use App\Models\Property\PropertyVariantDescription;
+use App\Models\Property\PropertyVariantGuestInfo;
+use App\Models\Property\PropertyVariantPhoto;
+use App\Models\Property\PropertyVariantPricing;
+use App\Models\Property\PropertyVariantRoom;
+use App\Models\SEO\ContentSeo;
+use App\Models\Setting\SettingAmenity;
+use App\Models\Setting\SettingPropertyFeature;
+use App\Services\Constant\Property\PropertyAddressType;
+use App\Services\Constant\Property\PropertyAdvanceNoticeUnit;
+use App\Services\Constant\Property\PropertyAvailabilityType;
+use App\Services\Constant\Property\PropertyCleaningFeeType;
+use App\Services\Constant\Property\PropertyCleaningStatus;
+use App\Services\Constant\Property\PropertyGuestySyncStatus;
+use App\Services\Constant\Property\PropertyListingType;
+use App\Services\Constant\Property\PropertyStatus;
+use App\Services\Constant\Property\PropertyUnitType;
+use App\Services\Constant\Storage\PathConstant;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class GuestyPropertyImporter
+{
+    public bool $withPhotos = false;
+
+    /** @var array<string,Property|null> parents already looked up / created during this run */
+    private array $parentCache = [];
+
+    public function __construct(protected GuestyClient $client) {}
+
+    public function import(array $listing): PropertyVariant
+    {
+        return DB::transaction(function () use ($listing) {
+            $property = PropertyVariant::updateOrCreate(
+                ['guestyId' => $listing['_id']],
+                [
+                    'nickname' => $listing['title'] ?? $listing['nickname'] ?? 'Untitled',
+                    'propertyTypeId' => $this->resolvePropertyTypeId($listing['propertyType'] ?? null),
+                    'unitTypeId' => $this->mapUnitType($listing['type'] ?? 'SINGLE'),
+                    'listingTypeId' => $this->mapListingType($listing['roomType'] ?? null),
+                    'roomType' => $listing['roomType'] ?? null,
+                    'occupancy' => $listing['accommodates'] ?? null,
+                    'propertySize' => $listing['areaSquareFeet'] ?? null,
+                    'statusId' => ($listing['isListed'] ?? false) ? PropertyStatus::ACTIVE_ID : PropertyStatus::INACTIVE_ID,
+                    'cleaningStatusId' => $this->mapCleaningStatus($listing['cleaningStatus']['value'] ?? null),
+                    'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
+                    'currency' => $listing['prices']['currency'] ?? 'USD',
+                    'guestyImportedAt' => now(),
+                    'guestySyncStatusId' => PropertyGuestySyncStatus::SYNCED_ID,
+                    'guestySyncedAt' => now(),
+                    'guestySyncError' => null,
+                    'sourceCreatedAt' => !empty($listing['createdAt'])
+                        ? Carbon::parse($listing['createdAt'])
+                        : null,
+
+                    'sourceUpdatedAt' => !empty($listing['updatedAt'])
+                        ? Carbon::parse($listing['updatedAt'])
+                        : null,
+                ]
+            );
+
+            $this->syncParent($property, $listing);
+            $this->syncAddress($property, $listing);
+            $this->syncGuestInfo($property, $listing);
+            $this->syncAvailability($property, $listing);
+            $this->syncPricing($property, $listing);
+            $this->syncDescriptions($property, $listing);
+            $this->syncRooms($property, $listing);
+            $this->syncAmenities($property, $listing);
+            $this->syncTags($property, $listing);
+            $this->syncFeatures($property, $listing);
+            if ($this->withPhotos) {
+                $this->syncPhotos($property, $listing);
+            }
+            $this->syncSeo($property, $listing);
+            return $property;
+        });
+    }
+
+    private function syncSeo(PropertyVariant $property, array $listing): void
+    {
+        $description = $listing['publicDescription'] ?? [];
+
+        $title = $listing['title']
+            ?? $listing['nickname']
+            ?? 'Untitled';
+
+        $slug = Str::slug($listing['nickname'] ?? $title);
+
+        $property->seo()->updateOrCreate(
+            [
+                'slug' => $slug,
+            ],
+            [
+                'info' => null,
+                'title' => $title,
+                'slug' => $slug,
+                'description' => $description['summary'] ?? null,
+                'metaKeyword' => null,
+                'canonicalUrl' => null,
+                'robotIndex' => true,
+                'robotFollow' => true,
+                'schemaMarkup' => null,
+            ]
+        );
+    }
+
+    private function syncAddress(PropertyVariant $property, array $listing): void
+    {
+        $address = $listing['address'] ?? null;
+        if (!$address) {
+            return;
+        }
+
+        PropertyVariantAddress::updateOrCreate(
+            ['propertyVariantId' => $property->id, 'typeId' => PropertyAddressType::FULL_ID],
+            [
+                'address' => $address['full'] ?? null,
+                'buildingName' => $address['apt'] ?? null,
+                'latitude' => $address['lat'] ?? null,
+                'longitude' => $address['lng'] ?? null,
+                'zipCode' => $address['zipcode'] ?? null,
+            ]
+        );
+    }
+
+    private function syncGuestInfo(PropertyVariant $property, array $listing): void
+    {
+        $description = $listing['publicDescription'] ?? [];
+
+        PropertyVariantGuestInfo::updateOrCreate(
+            ['propertyVariantId' => $property->id],
+            [
+                'hostName' => $listing['hostName'] ?? null,
+                'wifiName' => $listing['wifiName'] ?? null,
+                'wifiPassword' => $listing['wifiPassword'] ?? null,
+                'houseManual' => $listing['houseManual'] ?? null,
+                'trashInstructions' => $listing['trashCollectedOn'] ?? null,
+                'parkingInstructions' => $listing['parkingInstructions'] ?? null,
+                'cleaningInstructions' => null,
+                'interactionWithGuests' => $description['interactionWithGuests'] ?? null,
+            ]
+        );
+    }
+
+    private function syncAvailability(PropertyVariant $property, array $listing): void
+    {
+        $terms = $listing['terms'] ?? [];
+        $calendarRules = $listing['calendarRules'] ?? [];
+        $advanceNotice = $calendarRules['advanceNotice']['defaultSettings']['hours'] ?? null;
+
+        PropertyVariantAvailability::updateOrCreate(
+            ['propertyVariantId' => $property->id],
+            [
+                'defaultAvailabilityId' => ($calendarRules['defaultAvailability'] ?? null) === 'AVAILABLE'
+                    ? PropertyAvailabilityType::ALWAYS_ID
+                    : PropertyAvailabilityType::CUSTOM_ID,
+                'advanceNoticeValue' => $advanceNotice,
+                'advanceNoticeUnitId' => $advanceNotice !== null ? PropertyAdvanceNoticeUnit::HOUR_ID : null,
+                'minLengthOfStay' => $terms['minNights'] ?? null,
+                'maxLengthOfStay' => $terms['maxNights'] ?? null,
+            ]
+        );
+    }
+
+    private function syncPricing(PropertyVariant $property, array $listing): void
+    {
+        $prices = $listing['prices'] ?? [];
+        $cleaningFeeValue = $listing['financials']['cleaningFee']['value'] ?? null;
+
+        PropertyVariantPricing::updateOrCreate(
+            ['propertyVariantId' => $property->id],
+            [
+                'weekdayBasePrice' => $prices['basePrice'] ?? null,
+                'weekendBasePrice' => $prices['weekendBasePrice'] ?? null,
+                'rateStrategy' => $listing['yieldManagement']['rateStrategy']['name'] ?? null,
+                'cleaningFee' => $prices['cleaningFee'] ?? ($cleaningFeeValue['formula'] ?? null),
+                'cleaningFeeTypeId' => $this->mapCleaningFeeType($cleaningFeeValue['multiplier'] ?? null),
+                'extraPersonFee' => $prices['extraPersonFee'] ?? null,
+                'securityDepositFee' => $prices['securityDepositFee'] ?? null,
+                'weeklyDiscount' => isset($prices['weeklyPriceFactor']) ? round((1 - $prices['weeklyPriceFactor']) * 100, 2) : 0,
+                'monthlyDiscount' => isset($prices['monthlyPriceFactor']) ? round((1 - $prices['monthlyPriceFactor']) * 100, 2) : 0,
+            ]
+        );
+    }
+
+    private function syncDescriptions(PropertyVariant $property, array $listing): void
+    {
+        $description = $listing['publicDescription'] ?? [];
+
+        PropertyVariantDescription::updateOrCreate(
+            ['propertyVariantId' => $property->id, 'channel' => 'primary', 'language' => 'en'],
+            [
+                'title' => $listing['title'] ?? null,
+                'summary' => $description['summary'] ?? null,
+                'theSpace' => $description['space'] ?? null,
+                'guestAccess' => $description['access'] ?? null,
+                'theNeighborhood' => $description['neighborhood'] ?? null,
+                'gettingAround' => $description['transit'] ?? null,
+                'otherThingsToNote' => $description['notes'] ?? null,
+            ]
+        );
+    }
+
+    private function syncRooms(PropertyVariant $property, array $listing): void
+    {
+        $listingRooms = $listing['listingRooms'] ?? [];
+        if (empty($listingRooms)) {
+            return;
+        }
+
+        $bedroomType = PropertyRoomType::firstOrCreate(['name' => 'Bedroom']);
+
+        $property->rooms()->delete();
+
+        foreach ($listingRooms as $room) {
+            $beds = $room['beds'] ?? [];
+            if (empty($beds)) {
+                continue;
+            }
+
+            foreach ($beds as $bed) {
+                $bedType = PropertyBedType::firstOrCreate(['name' => $this->mapBedTypeName($bed['type'] ?? null)]);
+
+                PropertyVariantRoom::create([
+                    'propertyVariantId' => $property->id,
+                    'roomTypeId' => $bedroomType->id,
+                    'label' => 'Bedroom ' . (($room['roomNumber'] ?? 0) + 1),
+                    'bedTypeId' => $bedType->id,
+                    'bedCount' => $bed['quantity'] ?? 1,
+                    'order' => $room['roomNumber'] ?? 0,
+                ]);
+            }
+        }
+    }
+
+    private function syncAmenities(PropertyVariant $property, array $listing): void
+    {
+        $names = $listing['amenities'] ?? [];
+        if (empty($names)) {
+            return;
+        }
+
+        $ids = collect($names)->unique()->map(function ($name) {
+            return SettingAmenity::firstOrCreate(['name' => $name])->id;
+        });
+
+        $property->amenities()->sync($ids);
+    }
+
+    private function syncTags(PropertyVariant $property, array $listing): void
+    {
+        $names = $listing['tags'] ?? [];
+        if (empty($names)) {
+            return;
+        }
+
+        $ids = collect($names)->unique()->map(function ($name) {
+            return PropertyTag::firstOrCreate(['name' => $name])->id;
+        });
+
+        $property->tags()->sync($ids);
+    }
+
+    private function syncFeatures(PropertyVariant $property, array $listing): void
+    {
+        $values = [
+            'Bedroom' => $listing['bedrooms'] ?? null,
+            'Bathroom' => $listing['bathrooms'] ?? null,
+        ];
+
+        $syncData = [];
+        foreach ($values as $name => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            $feature = SettingPropertyFeature::firstOrCreate(['name' => $name], ['hasValue' => true]);
+            $syncData[$feature->id] = ['value' => $value];
+        }
+
+        if ($syncData) {
+            $property->features()->syncWithoutDetaching($syncData);
+        }
+    }
+
+    private function syncPhotos(PropertyVariant $property, array $listing): void
+    {
+        if ($property->photos()->exists()) {
+            return;
+        }
+
+        $pictures = $listing['pictures'] ?? [];
+        if (empty($pictures)) {
+            return;
+        }
+
+        $dirPath = PathConstant::IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH();
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        foreach ($pictures as $index => $picture) {
+            $url = $picture['original'] ?? null;
+            if (!$url) {
+                continue;
+            }
+
+            $bytes = $this->client->downloadImage($url);
+            if (!$bytes) {
+                continue;
+            }
+
+            $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+            $filename = $property->guestyId . '-' . $index . '.' . $extension;
+            file_put_contents($dirPath . $filename, $bytes);
+
+            PropertyVariantPhoto::create([
+                'propertyVariantId' => $property->id,
+                'path' => $filename,
+                'caption' => $picture['caption'] ?? null,
+                'order' => $index,
+            ]);
+        }
+    }
+
+    private function resolvePropertyTypeId(?string $name): ?int
+    {
+        if (!$name) {
+            return null;
+        }
+
+        return PropertyType::firstOrCreate(['name' => $name])->id;
+    }
+
+    private function syncParent(PropertyVariant $variant, array $listing): void
+    {
+        if ($variant->parentPropertyId) {
+            return;
+        }
+
+        $parent = $this->parentFromGuesty($listing) ?? $this->parentFromTitle($listing);
+
+        if ($parent) {
+            $variant->update(['parentPropertyId' => $parent->id]);
+        }
+    }
+
+    private function parentFromGuesty(array $listing): ?Property
+    {
+        if (($listing['type'] ?? null) !== 'MTL_CHILD') {
+            return null;
+        }
+
+        $parentGuestyId = $listing['mtl']['p'] ?? null;
+
+        if (!$parentGuestyId && !empty($listing['_id'])) {
+            try {
+                $parentGuestyId = ($this->client->get('/listings/' . $listing['_id'], ['fields' => '_id mtl'])['mtl']['p'] ?? null);
+            } catch (\Throwable $e) {
+                $parentGuestyId = null;
+            }
+        }
+
+        if (!$parentGuestyId) {
+            return null;
+        }
+
+        return $this->parentCache['g:' . $parentGuestyId] ??= $this->findOrCreateGuestyParent($parentGuestyId, $listing);
+    }
+
+    private function findOrCreateGuestyParent(string $guestyId, array $child): ?Property
+    {
+        if ($existing = Property::where('guestyId', $guestyId)->first()) {
+            return $existing;
+        }
+
+        try {
+            $data = $this->client->get('/listings/' . $guestyId, ['fields' => '_id title nickname type']);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $name = trim((string) ($data['title'] ?? $data['nickname'] ?? ''));
+
+        if ($name === '') {
+            return null;
+        }
+
+        if ($byName = Property::where('nickname', $name)->first()) {
+            if (!$byName->guestyId) {
+                $byName->update(['guestyId' => $guestyId]);
+            }
+
+            return $byName;
+        }
+
+        return $this->createParent($name, $child, $guestyId);
+    }
+
+    private function parentFromTitle(array $listing): ?Property
+    {
+        $parts = preg_split('/\s+[-–—]\s+/u', trim((string) ($listing['title'] ?? '')), 2);
+
+        if (!$parts || count($parts) < 2) {
+            return null;
+        }
+
+        $name = trim($parts[0]);
+
+        if (mb_strlen($name) < 2) {
+            return null;
+        }
+
+        return $this->parentCache['n:' . mb_strtolower($name)] ??=
+            Property::where('nickname', $name)->first() ?? $this->createParent($name, $listing);
+    }
+
+    private function createParent(string $name, array $child, ?string $guestyId = null): Property
+    {
+        $parent = Property::create([
+            'guestyId' => $guestyId,
+            'nickname' => $name,
+            'propertyTypeId' => $this->resolvePropertyTypeId($child['propertyType'] ?? null),
+            'unitTypeId' => PropertyUnitType::MULTI_UNIT_ID,
+            'listingTypeId' => $this->mapListingType($child['roomType'] ?? null),
+            'statusId' => PropertyStatus::ACTIVE_ID,
+            'sourceTypeId' => PropertySourceType::firstOrCreate(['name' => 'Guesty'])->id,
+            'currency' => $child['prices']['currency'] ?? 'USD',
+        ]);
+
+        $this->syncParentSeo($parent);
+
+        return $parent;
+    }
+
+    private function syncParentSeo(Property $parent): void
+    {
+        if ($parent->seo()->exists()) {
+            return;
+        }
+
+        $base = Str::slug($parent->nickname) ?: 'property-' . $parent->id;
+        $slug = $base;
+        $i = 2;
+
+        while (ContentSeo::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $i++;
+        }
+
+        $parent->seo()->create([
+            'title' => $parent->nickname,
+            'slug' => $slug,
+            'robotIndex' => true,
+            'robotFollow' => true,
+        ]);
+    }
+
+    private function mapUnitType(string $type): int
+    {
+        return match ($type) {
+            'MTL', 'MTL_CHILD' => PropertyUnitType::MULTI_UNIT_ID,
+            default => PropertyUnitType::SINGLE_UNIT_ID,
+        };
+    }
+
+    private function mapListingType(?string $roomType): int
+    {
+        return match ($roomType) {
+            'Private room' => PropertyListingType::PRIVATE_ROOM_ID,
+            'Shared room' => PropertyListingType::SHARED_ROOM_ID,
+            default => PropertyListingType::ENTIRE_HOME_ID,
+        };
+    }
+
+    private function mapCleaningStatus(?string $status): int
+    {
+        return match ($status) {
+            'dirty' => PropertyCleaningStatus::DIRTY_ID,
+            'clean' => PropertyCleaningStatus::CLEAN_ID,
+            'waiting_for_inspection', 'inspection' => PropertyCleaningStatus::WAITING_FOR_INSPECTION_ID,
+            null => PropertyCleaningStatus::NOT_SET_ID,
+            default => PropertyCleaningStatus::UNKNOWN_ID,
+        };
+    }
+
+    private function mapCleaningFeeType(?string $multiplier): ?int
+    {
+        return match ($multiplier) {
+            'PER_NIGHT' => PropertyCleaningFeeType::PER_NIGHT_ID,
+            'PER_STAY' => PropertyCleaningFeeType::PER_STAY_ID,
+            default => null,
+        };
+    }
+
+    private function mapBedTypeName(?string $type): string
+    {
+        if (!$type) {
+            return 'Bed';
+        }
+
+        return ucwords(strtolower(str_replace('_', ' ', $type)));
+    }
+}

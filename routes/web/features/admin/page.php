@@ -1,0 +1,14 @@
+<?php
+
+use App\Http\Controllers\Web\Admin\Page\PageController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix("pages")
+    ->middleware('auth.web.admin')
+    ->group(function () {
+        Route::get('/', [PageController::class, 'get']);
+        Route::post('/', [PageController::class, 'create']);
+        Route::get('{id}', [PageController::class, 'detail']);
+        Route::post('{id}', [PageController::class, 'update']);
+        Route::delete('{id}', [PageController::class, 'delete']);
+    });

@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Models\Boat;
+
+use App\Models\BaseModel;
+use App\Parser\Boat\BoatContactFormParser;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+
+class BoatContactForm extends BaseModel
+{
+    use SoftDeletes;
+
+    protected $table = 'boat_contact_forms';
+
+    protected $guarded = ['id'];
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
+    const DELETED_AT = 'deletedAt';
+
+    protected $casts = [
+        'bookedThroughTlt' => 'boolean',
+        'hasSurfboard' => 'boolean',
+        'isRead' => 'boolean',
+        'adultCount' => 'integer',
+        'childCount' => 'integer',
+        'infantCount' => 'integer',
+        'needLandTransport' => 'boolean',
+        'departureDate' => 'date',
+        'returnDate' => 'date',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+        self::DELETED_AT => 'datetime',
+    ];
+
+    public const PICK_UP_AIRPORT = 'airport';
+    public const PICK_UP_HOTEL_VILLA = 'hotel_villa';
+    public const PICK_UP_NOT_APPLICABLE = 'not_applicable';
+
+    public const PICK_UP_POINTS = [
+        self::PICK_UP_AIRPORT => 'Airport',
+        self::PICK_UP_HOTEL_VILLA => 'Hotel / Villa',
+        self::PICK_UP_NOT_APPLICABLE => 'Not Applicable',
+    ];
+
+    public static function pointLabel(?string $point): ?string
+    {
+        return $point ? (self::PICK_UP_POINTS[$point] ?? $point) : null;
+    }
+
+    public $parserClass = BoatContactFormParser::class;
+
+    public function boat(): BelongsTo
+    {
+        return $this->belongsTo(Boat::class, 'boatId');
+    }
+
+    public function scopeFilter($query, $request)
+    {
+        return $query->where(function ($query) use ($request) {
+            if ($request->has('search') && strlen($request->search) > 1) {
+                $query->where(function ($search) use ($request) {
+                    $search->where('name', 'LIKE', "%$request->search%")
+                        ->orWhere('email', 'LIKE', "%$request->search%")
+                        ->orWhere('phone', 'LIKE', "%$request->search%");
+                });
+            }
+
+            if ($request->has('boatId') && $request->boatId) {
+                $query->where('boatId', $request->boatId);
+            }
+
+            if ($request->has('ticketType') && $request->ticketType) {
+                $query->where('ticketType', $request->ticketType);
+            }
+
+            if ($request->has('isRead') && $request->isRead !== null) {
+                $query->where('isRead', $request->isRead);
+            }
+
+            if ($request->has('typeName') && $request->typeName) {
+                $typeName = Str::of($request->typeName)
+                    ->replace('-', ' ')
+                    ->lower();
+
+                $query->whereHas('boat', function ($boat) use ($typeName) {
+                    $boat->whereHas('type', function ($type) use ($typeName) {
+                        $type->whereRaw(
+                            'LOWER(name) = ?',
+                            [$typeName]
+                        );
+                    });
+                });
+            }
+        })->orderBy('id', 'DESC');
+    }
+}

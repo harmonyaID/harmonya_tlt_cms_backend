@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Models\Page;
+
+use App\Models\Access\Traits\HasAccession;
+use App\Models\BaseModel;
+use App\Models\HasActivation;
+use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasSeoSlugScope;
+use App\Parser\Page\PageParser;
+
+class Page extends BaseModel
+{
+    use HasActivation;
+    use HasAccession;
+    use HasDateRangeFilter;
+    use HasSeoSlugScope;
+
+    protected $table = 'pages';
+
+    protected $guarded = ['id'];
+
+    protected $casts = [
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+        self::DELETED_AT => 'datetime',
+        'isActive' => 'boolean',
+        'isSuperadmin' => 'boolean',
+        'content' => 'array',
+    ];
+
+    public $parserClass = PageParser::class;
+
+    public function createdBy()
+    {
+        return $this->belongsTo(\App\Models\Staff\Staff::class, 'createdBy');
+    }
+
+    public function seo()
+    {
+        return $this->morphOne(\App\Models\SEO\ContentSeo::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function acf()
+    {
+        return $this->morphMany(\App\Models\Acf\ContentAcf::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function scopeFilter($query, $request)
+    {
+        return $query
+            ->when(!$request->filled('locale'), function ($q) {
+                $q->whereIn('id', function ($sub) {
+                    $sub->selectRaw('MIN(id)')
+                        ->from('pages')
+                        ->whereNull('deletedAt')
+                        ->groupBy('groupId');
+                });
+            })
+            ->orderBy('groupId', 'ASC')
+            ->where(function ($query) use ($request) {
+                if ($request->has('search') && strlen($request->search) > 1) {
+                    $query->where(function ($search) use ($request) {
+                        $search->where("title", "LIKE", "%$request->search%")
+                            ->orWhere("shortDescription", "LIKE", "%$request->search%")
+                            ->orWhere("status", "LIKE", "%$request->search%");
+                    });
+                }
+
+                if ($request->has('status') && $request->status) {
+                    $query->where('status', $request->status);
+                }
+
+                if ($request->has('locale') && $request->locale) {
+                    $query->where('locale', $request->locale);
+                }
+
+                $this->applyDateRangeFilter($query, $request);
+            });
+    }
+
+    public function scopeLanguage($query, $request)
+    {
+        return $query->where('groupId', $request->groupId)->where('locale', $request->locale);
+    }
+}

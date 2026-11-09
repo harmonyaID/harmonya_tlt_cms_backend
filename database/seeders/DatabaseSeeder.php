@@ -1,0 +1,36 @@
+<?php
+
+namespace Database\Seeders;
+
+use Database\Seeders\Access\AccessPermissionSeeder;
+use Database\Seeders\Access\AccessRoleSeeder;
+use Database\Seeders\Configuration\WebsiteInformationSeeder;
+use Database\Seeders\Homepage\HomepageSeeder;
+use Database\Seeders\Language\LanguageGroupSeeder;
+use Database\Seeders\Language\LanguageSeeder;
+use Database\Seeders\Language\TranslatorSeeder;
+use Database\Seeders\Property\PropertyFeatureSeeder;
+use Database\Seeders\Setting\CountrySeeder;
+use Database\Seeders\Setting\PropertyNearbySettingSeeder;
+use Database\Seeders\Staff\StaffSeeder;
+use Illuminate\Database\Seeder;;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->call([
+            StaffSeeder::class,
+            AccessRoleSeeder::class,
+            AccessPermissionSeeder::class,
+            CountrySeeder::class,
+            LanguageGroupSeeder::class,
+            LanguageSeeder::class,
+            TranslatorSeeder::class,
+            WebsiteInformationSeeder::class,
+            HomepageSeeder::class,
+            PropertyNearbySettingSeeder::class,
+            PropertyFeatureSeeder::class,
+        ]);
+    }
+}

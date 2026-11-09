@@ -1,0 +1,68 @@
+<?php
+
+use App\Http\Controllers\Web\Admin\Setting\SettingAmenityCategoryController;
+use App\Http\Controllers\Web\Admin\Setting\SettingAmenityController;
+use App\Http\Controllers\Web\Admin\Setting\SettingAnalyticsController;
+use App\Http\Controllers\Web\Admin\Setting\SettingApiConfigurationController;
+use App\Http\Controllers\Web\Admin\Setting\SettingController;
+use App\Http\Controllers\Web\Admin\Setting\SettingNotificationCredentialController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix("settings")
+    ->middleware('auth.web.admin')
+    ->group(function () {
+        Route::get('', [SettingController::class, 'get']);
+
+        Route::prefix("amenities")
+            ->middleware('auth.web.admin')
+            ->group(function () {
+                Route::get('', [SettingAmenityController::class, 'get']);
+                Route::post('', [SettingAmenityController::class, 'create']);
+
+                Route::prefix('categories')
+                    ->group(function () {
+                        Route::get('', [SettingAmenityCategoryController::class, 'get']);
+                        Route::post('', [SettingAmenityCategoryController::class, 'create']);
+                        Route::get('{id}', [SettingAmenityCategoryController::class, 'detail']);
+                        Route::post('{id}', [SettingAmenityCategoryController::class, 'updateIcon']);
+                        Route::delete('{id}', [SettingAmenityCategoryController::class, 'delete']);
+                    });
+
+                Route::get('{id}', [SettingAmenityController::class, 'detail']);
+                Route::post('{id}', [SettingAmenityController::class, 'updateIcon']);
+                Route::delete('{id}', [SettingAmenityController::class, 'delete']);
+            });
+
+        Route::prefix("api-configurations")
+            ->group(function () {
+                Route::get('', [SettingApiConfigurationController::class, 'get']);
+                Route::post('', [SettingApiConfigurationController::class, 'create']);
+                Route::get('{id}', [SettingApiConfigurationController::class, 'detail']);
+                Route::put('{id}', [SettingApiConfigurationController::class, 'update']);
+                Route::delete('{id}', [SettingApiConfigurationController::class, 'delete']);
+            });
+
+        Route::prefix("analytics")
+            ->group(function () {
+                Route::get('', [SettingAnalyticsController::class, 'get']);
+                Route::post('', [SettingAnalyticsController::class, 'create']);
+                Route::get('{id}', [SettingAnalyticsController::class, 'detail']);
+                Route::put('{id}', [SettingAnalyticsController::class, 'update']);
+                Route::delete('{id}', [SettingAnalyticsController::class, 'delete']);
+            });
+
+        Route::prefix("notification-credentials")
+            ->group(function () {
+                Route::get('', [SettingNotificationCredentialController::class,'get']);
+                Route::post('', [SettingNotificationCredentialController::class,'create']);
+                Route::get('{id}', [SettingNotificationCredentialController::class,'detail']);
+                Route::put('{id}', [SettingNotificationCredentialController::class,'update']);
+                Route::delete('{id}', [SettingNotificationCredentialController::class,'delete']);
+                Route::get('statics/provider-types', [ SettingNotificationCredentialController::class, 'providerType']);
+                Route::get('statics/postmarks', [ SettingNotificationCredentialController::class, 'postmark']);
+                Route::get('statics/firebases', [ SettingNotificationCredentialController::class, 'firebase']);
+            });
+
+        Route::get('{id}', [SettingController::class, 'detail']);
+        Route::put('{id}', [SettingController::class, 'update']);
+    });
