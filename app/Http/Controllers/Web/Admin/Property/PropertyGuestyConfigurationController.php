@@ -115,6 +115,7 @@ class PropertyGuestyConfigurationController extends Controller
 
         // Credentials berubah, jadi hapus access token yang di-cache supaya credentials baru langsung dipakai
         Cache::forget(GuestyClient::TOKEN_CACHE_KEY);
+        Cache::forget(GuestyClient::CONFIG_CACHE_KEY);
 
         return success(ApiConfigurationParser::first($config->fresh()));
     }

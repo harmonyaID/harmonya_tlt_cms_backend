@@ -140,6 +140,54 @@ class GuestyClient
     }
 
     /**
+     * Authenticated write request (POST/PUT) with one retry on 401.
+     *
+     * @throws \Exception
+     */
+    protected function send(string $method, string $path, array $payload): array
+    {
+        $call = fn () => Http::withToken($this->getAccessToken())
+            ->acceptJson()
+            ->asJson()
+            ->send($method, $this->baseUrl() . $path, ['json' => $payload]);
+
+        $response = $call();
+
+        if ($response->status() === 401) {
+            Cache::forget(self::TOKEN_CACHE_KEY);
+            $response = $call();
+        }
+
+        if (!$response->successful()) {
+            throw new \Exception("Guesty $method $path failed ({$response->status()}): " . $response->body());
+        }
+
+        return $response->json() ?? [];
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function createListing(array $payload): array
+    {
+        return $this->send('POST', '/listings', $payload);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function updateListing(string $guestyId, array $payload): array
+    {
+        return $this->send('PUT', '/listings/' . $guestyId, $payload);
+    }
+
+    public function isConfigured(): bool
+    {
+        return (bool) $this->credential('client_id', config('guesty.client_id'))
+            && (bool) $this->credential('client_secret', config('guesty.client_secret'));
+    }
+
+    /**
      * Download a remote image's raw bytes (used for listing pictures).
      *
      * @param string $url
