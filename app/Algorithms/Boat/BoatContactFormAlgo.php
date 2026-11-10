@@ -5,6 +5,8 @@ namespace App\Algorithms\Boat;
 use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Boat\BoatContactFormMail;
 use App\Models\Boat\BoatContactForm;
+use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
@@ -49,6 +51,13 @@ class BoatContactFormAlgo
                     logger()->error('Failed to send BoatContactFormMail: ' . $e->getMessage());
                 }
             }
+
+            app(NotificationService::class)->notifyStaff(
+                NotificationType::BOAT_INQUIRY,
+                'New boat inquiry',
+                'From ' . $this->contactForm->name,
+                $this->contactForm
+            );
 
             return success($this->contactForm->fresh()->load('boat'));
         } catch (\Error $error) {

@@ -5,6 +5,8 @@ namespace App\Algorithms\Property;
 use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Property\PropertyContactFormMail;
 use App\Models\Property\PropertyContactForm;
+use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
@@ -52,6 +54,13 @@ class PropertyContactFormAlgo
                     logger()->error('Failed to send PropertyContactFormMail: ' . $e->getMessage());
                 }
             }
+
+            app(NotificationService::class)->notifyStaff(
+                NotificationType::PROPERTY_CONTACT_FORM,
+                'New property contact form',
+                'From ' . $this->contactForm->name,
+                $this->contactForm
+            );
 
             return success(
                 $this->contactForm->fresh()->load('property', 'sourceType'),

@@ -4,6 +4,8 @@ namespace App\Algorithms\Property;
 
 use App\Models\Property\PropertyVariantReview;
 use App\Models\Property\PropertyVariantReviewPhoto;
+use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use App\Services\Constant\Storage\PathConstant;
@@ -47,6 +49,13 @@ class PropertyVariantReviewAlgo
                     ->log("Enter new property review. Name: " . $this->review->name);
 
             });
+
+            app(NotificationService::class)->notifyStaff(
+                NotificationType::PROPERTY_REVIEW,
+                'New property review',
+                'From ' . $this->review->name,
+                $this->review
+            );
 
             return success($this->review->load('photos'));
 

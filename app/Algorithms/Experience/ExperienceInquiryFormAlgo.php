@@ -5,6 +5,8 @@ namespace App\Algorithms\Experience;
 use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Experience\ExperienceInquiryFormMail;
 use App\Models\Experience\ExperienceInquiryForm;
+use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
@@ -44,6 +46,13 @@ class ExperienceInquiryFormAlgo
                     logger()->error('Failed to send ExperienceInquiryFormMail: ' . $e->getMessage());
                 }
             }
+
+            app(NotificationService::class)->notifyStaff(
+                NotificationType::EXPERIENCE_INQUIRY,
+                'New experience inquiry',
+                'From ' . $this->form->fullName,
+                $this->form
+            );
 
             return success($this->form->load('experience'));
         } catch (\Error $error) {

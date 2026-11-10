@@ -6,6 +6,8 @@ use App\Http\Requests\ChangeMailStatusRequest;
 use App\Http\Requests\Website\WebsiteContactFormChangeStatusRequest;
 use App\Mail\WebsiteContactForm\WebsiteContactFormMail;
 use App\Models\WebsiteContactForm\WebsiteContactForm;
+use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
@@ -50,6 +52,13 @@ class WebsiteContactFormAlgo
                     logger()->error('Failed to send WebsiteContactFormMail: ' . $e->getMessage());
                 }
             }
+
+            app(NotificationService::class)->notifyStaff(
+                NotificationType::WEBSITE_CONTACT_FORM,
+                'New website contact form',
+                'From ' . $this->contactForm->name,
+                $this->contactForm
+            );
 
             return success($this->contactForm);
         } catch (\Error $error) {
