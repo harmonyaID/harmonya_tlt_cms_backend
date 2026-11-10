@@ -98,10 +98,7 @@ class SettingNotificationCredentialController extends Controller
      * @return \Illuminate\Http\JsonResponse|mixed|null
      * @throws \Logia\Core\Exception\ErrorException
      */
-    public function update(
-        $id,
-        SettingNotificationCredentialRequest $request
-    ) {
+    public function update($id,SettingNotificationCredentialRequest $request) {
         $algo = new SettingNotificationCredentialAlgo((int) $id);
 
         return $algo->update($request);

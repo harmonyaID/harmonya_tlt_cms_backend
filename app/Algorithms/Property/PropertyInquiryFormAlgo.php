@@ -5,6 +5,8 @@ namespace App\Algorithms\Property;
 use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Property\PropertyInquiryFormMail;
 use App\Models\Property\PropertyInquiryForm;
+use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
@@ -49,6 +51,13 @@ class PropertyInquiryFormAlgo
                     logger()->error('Failed to send PropertyInquiryFormMail: ' . $e->getMessage());
                 }
             }
+
+            app(NotificationService::class)->notifyStaff(
+                NotificationType::PROPERTY_INQUIRY,
+                'New property inquiry',
+                'From ' . $this->inquiryForm->name,
+                $this->inquiryForm
+            );
 
             return success(
                 $this->inquiryForm->fresh()->load('property', 'sourceType'),
