@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Blog\Blog;
 use App\Models\Boat\BoatContactForm;
+use App\Models\Property\Property;
 use App\Models\Property\PropertyVariantReview;
 use App\Models\Visitor\ContentVisitor;
 use Illuminate\Http\Request;
@@ -41,6 +42,8 @@ class DashboardController extends Controller
 
         return success([
             'totalBlogPost' => Blog::count(),
+
+            // kept for backward compatibility with existing dashboard widgets
             'totalPropertyGuesty' => (int)optional($bySourceType->firstWhere('name', 'Guesty'))->total,
             'totalPropertyBookeasy' => (int)optional($bySourceType->firstWhere('name', 'Bookeasy'))->total,
 
@@ -76,8 +79,8 @@ class DashboardController extends Controller
             'createdAt'
         );
 
-        $topPropertyVariantViews = $visits(PropertyVariant::class)->orderByDesc('total')->limit($limit)->get();
-        $variantNames = PropertyVariant::whereIn('id', $topPropertyVariantViews->pluck('contentableId'))->pluck('nickname', 'id');
+        $topPropertyViews = $visits(Property::class)->orderByDesc('total')->limit($limit)->get();
+        $propertyNames = Property::whereIn('id', $topPropertyViews->pluck('contentableId'))->pluck('nickname', 'id');
 
         $topBlogViews = $visits(Blog::class)->orderByDesc('total')->limit($limit)->get();
         $blogs = Blog::whereIn('id', $topBlogViews->pluck('contentableId'))->get(['id', 'title', 'slug'])->keyBy('id');
@@ -94,15 +97,16 @@ class DashboardController extends Controller
         $reviews = fn (string $direction) => $inRange(
             PropertyVariantReview::query()
                 ->join('property_variants', 'property_variants.id', '=', 'property_variant_reviews.propertyVariantId')
+                ->join('properties', 'properties.id', '=', 'property_variants.parentPropertyId')
                 ->where('property_variant_reviews.isActive', true)
                 ->whereNull('property_variant_reviews.deletedAt')
                 ->select(
-                    'property_variants.id',
-                    'property_variants.nickname',
+                    'properties.id',
+                    'properties.nickname',
                     DB::raw('round(avg(property_variant_reviews.rating), 2) as averageRating'),
                     DB::raw('count(property_variant_reviews.id) as totalReviews')
                 )
-                ->groupBy('property_variants.id', 'property_variants.nickname'),
+                ->groupBy('properties.id', 'properties.nickname'),
             'property_variant_reviews.createdAt'
         )->orderBy('averageRating', $direction)->orderByDesc('totalReviews')->limit($limit)->get()
             ->map(fn ($row) => [
@@ -113,9 +117,9 @@ class DashboardController extends Controller
             ]);
 
         return success([
-            'topPropertyVariantViews' => $topPropertyVariantViews->map(fn ($row) => [
+            'topPropertyViews' => $topPropertyViews->map(fn ($row) => [
                 'id' => $row->contentableId,
-                'nickname' => $variantNames[$row->contentableId] ?? null,
+                'nickname' => $propertyNames[$row->contentableId] ?? null,
                 'totalViews' => (int) $row->total,
             ])->values(),
             'topBlogViews' => $topBlogViews->map(fn ($row) => [
@@ -129,8 +133,8 @@ class DashboardController extends Controller
                 'name' => $row->name,
                 'totalInquiries' => (int) $row->total,
             ])->values(),
-            'lowestRatedPropertyVariants' => $reviews('asc'),
-            'highestRatedPropertyVariants' => $reviews('desc'),
+            'lowestRatedProperties' => $reviews('asc'),
+            'highestRatedProperties' => $reviews('desc'),
         ]);
     }
 }
