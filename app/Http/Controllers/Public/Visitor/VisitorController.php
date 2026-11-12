@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public\Visitor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Visitor\TrackVisitorRequest;
 use App\Models\Blog\Blog;
+use App\Models\Property\PropertyVariant;
 use App\Models\Visitor\ContentVisitor;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,7 @@ class VisitorController extends Controller
 {
     const CONTENT_TYPE_MAP = [
         'blog' => Blog::class,
+        'property-variant' => PropertyVariant::class,
     ];
     
     public function track(TrackVisitorRequest $request)

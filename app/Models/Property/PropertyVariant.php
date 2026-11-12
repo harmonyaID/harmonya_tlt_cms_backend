@@ -63,6 +63,16 @@ class PropertyVariant extends BaseModel
         return $this->belongsTo(PropertyType::class, 'propertyTypeId');
     }
 
+    public function visitors()
+    {
+        return $this->morphMany(\App\Models\Visitor\ContentVisitor::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function uniqueVisitorCount(): int
+    {
+        return $this->visitors()->count();
+    }
+
     public function sourceType(): BelongsTo
     {
         return $this->belongsTo(PropertySourceType::class, 'sourceTypeId');
