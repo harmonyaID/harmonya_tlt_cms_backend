@@ -8,4 +8,5 @@ Route::prefix("dashboard")
     ->group(function () {
 
         Route::get('metrics', [DashboardController::class, 'metrics']);
+        Route::get('analytics', [DashboardController::class, 'analytics']);
     });

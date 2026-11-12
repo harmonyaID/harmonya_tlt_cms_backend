@@ -222,4 +222,14 @@ class Property extends BaseModel
             $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
     }
+
+    public function visitors()
+    {
+        return $this->morphMany(\App\Models\Visitor\ContentVisitor::class, 'contentable', 'contentableType', 'contentableId');
+    }
+
+    public function uniqueVisitorCount(): int
+    {
+        return $this->visitors()->count();
+    }
 }

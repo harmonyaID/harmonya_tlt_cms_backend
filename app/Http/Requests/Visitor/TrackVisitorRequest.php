@@ -25,7 +25,7 @@ class TrackVisitorRequest extends FormRequest
     public function rules()
     {
         return [
-            'contentType' => 'required|string|in:blog',
+            'contentType' => 'required|string|in:blog,property',
             'contentId' => 'required|integer',
         ];
     }
