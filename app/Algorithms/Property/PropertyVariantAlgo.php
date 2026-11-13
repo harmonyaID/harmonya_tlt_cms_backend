@@ -17,6 +17,7 @@ use App\Services\Constant\Storage\PathConstant;
 use App\Services\Guesty\GuestyListingPusher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\Constant\Property\PropertyStatus;
 
 class PropertyVariantAlgo
 {
@@ -51,6 +52,7 @@ class PropertyVariantAlgo
         try {
             DB::transaction(function () use ($request) {
                 $data = $request->except($this->nestedKeys);
+                $data['statusId'] = $data['statusId'] ?? PropertyStatus::ACTIVE_ID;
 
                 if ($request->hasFile('floorplanImage')) {
                     $data['floorplanImage'] = $this->uploadFloorplanImage($request);
@@ -87,6 +89,7 @@ class PropertyVariantAlgo
         try {
             DB::transaction(function () use ($request) {
                 $data = $request->except($this->nestedKeys);
+                $data['statusId'] = $data['statusId'] ?? PropertyStatus::ACTIVE_ID;
 
                 if ($request->hasFile('floorplanImage')) {
                     $this->deleteFloorplanImage();
