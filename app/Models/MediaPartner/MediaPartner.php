@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Models\MediaPartner;
@@ -19,9 +20,9 @@ class MediaPartner extends BaseModel
     const UPDATED_AT = 'updatedAt';
     const DELETED_AT = 'deletedAt';
 
-
     protected $casts = [
         'isPublish' => 'boolean',
+        'isPublishHomepage' => 'boolean',
         'date' => 'date',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
@@ -36,7 +37,10 @@ class MediaPartner extends BaseModel
             $dirPath = PathConstant::IMAGES_MEDIA_PARTNER_STORAGE_PUBLIC_PATH();
 
             foreach (['featuredImage', 'logo'] as $column) {
-                if ($mediaPartner->{$column} && is_file($dirPath . $mediaPartner->{$column})) {
+                if (
+                    $mediaPartner->{$column} &&
+                    is_file($dirPath . $mediaPartner->{$column})
+                ) {
                     @unlink($dirPath . $mediaPartner->{$column});
                 }
             }
@@ -46,7 +50,7 @@ class MediaPartner extends BaseModel
     /*
      |--------------------------------------------------------------------------
      | Scopes
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
 
     public function scopeFilter($query, $request)
@@ -55,10 +59,21 @@ class MediaPartner extends BaseModel
 
             if ($request->has('search') && strlen($request->search) > 1) {
                 $query->where(function ($search) use ($request) {
-                    $search->where('title', 'LIKE', "%$request->search%")
-                        ->orWhere('name', 'LIKE', "%$request->search%")
-                        ->orWhere('description', 'LIKE', "%$request->search%");
+                    $search->where('title', 'LIKE', "%{$request->search}%")
+                        ->orWhere('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('description', 'LIKE', "%{$request->search}%");
                 });
+            }
+
+            // Filter homepage publication status
+            if (
+                $request->has('isPublishHomepage') &&
+                $request->input('isPublishHomepage') !== ''
+            ) {
+                $query->where(
+                    'isPublishHomepage',
+                    $request->input('isPublishHomepage')
+                );
             }
 
         })->orderBy('id', 'DESC');
@@ -67,7 +82,7 @@ class MediaPartner extends BaseModel
     /*
      |--------------------------------------------------------------------------
      | Functions
-     |-------------------------------------------------------------------------
+     |--------------------------------------------------------------------------
      */
 
     public function featuredImageUrl()
@@ -76,7 +91,9 @@ class MediaPartner extends BaseModel
             return null;
         }
 
-        return Storage::disk('public')->url(PathConstant::IMAGES_MEDIA_PARTNER . $this->featuredImage);
+        return Storage::disk('public')->url(
+            PathConstant::IMAGES_MEDIA_PARTNER . $this->featuredImage
+        );
     }
 
     public function logoUrl()
@@ -85,6 +102,8 @@ class MediaPartner extends BaseModel
             return null;
         }
 
-        return Storage::disk('public')->url(PathConstant::IMAGES_MEDIA_PARTNER . $this->logo);
+        return Storage::disk('public')->url(
+            PathConstant::IMAGES_MEDIA_PARTNER . $this->logo
+        );
     }
 }
