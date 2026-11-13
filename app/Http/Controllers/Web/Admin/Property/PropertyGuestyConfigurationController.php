@@ -8,6 +8,7 @@ use App\Models\Setting\ApiConfiguration;
 use App\Parser\Setting\ApiConfigurationParser;
 use App\Services\Constant\Access\AccessPermissionName;
 use App\Services\Guesty\GuestyClient;
+use App\Services\Guesty\GuestyTokenLimitException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +25,12 @@ class PropertyGuestyConfigurationController extends Controller
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_VIEW);
                 return $next($request);
-            })->only(['get']);
+            })->only(['get', 'token']);
 
             $this->middleware(function ($request, $next) {
                 has_permission_staff(AccessPermissionName::STAFF_PROPERTY_UPDATE);
                 return $next($request);
-            })->only(['update', 'test']);
+            })->only(['update', 'test', 'refreshToken']);
         }
     }
 
@@ -135,8 +136,6 @@ class PropertyGuestyConfigurationController extends Controller
             errApiConfigurationGet('Guesty has not been configured yet');
         }
 
-        \Illuminate\Support\Facades\Cache::forget(GuestyClient::TOKEN_CACHE_KEY);
-
         try {
             $client->getAccessToken();
 
@@ -148,5 +147,23 @@ class PropertyGuestyConfigurationController extends Controller
 
             error(422, 'Unable to authenticate with Guesty', $e->getMessage());
         }
+    }
+
+    public function token(GuestyClient $client)
+    {
+        return success($client->tokenStatus());
+    }
+
+    public function refreshToken(GuestyClient $client)
+    {
+        try {
+            $client->refreshToken();
+        } catch (GuestyTokenLimitException $e) {
+            error(429, $e->getMessage());
+        } catch (\Throwable $e) {
+            error(422, 'Unable to generate Guesty token', $e->getMessage());
+        }
+
+        return success($client->tokenStatus());
     }
 }

@@ -166,6 +166,8 @@ Route::prefix("properties")
                 Route::get('', [PropertyGuestyConfigurationController::class, 'get']);
                 Route::put('', [PropertyGuestyConfigurationController::class, 'update']);
                 Route::post('test', [PropertyGuestyConfigurationController::class, 'test']);
+                Route::get('token', [PropertyGuestyConfigurationController::class, 'token']);
+                Route::post('token/refresh', [PropertyGuestyConfigurationController::class, 'refreshToken']);
             });
 
         Route::prefix('trash')

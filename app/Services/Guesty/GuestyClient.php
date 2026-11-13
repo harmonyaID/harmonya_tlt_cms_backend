@@ -3,12 +3,16 @@
 namespace App\Services\Guesty;
 
 use App\Models\Setting\ApiConfiguration;
+use App\Models\Setting\GuestyAccessToken;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class GuestyClient
 {
     const TOKEN_CACHE_KEY = 'guesty_access_token';
+    const TOKEN_LOCK_KEY = 'guesty_access_token_lock';
+    const MAX_TOKENS_PER_DAY = 4;
+    const EXPIRY_BUFFER = 300;
     const CONFIG_CACHE_KEY = 'guesty_api_configuration';
     const CONFIG_KEY = 'guesty';
 
@@ -36,36 +40,134 @@ class GuestyClient
     }
 
     /**
-     * Exchange client credentials for an access token (cached until near-expiry).
+     * Guesty allows 5 token requests per 24h, so a token is generated once and
+     * reused from cache, then from the database, until shortly before it expires.
      *
-     * @return string
      * @throws \Exception
      */
-    public function getAccessToken(): string
+    public function getAccessToken(bool $force = false): string
     {
-        return Cache::remember(self::TOKEN_CACHE_KEY, 3600 * 23, function () {
+        if (!$force && ($token = $this->storedToken())) {
+            return $token;
+        }
 
-            $authUrl = $this->credential('auth_url', config('guesty.auth_url'));
+        return Cache::lock(self::TOKEN_LOCK_KEY, 30)->block(15, function () use ($force) {
+            $latest = $this->latestValidToken();
 
-            $response = Http::asForm()->post($authUrl, [
-                'grant_type' => 'client_credentials',
-                'scope' => 'open-api',
-                'client_id' => $this->credential('client_id', config('guesty.client_id')),
-                'client_secret' => $this->credential('client_secret', config('guesty.client_secret')),
-            ]);
-
-            if (!$response->successful()) {
-                throw new \Exception('Unable to authenticate with Guesty: ' . $response->body());
+            if ($latest && (!$force || $latest->createdAt->gt(now()->subMinute()))) {
+                return $latest->accessToken;
             }
 
-            $data = $response->json();
-
-            // Cache for slightly less than the token's real lifetime (default 86400s / 24h)
-            $ttl = ($data['expires_in'] ?? 86400) - 300;
-            Cache::put(self::TOKEN_CACHE_KEY, $data['access_token'], $ttl);
-
-            return $data['access_token'];
+            return $this->requestNewToken();
         });
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function refreshToken(): string
+    {
+        return $this->getAccessToken(true);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function publicToken(): array
+    {
+        $token = $this->getAccessToken();
+        $record = $this->latestValidToken();
+
+        return [
+            'accessToken' => $token,
+            'tokenType' => 'Bearer',
+            'expiresAt' => $record?->expiresAt,
+            'expiresInSeconds' => $record ? max(0, (int) now()->diffInSeconds($record->expiresAt, false)) : 0,
+        ];
+    }
+
+    public function tokenStatus(): array
+    {
+        $latest = $this->latestValidToken();
+        $recent = GuestyAccessToken::where('createdAt', '>=', now()->subDay())->orderBy('createdAt')->get();
+        $remaining = max(0, self::MAX_TOKENS_PER_DAY - $recent->count());
+
+        return [
+            'hasToken' => (bool) $latest,
+            'expiresAt' => $latest?->expiresAt,
+            'expiresInSeconds' => $latest ? max(0, (int) now()->diffInSeconds($latest->expiresAt, false)) : 0,
+            'generatedLast24h' => $recent->count(),
+            'remainingQuota' => $remaining,
+            'nextTokenAvailableAt' => $remaining === 0 ? $recent->first()->createdAt->copy()->addDay() : null,
+        ];
+    }
+
+    protected function storedToken(): ?string
+    {
+        if ($token = Cache::get(self::TOKEN_CACHE_KEY)) {
+            return $token;
+        }
+
+        $latest = $this->latestValidToken();
+
+        if ($latest) {
+            Cache::put(self::TOKEN_CACHE_KEY, $latest->accessToken, $latest->expiresAt->copy()->subSeconds(self::EXPIRY_BUFFER));
+        }
+
+        return $latest?->accessToken;
+    }
+
+    protected function latestValidToken(): ?GuestyAccessToken
+    {
+        return GuestyAccessToken::where('credentialHash', $this->credentialHash())
+            ->where('expiresAt', '>', now()->addSeconds(self::EXPIRY_BUFFER))
+            ->latest('createdAt')
+            ->first();
+    }
+
+    protected function credentialHash(): string
+    {
+        return hash('sha256', $this->credential('client_id', config('guesty.client_id')) . '|' . $this->credential('client_secret', config('guesty.client_secret')));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function requestNewToken(): string
+    {
+        $recent = GuestyAccessToken::where('createdAt', '>=', now()->subDay())->orderBy('createdAt')->get();
+
+        if ($recent->count() >= self::MAX_TOKENS_PER_DAY) {
+            throw new GuestyTokenLimitException(
+                'Guesty token limit reached. Next token can be generated at ' . $recent->first()->createdAt->copy()->addDay()->toDateTimeString()
+            );
+        }
+
+        $response = Http::asForm()->post($this->credential('auth_url', config('guesty.auth_url')), [
+            'grant_type' => 'client_credentials',
+            'scope' => 'open-api',
+            'client_id' => $this->credential('client_id', config('guesty.client_id')),
+            'client_secret' => $this->credential('client_secret', config('guesty.client_secret')),
+        ]);
+
+        if (!$response->successful()) {
+            throw new \Exception('Unable to authenticate with Guesty: ' . $response->body());
+        }
+
+        $data = $response->json();
+        $expiresAt = now()->addSeconds($data['expires_in'] ?? 86400);
+
+        GuestyAccessToken::create([
+            'credentialHash' => $this->credentialHash(),
+            'accessToken' => $data['access_token'],
+            'expiresAt' => $expiresAt,
+        ]);
+
+        GuestyAccessToken::where('createdAt', '<', now()->subDays(7))->delete();
+
+        Cache::put(self::TOKEN_CACHE_KEY, $data['access_token'], $expiresAt->copy()->subSeconds(self::EXPIRY_BUFFER));
+
+        return $data['access_token'];
     }
 
     /**
@@ -94,8 +196,7 @@ class GuestyClient
             ]);
 
         if ($response->status() === 401) {
-            // Token might be stale/revoked, force refresh once and retry
-            Cache::forget(self::TOKEN_CACHE_KEY);
+            $this->refreshToken();
 
             $response = Http::withToken($this->getAccessToken())
                 ->get($this->baseUrl() . '/listings', [
@@ -126,7 +227,7 @@ class GuestyClient
             ->get($this->baseUrl() . $path, $query);
 
         if ($response->status() === 401) {
-            Cache::forget(self::TOKEN_CACHE_KEY);
+            $this->refreshToken();
 
             $response = Http::withToken($this->getAccessToken())
                 ->get($this->baseUrl() . $path, $query);
@@ -154,7 +255,7 @@ class GuestyClient
         $response = $call();
 
         if ($response->status() === 401) {
-            Cache::forget(self::TOKEN_CACHE_KEY);
+            $this->refreshToken();
             $response = $call();
         }
 
