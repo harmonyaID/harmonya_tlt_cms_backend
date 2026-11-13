@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Parser\MediaPartner;
