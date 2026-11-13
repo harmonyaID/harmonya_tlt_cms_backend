@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Boat;
 
 use App\Models\Boat\BoatContactForm;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 use Logia\Core\Validation\Support\FormRequest;
 
 class BoatContactFormRequest extends FormRequest
@@ -24,9 +26,15 @@ class BoatContactFormRequest extends FormRequest
             'fromLocation' => 'required|string|max:255',
             'toLocation' => 'required|string|max:255',
 
-            'departureDate' => 'required|date',
+            'departureDate' => 'required|date_format:d/m/Y',
             'departureTime' => 'required|string|max:50',
-            'returnDate' => 'required_if:ticketType,return|nullable|date|after_or_equal:departureDate',
+
+            'returnDate' => [
+                'required_if:ticketType,return',
+                'nullable',
+                'date_format:d/m/Y',
+            ],
+
             'returnTime' => 'required_if:ticketType,return|nullable|string|max:50',
 
             'adultCount' => 'required|integer|min:1',
@@ -39,16 +47,25 @@ class BoatContactFormRequest extends FormRequest
             'email' => 'required|email|max:255',
 
             'needLandTransport' => 'required|boolean',
-            'departurePickupPoint' => ['required_if:needLandTransport,true,1', 'nullable', $points],
+
+            'departurePickupPoint' => [
+                'required_if:needLandTransport,true,1',
+                'nullable',
+                $points,
+            ],
+
             'departurePickupFlightNumber' => 'nullable|string|max:100',
             'departurePickupArrivalTime' => 'nullable|string|max:50',
+
             'departureDropOffPoint' => ['nullable', $points],
             'departureDropOffLocation' => 'nullable|string|max:255',
             'departureDropOffArrivalTime' => 'nullable|string|max:50',
-            // return leg (only for ticketType = return)
+
+            // Return leg
             'returnPickupPoint' => ['nullable', $points],
             'returnPickupLocation' => 'nullable|string|max:255',
             'returnPickupCheckoutTime' => 'nullable|string|max:50',
+
             'returnDropOffPoint' => ['nullable', $points],
             'returnDropOffLocation' => 'nullable|string|max:255',
 
@@ -60,37 +77,121 @@ class BoatContactFormRequest extends FormRequest
         ];
     }
 
+    public function withValidator(Validator $validator)
+    {
+        $validator->after(function ($validator) {
+
+            if (
+                $this->ticketType !== 'return' ||
+                !$this->filled('departureDate') ||
+                !$this->filled('returnDate')
+            ) {
+                return;
+            }
+
+            // Only compare when both dates have the correct format.
+            if (
+                !$this->isValidDate($this->departureDate) ||
+                !$this->isValidDate($this->returnDate)
+            ) {
+                return;
+            }
+
+            $departureDate = Carbon::createFromFormat(
+                '!d/m/Y',
+                $this->departureDate
+            );
+
+            $returnDate = Carbon::createFromFormat(
+                '!d/m/Y',
+                $this->returnDate
+            );
+
+            if ($returnDate->lt($departureDate)) {
+                $validator->errors()->add(
+                    'returnDate',
+                    'Return date must be after or equal to departure date.'
+                );
+            }
+        });
+    }
+
+    private function isValidDate($date): bool
+    {
+        try {
+            $parsed = Carbon::createFromFormat('!d/m/Y', $date);
+
+            return $parsed && $parsed->format('d/m/Y') === $date;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     protected function passedValidation()
     {
         $clean = [];
 
-        if ($this->ticketType !== 'return') {
-            $clean += ['returnDate' => null, 'returnTime' => null];
+        // Convert departure date: d/m/Y -> Y-m-d
+        $clean['departureDate'] = Carbon::createFromFormat(
+            '!d/m/Y',
+            $this->departureDate
+        )->format('Y-m-d');
+
+        // Convert return date
+        if ($this->ticketType === 'return' && $this->returnDate) {
+            $clean['returnDate'] = Carbon::createFromFormat(
+                '!d/m/Y',
+                $this->returnDate
+            )->format('Y-m-d');
         }
 
-        if (!$this->boolean('needLandTransport') || $this->ticketType !== 'return') {
-            $returnLeg = array_fill_keys([
-                'returnPickupPoint', 'returnPickupLocation', 'returnPickupCheckoutTime',
-                'returnDropOffPoint', 'returnDropOffLocation',
+        if ($this->ticketType !== 'return') {
+            $clean += [
+                'returnDate' => null,
+                'returnTime' => null,
+            ];
+        }
+
+        if (
+            !$this->boolean('needLandTransport') ||
+            $this->ticketType !== 'return'
+        ) {
+            $clean += array_fill_keys([
+                'returnPickupPoint',
+                'returnPickupLocation',
+                'returnPickupCheckoutTime',
+                'returnDropOffPoint',
+                'returnDropOffLocation',
             ], null);
-            $clean += $returnLeg;
         }
 
         if (!$this->boolean('needLandTransport')) {
             $clean += array_fill_keys([
-                'departurePickupPoint', 'departurePickupFlightNumber', 'departurePickupArrivalTime',
-                'departureDropOffPoint', 'departureDropOffLocation', 'departureDropOffArrivalTime',
+                'departurePickupPoint',
+                'departurePickupFlightNumber',
+                'departurePickupArrivalTime',
+                'departureDropOffPoint',
+                'departureDropOffLocation',
+                'departureDropOffArrivalTime',
             ], null);
         }
 
         if (!$this->boolean('bookedThroughTlt')) {
-            $clean += ['tltBookingRefName' => null];
+            $clean['tltBookingRefName'] = null;
         }
 
-        if ($this->boolean('needLandTransport') && $this->departurePickupPoint !== BoatContactForm::PICK_UP_AIRPORT) {
-            $clean += ['departurePickupFlightNumber' => null, 'departurePickupArrivalTime' => null];
+        if (
+            $this->boolean('needLandTransport') &&
+            $this->departurePickupPoint !== BoatContactForm::PICK_UP_AIRPORT
+        ) {
+            $clean += [
+                'departurePickupFlightNumber' => null,
+                'departurePickupArrivalTime' => null,
+            ];
         }
 
-        $this->merge($clean + ['infantCount' => $this->infantCount ?? 0]);
+        $clean['infantCount'] = $this->infantCount ?? 0;
+
+        $this->merge($clean);
     }
 }
