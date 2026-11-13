@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 
 class BoatContactFormAlgo
 {
-    public function __construct(protected BoatContactForm|int|null $contactForm = null)
+    public function __construct(protected BoatContactForm|int|null $contactForm = null) 
     {
         if (is_int($this->contactForm)) {
             $this->contactForm = BoatContactForm::find($this->contactForm);
@@ -31,7 +31,10 @@ class BoatContactFormAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->contactForm = BoatContactForm::create($request->all());
+                $this->contactForm = BoatContactForm::create(
+                    $request->all()
+                );
+
                 if (!$this->contactForm) {
                     errBoatContactFormSave();
                 }
@@ -40,18 +43,28 @@ class BoatContactFormAlgo
                     ->setReference($this->contactForm)
                     ->setType(ActivityType::BOAT_CONTACT_FORM)
                     ->setAction(ActivityAction::CREATE)
-                    ->log("New boat booking form submitted. Name: " . $this->contactForm->name);
+                    ->log(
+                        "New boat booking form submitted. Name: " .
+                            $this->contactForm->name
+                    );
             });
 
+            // Email notification
             if (config('mail.notification_to')) {
                 try {
                     Mail::to(config('mail.notification_to'))
-                        ->queue(new BoatContactFormMail($this->contactForm));
+                        ->queue(
+                            new BoatContactFormMail($this->contactForm)
+                        );
                 } catch (\Throwable $e) {
-                    logger()->error('Failed to send BoatContactFormMail: ' . $e->getMessage());
+                    logger()->error(
+                        'Failed to send BoatContactFormMail: ' .
+                            $e->getMessage()
+                    );
                 }
             }
 
+            // Staff notification
             app(NotificationService::class)->notifyStaff(
                 NotificationType::BOAT_INQUIRY,
                 'New boat inquiry',
@@ -59,8 +72,10 @@ class BoatContactFormAlgo
                 $this->contactForm
             );
 
-            return success($this->contactForm->fresh()->load('boat'));
-        } catch (\Error $error) {
+            return success(
+                $this->contactForm->fresh()->load('boat')
+            );
+        } catch (\Throwable $error) {
             exception($error);
         }
     }
@@ -79,11 +94,14 @@ class BoatContactFormAlgo
                     ->setReference($this->contactForm)
                     ->setType(ActivityType::BOAT_CONTACT_FORM)
                     ->setAction(ActivityAction::DELETE)
-                    ->log("Delete boat contact form. Name: " . $this->contactForm->name);
+                    ->log(
+                        "Delete boat contact form. Name: " .
+                            $this->contactForm->name
+                    );
             });
 
             return success();
-        } catch (\Error $error) {
+        } catch (\Throwable $error) {
             exception($error);
         }
     }
@@ -93,20 +111,28 @@ class BoatContactFormAlgo
         try {
 
             DB::transaction(function () {
-                $this->contactForm->update(['isRead' => true]);
+
+                $this->contactForm->update([
+                    'isRead' => true,
+                ]);
             });
 
-            return success($this->contactForm->fresh()->load('boat'));
-        } catch (\Error $error) {
+            return success(
+                $this->contactForm->fresh()->load('boat')
+            );
+        } catch (\Throwable $error) {
             exception($error);
         }
     }
 
-    public function changeStatus(ChangeMailStatusRequest $request){
+    public function changeStatus(ChangeMailStatusRequest $request)
+    {
         $this->contactForm->update([
             'statusId' => $request->statusId,
         ]);
 
-        return success($this->contactForm->fresh()->load('boat'));
+        return success(
+            $this->contactForm->fresh()->load('boat')
+        );
     }
 }
