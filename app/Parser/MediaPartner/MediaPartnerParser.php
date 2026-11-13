@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Parser\MediaPartner;
@@ -7,7 +8,6 @@ use Logia\Core\Parser\BaseParser;
 
 class MediaPartnerParser extends BaseParser
 {
-
     /**
      * @param $data
      *
@@ -31,6 +31,7 @@ class MediaPartnerParser extends BaseParser
             'url' => $data->url,
             'type' => MediaPartnerType::idName($data->typeId),
             'isPublish' => $data->isPublish,
+            'isPublishHomepage' => $data->isPublishHomepage,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -57,6 +58,7 @@ class MediaPartnerParser extends BaseParser
             'logo' => $data->logoUrl(),
             'url' => $data->url,
             'isPublish' => $data->isPublish,
+            'isPublishHomepage' => $data->isPublishHomepage,
             'type' => MediaPartnerType::idName($data->typeId),
         ];
     }
