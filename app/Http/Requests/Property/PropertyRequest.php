@@ -28,7 +28,7 @@ class PropertyRequest extends FormRequest
             'roomType' => 'nullable|string',
             'occupancy' => 'nullable|integer|min:0',
             'propertySize' => 'nullable|numeric|min:0',
-            'statusId' => 'required|integer',
+            'statusId' => 'nullable|integer',
             'cleaningStatusId' => 'nullable|integer',
             'sourceTypeId' => 'nullable|integer|exists:property_source_types,id',
             'currency' => 'nullable|string|max:10',
@@ -103,7 +103,7 @@ class PropertyRequest extends FormRequest
             'features.*.featureId' => 'required_with:features|integer|exists:setting_property_features,id',
             'features.*.value' => 'nullable|string',
 
-            'floorplanImage' => [ 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', ],
+            'floorplanImage' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120',],
 
             'whyYoullLoveThis' => 'nullable|array',
             'whyYoullLoveThis.*.title' => 'required_with:whyYoullLoveThis|string|max:255',

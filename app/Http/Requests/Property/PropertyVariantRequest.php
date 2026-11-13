@@ -29,7 +29,7 @@ class PropertyVariantRequest extends FormRequest
             'roomType' => 'nullable|string',
             'occupancy' => 'nullable|integer|min:0',
             'propertySize' => 'nullable|numeric|min:0',
-            'statusId' => 'required|integer',
+            'statusId' => 'nullable|integer',
             'cleaningStatusId' => 'nullable|integer',
             'sourceTypeId' => 'nullable|integer|exists:property_source_types,id',
             'currency' => 'nullable|string|max:10',
