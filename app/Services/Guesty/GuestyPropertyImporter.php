@@ -3,7 +3,6 @@
 namespace App\Services\Guesty;
 
 use App\Models\Property\Property;
-use App\Models\Property\PropertyPhoto;
 use App\Models\Property\PropertyVariant;
 use App\Models\Property\PropertyVariantAddress;
 use App\Models\Property\PropertyVariantAvailability;
@@ -29,6 +28,7 @@ use App\Services\Constant\Property\PropertyListingType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Storage\PathConstant;
+use App\Services\Property\PropertyPhotoSyncService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -340,34 +340,8 @@ class GuestyPropertyImporter
     {
         $parent = $variant->parentPropertyId ? Property::find($variant->parentPropertyId) : null;
 
-        if (!$parent || $parent->photos()->exists()) {
-            return;
-        }
-
-        $first = $parent->variants()->orderBy('id')->first();
-
-        if (!$first || $first->id !== $variant->id) {
-            return;
-        }
-
-        $dirPath = PathConstant::IMAGES_PROPERTY_PHOTO_STORAGE_PUBLIC_PATH();
-
-        foreach ($first->photos()->get() as $photo) {
-            $source = $dirPath . $photo->path;
-
-            if (!is_file($source)) {
-                continue;
-            }
-
-            $filename = 'property-' . $parent->id . '-' . $photo->path;
-            copy($source, $dirPath . $filename);
-
-            PropertyPhoto::create([
-                'propertyId' => $parent->id,
-                'path' => $filename,
-                'caption' => $photo->caption,
-                'order' => $photo->order,
-            ]);
+        if ($parent) {
+            app(PropertyPhotoSyncService::class)->syncFromFirstVariant($parent);
         }
     }
 
