@@ -3,6 +3,7 @@
 namespace App\Services\Property;
 
 use App\Models\Property\Property;
+use App\Models\Property\PropertyAddress;
 use App\Models\Property\PropertyPhoto;
 use App\Services\Constant\Storage\PathConstant;
 
@@ -60,5 +61,41 @@ class PropertyPhotoSyncService
         }
 
         return $copied;
+    }
+
+    /**
+     * Copy the addresses of the property's first variant (lowest id) to the property itself.
+     * Returns the number of addresses copied; 0 when skipped.
+     */
+    public function syncAddressesFromFirstVariant(Property $property, bool $force = false): int
+    {
+        if ($property->addresses()->exists() && !$force) {
+            return 0;
+        }
+
+        $first = $property->variants()->orderBy('id')->first();
+        $addresses = $first ? $first->addresses()->get() : collect();
+
+        if ($addresses->isEmpty()) {
+            return 0;
+        }
+
+        if ($force) {
+            $property->addresses()->delete();
+        }
+
+        foreach ($addresses as $address) {
+            PropertyAddress::create([
+                'propertyId' => $property->id,
+                'typeId' => $address->typeId,
+                'address' => $address->address,
+                'buildingName' => $address->buildingName,
+                'latitude' => $address->latitude,
+                'longitude' => $address->longitude,
+                'zipCode' => $address->zipCode,
+            ]);
+        }
+
+        return $addresses->count();
     }
 }

@@ -73,6 +73,7 @@ class GuestyPropertyImporter
 
             $this->syncParent($property, $listing);
             $this->syncAddress($property, $listing);
+            $this->syncParentAddress($property);
             $this->syncGuestInfo($property, $listing);
             $this->syncAvailability($property, $listing);
             $this->syncPricing($property, $listing);
@@ -333,6 +334,15 @@ class GuestyPropertyImporter
                 'caption' => $picture['caption'] ?? null,
                 'order' => $index,
             ]);
+        }
+    }
+
+    private function syncParentAddress(PropertyVariant $variant): void
+    {
+        $parent = $variant->parentPropertyId ? Property::find($variant->parentPropertyId) : null;
+
+        if ($parent) {
+            app(PropertyPhotoSyncService::class)->syncAddressesFromFirstVariant($parent);
         }
     }
 
