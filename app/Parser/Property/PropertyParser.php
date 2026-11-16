@@ -130,6 +130,7 @@ class PropertyParser extends BaseParser
                 return [
                     'id' => $amenity->id,
                     'name' => $amenity->name,
+                    'icon' => $amenity->iconUrl(),
                 ];
             }),
             'tags' => $data->tags->map(function ($tag) {
@@ -172,6 +173,8 @@ class PropertyParser extends BaseParser
                 return [
                     'id' => $amenity->id,
                     'name' => $amenity->name,
+                    'icon' => $amenity->iconUrl(),
+
                 ];
             }),
             'rooms' => $data->rooms->map(function ($room) {
