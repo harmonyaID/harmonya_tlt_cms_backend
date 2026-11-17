@@ -76,7 +76,7 @@ class PropertyVariantAlgo
                     ->log("Enter new property variant: " . $this->property->nickname);
             });
 
-            app(GuestyListingPusher::class)->push($this->property);
+            // app(GuestyListingPusher::class)->push($this->property);
 
             return success($this->property->load($this->relations()));
         } catch (\Error $error) {
@@ -115,7 +115,7 @@ class PropertyVariantAlgo
                     ->log("Update property variant: " . $this->property->nickname);
             });
 
-            app(GuestyListingPusher::class)->push($this->property);
+            // app(GuestyListingPusher::class)->push($this->property);
 
             return success($this->property->load($this->relations()));
         } catch (\Error $error) {
