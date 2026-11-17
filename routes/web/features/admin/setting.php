@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\Admin\Setting\SettingAnalyticsController;
 use App\Http\Controllers\Web\Admin\Setting\SettingApiConfigurationController;
 use App\Http\Controllers\Web\Admin\Setting\SettingController;
 use App\Http\Controllers\Web\Admin\Setting\SettingNotificationCredentialController;
+use App\Http\Controllers\Web\Admin\Setting\SettingPropertyFeatureController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("settings")
@@ -37,6 +38,15 @@ Route::prefix("settings")
                 Route::delete('{id}', [SettingAmenityController::class, 'delete']);
             });
 
+        Route::prefix("property-features")
+            ->group(function () {
+                Route::get('', [SettingPropertyFeatureController::class, 'get']);
+                Route::post('', [SettingPropertyFeatureController::class, 'create']);
+                Route::get('{id}', [SettingPropertyFeatureController::class, 'detail']);
+                Route::put('{id}', [SettingPropertyFeatureController::class, 'update']);
+                Route::delete('{id}', [SettingPropertyFeatureController::class, 'delete']);
+            });
+            
         // Open API Features - generic 3rd-party API credential management
         Route::prefix("api-configurations")
             ->group(function () {
@@ -58,15 +68,14 @@ Route::prefix("settings")
 
         Route::prefix("notification-credentials")
             ->group(function () {
-                Route::get('', [SettingNotificationCredentialController::class,'get']);
-                Route::post('', [SettingNotificationCredentialController::class,'create']);
-                Route::get('{id}', [SettingNotificationCredentialController::class,'detail']);
-                Route::put('{id}', [SettingNotificationCredentialController::class,'update']);
-                Route::delete('{id}', [SettingNotificationCredentialController::class,'delete']);
-                Route::get('statics/provider-types', [ SettingNotificationCredentialController::class, 'providerType']);
-                Route::get('statics/postmarks', [ SettingNotificationCredentialController::class, 'postmark']);
-                Route::get('statics/firebases', [ SettingNotificationCredentialController::class, 'firebase']);
-
+                Route::get('', [SettingNotificationCredentialController::class, 'get']);
+                Route::post('', [SettingNotificationCredentialController::class, 'create']);
+                Route::get('{id}', [SettingNotificationCredentialController::class, 'detail']);
+                Route::put('{id}', [SettingNotificationCredentialController::class, 'update']);
+                Route::delete('{id}', [SettingNotificationCredentialController::class, 'delete']);
+                Route::get('statics/provider-types', [SettingNotificationCredentialController::class, 'providerType']);
+                Route::get('statics/postmarks', [SettingNotificationCredentialController::class, 'postmark']);
+                Route::get('statics/firebases', [SettingNotificationCredentialController::class, 'firebase']);
             });
 
         Route::get('{id}', [SettingController::class, 'detail']);

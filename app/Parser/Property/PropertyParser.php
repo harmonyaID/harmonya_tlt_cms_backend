@@ -143,6 +143,17 @@ class PropertyParser extends BaseParser
             'acf' => AcfParser::forContent($data->acf),
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
             'coverPhoto' => $data->coverPhotoUrl(),
+            'features' => $data->features->map(function ($feature) {
+                return [
+                    'id' => $feature->id,
+                    'name' => $feature->name,
+                    'icon' => $feature->icon,
+                    'value' => $feature->pivot->value,
+                ];
+            })->values(),
+            'bedrooms' => $data->featureValue('Bedroom'),
+            'bathrooms' => $data->featureValue('Bathroom'),
+
         ];
     }
 
@@ -196,6 +207,9 @@ class PropertyParser extends BaseParser
             'coverPhoto' => $data->coverPhotoUrl(),
             'address' => optional($data->addresses->first())->address,
             'seo' => SeoParser::first($data->seo),
+            'bedrooms' => $data->featureValue('Bedroom'),
+            'bathrooms' => $data->featureValue('Bathroom'),
+
         ];
     }
 }

@@ -338,6 +338,13 @@ class AccessPermissionName
     // System Cache
     const STAFF_SYSTEM_CACHE_RUN = AccessGroup::STAFF . '.system-cache.run';
 
+    // Property Feature
+    const STAFF_PROPERTY_FEATURE = AccessGroup::STAFF . '.property-feature.*';
+    const STAFF_PROPERTY_FEATURE_VIEW = AccessGroup::STAFF . '.property-feature.view';
+    const STAFF_PROPERTY_FEATURE_CREATE = AccessGroup::STAFF . '.property-feature.create';
+    const STAFF_PROPERTY_FEATURE_UPDATE = AccessGroup::STAFF . '.property-feature.update';
+    const STAFF_PROPERTY_FEATURE_DELETE = AccessGroup::STAFF . '.property-feature.delete';
+
     const STAFF_OPTION = [
         self::STAFF_DASHBOARD,
         self::STAFF_DASHBOARD_VIEW,
@@ -347,6 +354,11 @@ class AccessPermissionName
         self::STAFF_SETTING_CREATE,
         self::STAFF_SETTING_UPDATE,
         self::STAFF_SETTING_DELETE,
+        self::STAFF_PROPERTY_FEATURE,
+        self::STAFF_PROPERTY_FEATURE_VIEW,
+        self::STAFF_PROPERTY_FEATURE_CREATE,
+        self::STAFF_PROPERTY_FEATURE_UPDATE,
+        self::STAFF_PROPERTY_FEATURE_DELETE,
         self::STAFF_STAFF,
         self::STAFF_STAFF_VIEW,
         self::STAFF_STAFF_CREATE,
@@ -497,7 +509,7 @@ class AccessPermissionName
         self::STAFF_EXPERIENCE_TAG_CREATE,
         self::STAFF_EXPERIENCE_TAG_UPDATE,
         self::STAFF_EXPERIENCE_TAG_DELETE,
-        
+
         self::STAFF_ISLAND_GUIDE_TYPE,
         self::STAFF_ISLAND_GUIDE_TYPE_VIEW,
         self::STAFF_ISLAND_GUIDE_TYPE_CREATE,

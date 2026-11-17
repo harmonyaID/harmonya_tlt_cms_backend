@@ -142,6 +142,7 @@ class PropertyVariantParser extends BaseParser
                 return [
                     'id' => $amenity->id,
                     'name' => $amenity->name,
+                    'icon' => $amenity->iconUrl(),
                 ];
             }),
             'tags' => $data->tags->map(function ($tag) {
