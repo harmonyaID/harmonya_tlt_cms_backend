@@ -5,6 +5,7 @@ namespace App\Algorithms\Setting;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,6 +15,7 @@ class SettingPropertyFeatureAlgo
     {
         if (is_int($this->propertyFeature)) {
             $this->propertyFeature = SettingPropertyFeature::find($this->propertyFeature);
+
             if (!$this->propertyFeature) {
                 errPropertyFeatureGet();
             }
@@ -25,10 +27,15 @@ class SettingPropertyFeatureAlgo
         try {
             DB::transaction(function () use ($request) {
 
-                $this->propertyFeature = SettingPropertyFeature::create($request->all() + created_by());
+                $this->propertyFeature = SettingPropertyFeature::create(
+                    $request->except(['icon', 'deleteIcon']) + created_by()
+                );
+
                 if (!$this->propertyFeature) {
                     errPropertyFeatureSave();
                 }
+
+                $this->uploadIcon($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->propertyFeature)
@@ -37,7 +44,8 @@ class SettingPropertyFeatureAlgo
                     ->log("Enter new property feature: " . $this->propertyFeature->name);
             });
 
-            return success($this->propertyFeature);
+            return success($this->propertyFeature->fresh());
+
         } catch (\Error $error) {
             exception($error);
         }
@@ -48,7 +56,11 @@ class SettingPropertyFeatureAlgo
         try {
             DB::transaction(function () use ($request) {
 
-                $this->propertyFeature->update($request->all());
+                $this->propertyFeature->update(
+                    $request->except(['icon', 'deleteIcon'])
+                );
+
+                $this->uploadIcon($request);
 
                 activity()->setCausedBy()
                     ->setReference($this->propertyFeature)
@@ -57,7 +69,8 @@ class SettingPropertyFeatureAlgo
                     ->log("Update property feature: " . $this->propertyFeature->name);
             });
 
-            return success($this->propertyFeature);
+            return success($this->propertyFeature->fresh());
+
         } catch (\Error $error) {
             exception($error);
         }
@@ -80,8 +93,48 @@ class SettingPropertyFeatureAlgo
             });
 
             return success();
+
         } catch (\Error $error) {
             exception($error);
+        }
+    }
+
+    private function uploadIcon(Request $request): void
+    {
+        $dirPath = PathConstant::IMAGES_PROPERTY_FEATURE_STORAGE_PUBLIC_PATH();
+
+        if ($request->hasFile('icon') && $request->file('icon')->isValid()) {
+
+            if (!file_exists($dirPath)) {
+                mkdir($dirPath, 0777, true);
+            }
+
+            $this->removeIconFile($dirPath);
+
+            $image = $request->file('icon');
+            $filename = filename($image, $this->propertyFeature->name);
+
+            $image->move($dirPath, $filename);
+
+            $this->propertyFeature->icon = $filename;
+            $this->propertyFeature->save();
+
+        } elseif ($request->boolean('deleteIcon')) {
+
+            $this->removeIconFile($dirPath);
+
+            $this->propertyFeature->icon = null;
+            $this->propertyFeature->save();
+        }
+    }
+
+    private function removeIconFile(string $dirPath): void
+    {
+        if (
+            $this->propertyFeature->icon &&
+            file_exists($dirPath . $this->propertyFeature->icon)
+        ) {
+            unlink($dirPath . $this->propertyFeature->icon);
         }
     }
 }

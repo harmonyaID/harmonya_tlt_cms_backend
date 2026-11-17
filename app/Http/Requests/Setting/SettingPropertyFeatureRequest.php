@@ -15,9 +15,10 @@ class SettingPropertyFeatureRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'icon' => 'nullable|string',
+            'icon' => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
             'hasValue' => 'nullable|boolean',
             'order' => 'nullable|integer',
+            'deleteIcon' => 'nullable|boolean',
         ];
     }
 }

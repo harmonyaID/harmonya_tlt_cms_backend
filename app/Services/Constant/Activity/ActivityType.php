@@ -50,6 +50,7 @@ class ActivityType extends BaseCodeName
     const PROPERTY_CONTACT_FORM = 'property_contact_form';
     const PROPERTY_INQUIRY_FORM = 'property_inquiry_form';
     const PROPERTY_REVIEW = 'property_review';
+    const PROPERTY_FEATURE = 'property_feature';
     const PROPERTY_VARIANT = 'property_variant';
     const PROPERTY_VARIANT_REVIEW = 'property_variant_review';
     const API_CONFIGURATION = 'api_configuration';

@@ -46,7 +46,6 @@ Route::prefix("settings")
                 Route::put('{id}', [SettingPropertyFeatureController::class, 'update']);
                 Route::delete('{id}', [SettingPropertyFeatureController::class, 'delete']);
             });
-            
         // Open API Features - generic 3rd-party API credential management
         Route::prefix("api-configurations")
             ->group(function () {
