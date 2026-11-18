@@ -66,7 +66,10 @@ class PropertyController extends Controller
     public function get(Request $request)
     {
         $properties = Property::filter($request)
-        ->with(['type', 'photos', 'variants.photos', 'addresses', 'seo'])
+        ->with([
+            'type', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
+            'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
+        ])
         ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
@@ -76,7 +79,8 @@ class PropertyController extends Controller
     {
         $property = Property::with([
             'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
+            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf', 'features',
+            'variants.photos',
         ])->find($id);
 
         if (!$property) {

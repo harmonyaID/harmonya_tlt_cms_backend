@@ -8,6 +8,7 @@ use App\Models\Setting\Setting;
 use App\Parser\Property\PropertyParser;
 use App\Services\Constant\Property\PropertyStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PropertyController extends Controller
 {
@@ -16,7 +17,10 @@ class PropertyController extends Controller
         $request->merge(['statusId' => PropertyStatus::ACTIVE_ID]);
 
         $properties = Property::filter($request)
-            ->with(['type', 'photos', 'addresses','seo'])
+            ->with([
+                'type', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
+                'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
+            ])
             ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
@@ -28,7 +32,8 @@ class PropertyController extends Controller
         ->bySlugOrId($idOrSlug)    
         ->with([
                 'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-                'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf',
+                'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf', 'features',
+                'variants.photos',
             ])
             ->first();
 
@@ -62,23 +67,36 @@ class PropertyController extends Controller
         $radiusKm = (float)(Setting::ofName('property_nearby_radius_km')->value('value') ?? 5);
         $limit = (int)(Setting::ofName('property_nearby_limit')->value('value') ?? 10);
 
-        $haversine = "(6371 * acos(cos(radians($origin->latitude))
-            * cos(radians(property_addresses.latitude))
-            * cos(radians(property_addresses.longitude) - radians($origin->longitude))
-            + sin(radians($origin->latitude)) * sin(radians(property_addresses.latitude))))";
+        $latitude = (float) $origin->latitude;
+        $longitude = (float) $origin->longitude;
+
+        // LEAST/GREATEST keep acos() inside [-1, 1]: float rounding can push it just above 1
+        // for an address at the exact same spot, which makes acos() return NULL.
+        $haversine = "6371 * acos(LEAST(1, GREATEST(-1,
+            cos(radians(?)) * cos(radians(latitude))
+            * cos(radians(longitude) - radians(?))
+            + sin(radians(?)) * sin(radians(latitude)))))";
+
+        // One row per property (its closest address), so a property with several
+        // addresses is not listed more than once.
+        $distances = DB::table('property_addresses')
+            ->selectRaw("propertyId, MIN($haversine) AS distanceKm", [$latitude, $longitude, $latitude])
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->groupBy('propertyId');
 
         $nearby = Property::query()
-            ->select('properties.*')
-            ->selectRaw("$haversine AS distanceKm")
-            ->join('property_addresses', 'property_addresses.propertyId', '=', 'properties.id')
+            ->select('properties.*', 'nearby.distanceKm')
+            ->joinSub($distances, 'nearby', 'nearby.propertyId', '=', 'properties.id')
             ->where('properties.id', '!=', $property->id)
             ->where('properties.statusId', PropertyStatus::ACTIVE_ID)
-            ->whereNotNull('property_addresses.latitude')
-            ->whereNotNull('property_addresses.longitude')
-            ->havingRaw("$haversine <= ?", [$radiusKm])
-            ->orderBy('distanceKm')
+            ->where('nearby.distanceKm', '<=', $radiusKm)
+            ->orderBy('nearby.distanceKm')
             ->limit($limit)
-            ->with(['type', 'photos', 'addresses'])
+            ->with([
+                'type', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
+                'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
+            ])
             ->get();
 
         return success($nearby->map(function ($item) {

@@ -6,6 +6,7 @@ use App\Models\Property\Property;
 use App\Models\Property\PropertyAddress;
 use App\Models\Property\PropertyPhoto;
 use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Support\Facades\DB;
 
 class PropertyPhotoSyncService
 {
@@ -97,5 +98,65 @@ class PropertyPhotoSyncService
         }
 
         return $addresses->count();
+    }
+
+    /**
+     * Fill the property's numeric features (e.g. Bedroom, Bed, Bathroom) from its variants,
+     * using the highest value of all variants ("up to X").
+     *
+     * Without $force a value is only raised, never lowered, so a higher value set by an
+     * admin is kept. With $force the value is replaced by the variants' highest value.
+     * Returns the number of features written.
+     */
+    public function syncFeaturesFromVariants(Property $property, bool $force = false): int
+    {
+        $variantIds = $property->variants()->pluck('id');
+
+        if ($variantIds->isEmpty()) {
+            return 0;
+        }
+
+        $highest = [];
+
+        DB::table('property_variant_feature')
+            ->whereIn('propertyVariantId', $variantIds)
+            ->whereNotNull('value')
+            ->get(['featureId', 'value'])
+            ->each(function ($row) use (&$highest) {
+                if (!is_numeric($row->value)) {
+                    return;
+                }
+
+                $value = $row->value + 0;
+
+                if (!isset($highest[$row->featureId]) || $value > $highest[$row->featureId]) {
+                    $highest[$row->featureId] = $value;
+                }
+            });
+
+        if (!$highest) {
+            return 0;
+        }
+
+        $current = $property->features()->get()
+            ->mapWithKeys(fn ($feature) => [$feature->id => $feature->pivot->value]);
+
+        $syncData = [];
+
+        foreach ($highest as $featureId => $value) {
+            $old = $current[$featureId] ?? null;
+
+            if (!$force && is_numeric($old) && $old + 0 >= $value) {
+                continue;
+            }
+
+            $syncData[$featureId] = ['value' => (string) $value];
+        }
+
+        if ($syncData) {
+            $property->features()->syncWithoutDetaching($syncData);
+        }
+
+        return count($syncData);
     }
 }

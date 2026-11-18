@@ -53,10 +53,35 @@ class GuestyPropertyImporter
      */
     public function import(array $listing): PropertyVariant
     {
-        // Fetch Spaces before starting database transaction.
+        // Every Guesty API call runs before the database transaction, so a slow
+        // or failing request never keeps the transaction (and its locks) open.
         $spaces = $this->fetchSpaces($listing);
+        $guestyParent = $this->fetchGuestyParent($listing);
 
-        return DB::transaction(function () use ($listing, $spaces) {
+        try {
+            $property = $this->importInTransaction($listing, $spaces, $guestyParent);
+        } catch (\Throwable $e) {
+            // A parent created in the rolled back transaction no longer exists.
+            $this->parentCache = [];
+
+            throw $e;
+        }
+
+        // Photo downloads also run outside the transaction.
+        if ($this->withPhotos) {
+            $this->syncPhotos($property, $listing);
+            $this->syncParentPhotos($property);
+        }
+
+        return $property;
+    }
+
+    private function importInTransaction(
+        array $listing,
+        array $spaces,
+        ?array $guestyParent
+    ): PropertyVariant {
+        return DB::transaction(function () use ($listing, $spaces, $guestyParent) {
 
             $property = PropertyVariant::updateOrCreate(
                 ['guestyId' => $listing['_id']],
@@ -109,7 +134,7 @@ class GuestyPropertyImporter
                 ]
             );
 
-            $this->syncParent($property, $listing);
+            $this->syncParent($property, $listing, $guestyParent);
 
             $this->syncAddress($property, $listing);
 
@@ -132,10 +157,7 @@ class GuestyPropertyImporter
             // Property Features: Bedroom, Bed, Bathroom
             $this->syncFeatures($property, $listing, $spaces);
 
-            if ($this->withPhotos) {
-                $this->syncPhotos($property, $listing);
-                $this->syncParentPhotos($property);
-            }
+            $this->syncParentFeatures($property);
 
             $this->syncSeo($property, $listing);
 
@@ -223,12 +245,12 @@ class GuestyPropertyImporter
         $bathrooms = null;
 
         if ($hasSpaces) {
-            $bathrooms = collect($spaces)
-                ->whereIn('type', [
-                    'FULL_BATHROOM',
-                    'HALF_BATHROOM',
-                ])
-                ->count();
+            // A half bathroom (toilet + sink, no shower) counts as 0.5, like Guesty's own "bathrooms".
+            $bathrooms = collect($spaces)->sum(fn ($space) => match ($space['type'] ?? null) {
+                'FULL_BATHROOM' => 1,
+                'HALF_BATHROOM' => 0.5,
+                default => 0,
+            });
         } else {
             $bathrooms = $listing['bathrooms'] ?? null;
         }
@@ -307,24 +329,46 @@ class GuestyPropertyImporter
             ?? $listing['nickname']
             ?? 'Untitled';
 
-        $slug = Str::slug($listing['nickname'] ?? $title);
+        $data = [
+            'title' => $title,
+            'description' => $description['summary'] ?? null,
+        ];
 
-        $property->seo()->updateOrCreate(
-            [
-                'slug' => $slug,
-            ],
-            [
-                'info' => null,
-                'title' => $title,
-                'slug' => $slug,
-                'description' => $description['summary'] ?? null,
-                'metaKeyword' => null,
-                'canonicalUrl' => null,
-                'robotIndex' => true,
-                'robotFollow' => true,
-                'schemaMarkup' => null,
-            ]
-        );
+        // Existing SEO: keep its slug (URLs stay the same when the Guesty nickname changes)
+        // and the fields an admin may have filled in (keywords, canonical URL, schema, ...).
+        if ($seo = $property->seo()->first()) {
+            $seo->update($data);
+
+            return;
+        }
+
+        $base = Str::slug($listing['nickname'] ?? $title)
+            ?: 'property-variant-' . $property->id;
+
+        $property->seo()->create($data + [
+            'info' => null,
+            'slug' => $this->uniqueSlug($base),
+            'metaKeyword' => null,
+            'canonicalUrl' => null,
+            'robotIndex' => true,
+            'robotFollow' => true,
+            'schemaMarkup' => null,
+        ]);
+    }
+
+    /**
+     * $base, or $base-2, $base-3, ... when the slug is already used by any content.
+     */
+    private function uniqueSlug(string $base): string
+    {
+        $slug = $base;
+        $i = 2;
+
+        while (ContentSeo::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $i++;
+        }
+
+        return $slug;
     }
 
     /*
@@ -624,6 +668,8 @@ class GuestyPropertyImporter
             mkdir($dirPath, 0777, true);
         }
 
+        $rows = [];
+
         foreach ($pictures as $index => $picture) {
             $url = $picture['original'] ?? null;
 
@@ -638,7 +684,7 @@ class GuestyPropertyImporter
             }
 
             $extension = pathinfo(
-                parse_url($url, PHP_URL_PATH),
+                (string) parse_url($url, PHP_URL_PATH),
                 PATHINFO_EXTENSION
             ) ?: 'jpg';
 
@@ -646,13 +692,21 @@ class GuestyPropertyImporter
 
             file_put_contents($dirPath . $filename, $bytes);
 
-            PropertyVariantPhoto::create([
+            $rows[] = [
                 'propertyVariantId' => $property->id,
                 'path' => $filename,
                 'caption' => $picture['caption'] ?? null,
                 'order' => $index,
-            ]);
+            ];
         }
+
+        // Rows are saved only once every download is done: when a download fails
+        // half way, no photo row exists and the next import tries again.
+        DB::transaction(function () use ($rows) {
+            foreach ($rows as $row) {
+                PropertyVariantPhoto::create($row);
+            }
+        });
     }
 
     /*
@@ -670,6 +724,21 @@ class GuestyPropertyImporter
         if ($parent) {
             app(PropertyPhotoSyncService::class)
                 ->syncAddressesFromFirstVariant($parent);
+        }
+    }
+
+    /**
+     * Raise the parent's Bedroom / Bed / Bathroom to the highest value of its variants.
+     */
+    private function syncParentFeatures(PropertyVariant $variant): void
+    {
+        $parent = $variant->parentPropertyId
+            ? Property::find($variant->parentPropertyId)
+            : null;
+
+        if ($parent) {
+            app(PropertyPhotoSyncService::class)
+                ->syncFeaturesFromVariants($parent);
         }
     }
 
@@ -719,13 +788,14 @@ class GuestyPropertyImporter
 
     private function syncParent(
         PropertyVariant $variant,
-        array $listing
+        array $listing,
+        ?array $guestyParent
     ): void {
         if ($variant->parentPropertyId) {
             return;
         }
 
-        $parent = $this->parentFromGuesty($listing)
+        $parent = $this->parentFromGuesty($guestyParent, $listing)
             ?? $this->parentFromTitle($listing);
 
         if ($parent) {
@@ -735,9 +805,22 @@ class GuestyPropertyImporter
         }
     }
 
-    private function parentFromGuesty(array $listing): ?Property
+    /**
+     * Guesty data of a Multi-Unit child's parent, fetched before the transaction.
+     * Returns ['guestyId' => ..., 'name' => ...], or null when there is no
+     * Guesty parent to look for. 'name' is only fetched when the parent is not
+     * in the database yet.
+     */
+    private function fetchGuestyParent(array $listing): ?array
     {
         if (($listing['type'] ?? null) !== 'MTL_CHILD') {
+            return null;
+        }
+
+        // The parent of an existing variant is never changed: no API call needed.
+        if (!empty($listing['_id']) && PropertyVariant::where('guestyId', $listing['_id'])
+            ->whereNotNull('parentPropertyId')
+            ->exists()) {
             return null;
         }
 
@@ -762,36 +845,57 @@ class GuestyPropertyImporter
             return null;
         }
 
-        return $this->parentCache['g:' . $parentGuestyId]
+        $parent = ['guestyId' => $parentGuestyId, 'name' => null];
+
+        if (isset($this->parentCache['g:' . $parentGuestyId])
+            || Property::where('guestyId', $parentGuestyId)->exists()) {
+            return $parent;
+        }
+
+        try {
+            $data = $this->client->get(
+                '/listings/' . $parentGuestyId,
+                ['fields' => '_id title nickname type']
+            );
+
+            $parent['name'] = trim((string) (
+                $data['title'] ?? $data['nickname'] ?? ''
+            ));
+
+        } catch (\Throwable $e) {
+            // No name: an existing parent can still be found by its guestyId.
+        }
+
+        return $parent;
+    }
+
+    /**
+     * Find or create the parent fetched by fetchGuestyParent(). Database only.
+     */
+    private function parentFromGuesty(?array $guestyParent, array $listing): ?Property
+    {
+        if (!$guestyParent) {
+            return null;
+        }
+
+        return $this->parentCache['g:' . $guestyParent['guestyId']]
             ??= $this->findOrCreateGuestyParent(
-                $parentGuestyId,
+                $guestyParent['guestyId'],
+                $guestyParent['name'],
                 $listing
             );
     }
 
     private function findOrCreateGuestyParent(
         string $guestyId,
+        ?string $name,
         array $child
     ): ?Property {
         if ($existing = Property::where('guestyId', $guestyId)->first()) {
             return $existing;
         }
 
-        try {
-            $data = $this->client->get(
-                '/listings/' . $guestyId,
-                ['fields' => '_id title nickname type']
-            );
-
-        } catch (\Throwable $e) {
-            return null;
-        }
-
-        $name = trim((string) (
-            $data['title'] ?? $data['nickname'] ?? ''
-        ));
-
-        if ($name === '') {
+        if ($name === null || $name === '') {
             return null;
         }
 
@@ -878,16 +982,9 @@ class GuestyPropertyImporter
         $base = Str::slug($parent->nickname)
             ?: 'property-' . $parent->id;
 
-        $slug = $base;
-        $i = 2;
-
-        while (ContentSeo::where('slug', $slug)->exists()) {
-            $slug = $base . '-' . $i++;
-        }
-
         $parent->seo()->create([
             'title' => $parent->nickname,
-            'slug' => $slug,
+            'slug' => $this->uniqueSlug($base),
             'robotIndex' => true,
             'robotFollow' => true,
         ]);

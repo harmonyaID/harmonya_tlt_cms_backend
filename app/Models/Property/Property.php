@@ -159,6 +159,23 @@ class Property extends BaseModel
 
         return asset('storage/' . PathConstant::IMAGES_PROPERTY_FLOORPLAN . $this->floorplanImage);
     }
+
+    /**
+     * Value of a feature (e.g. "Bedroom", "Bathroom") as a number, null when not set.
+     * Uses the loaded "features" relation.
+     */
+    public function featureValue(string $name): int|float|null
+    {
+        $feature = $this->features->firstWhere('name', $name);
+        $value = $feature?->pivot?->value;
+
+        if ($value === null || $value === '' || !is_numeric($value)) {
+            return null;
+        }
+
+        return $value + 0;
+    }
+
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($query) use ($request) {

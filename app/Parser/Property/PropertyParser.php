@@ -23,8 +23,6 @@ class PropertyParser extends BaseParser
             return null;
         }
 
-        $cover = $data->photos->first();
-
         return [
             'id' => $data->id,
             'guestyId' => $data->guestyId,
@@ -200,7 +198,6 @@ class PropertyParser extends BaseParser
             }),
             'type' => optional($data->type)->only('id', 'name'),
             'unitType' => PropertyUnitType::idName($data->unitTypeId),
-            'occupancy' => $data->occupancy,
             'status' => PropertyStatus::idName($data->statusId),
             'cleaningStatus' => PropertyCleaningStatus::idName($data->cleaningStatusId),
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
