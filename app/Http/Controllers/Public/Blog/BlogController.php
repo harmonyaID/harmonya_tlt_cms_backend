@@ -12,7 +12,7 @@ class BlogController extends Controller
 {
     public function get(Request $request)
     {
-        $request->merge(['isActive' => true]);
+        $request->merge(['isActive' => true, 'visibility' => true]);
 
         $blogs = Blog::filter($request)->with(['category', 'tags', 'categories', 'properties'])->reorder('publishedAt', 'desc')->getOrPaginate($request);
         return success(BlogParser::briefs($blogs), pagination: pagination($blogs));

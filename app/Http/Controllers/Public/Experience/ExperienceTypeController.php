@@ -11,13 +11,13 @@ class ExperienceTypeController extends Controller
 {
     public function get(Request $request)
     {
-        $types = ExperienceType::filter($request)->with('blogs','seo')->getOrPaginate($request);
+        $types = ExperienceType::filter($request)->with(['blogs' => fn ($blogs) => $blogs->where('blogs.isActive', true)->listed(), 'seo'])->getOrPaginate($request);
         return success(ExperienceTypeParser::briefs($types), pagination: pagination($types));
     }
 
     public function detail($idOrSlug)
     {
-        $type = ExperienceType::with('seo', 'blogs')->bySlugOrId($idOrSlug)->first();;
+        $type = ExperienceType::with(['seo', 'blogs' => fn ($blogs) => $blogs->where('blogs.isActive', true)->listed()])->bySlugOrId($idOrSlug)->first();
         if (!$type) {
             errExperienceTypeGet();
         }

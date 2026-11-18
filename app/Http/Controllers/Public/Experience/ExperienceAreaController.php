@@ -15,6 +15,10 @@ class ExperienceAreaController extends Controller
             ->with('type', 'seo')
             ->getOrPaginate($request);
 
+        foreach ($areas as $area) {
+            $area->onlyPublicBlogs = true;
+        }
+
         return success(
             ExperienceAreaParser::briefs($areas),
             pagination: pagination($areas)
@@ -33,6 +37,8 @@ class ExperienceAreaController extends Controller
         if (!$area) {
             errExperienceAreaGet();
         }
+
+        $area->onlyPublicBlogs = true;
 
         return success(
             ExperienceAreaParser::first($area)

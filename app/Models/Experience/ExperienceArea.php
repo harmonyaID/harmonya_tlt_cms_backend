@@ -38,6 +38,8 @@ class ExperienceArea extends BaseModel
 
     public $parserClass = ExperienceAreaParser::class;
 
+    public bool $onlyPublicBlogs = false;
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(ExperienceType::class, 'experienceTypeId');
@@ -72,7 +74,9 @@ class ExperienceArea extends BaseModel
         return Blog::whereIn(
             'id',
             $this->blogIds ?? []
-        )->get();
+        )
+            ->when($this->onlyPublicBlogs, fn ($blogs) => $blogs->where('isActive', true)->listed())
+            ->get();
     }
 
     public function seo()

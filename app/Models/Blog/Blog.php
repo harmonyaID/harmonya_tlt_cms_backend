@@ -98,6 +98,14 @@ class Blog extends BaseModel
      |-------------------------------------------------------------------------
      */
 
+    public function scopeListed($query)
+    {
+        return $query->where(function ($visibility) {
+            $visibility->where('blogs.visibility', true)
+                ->orWhereNull('blogs.visibility');
+        });
+    }
+
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($query) use ($request) {
@@ -125,6 +133,12 @@ class Blog extends BaseModel
 
             if ($request->has('isActive') && $request->isActive !== null && $request->isActive !== '') {
                 $query->where('isActive', $request->isActive);
+            }
+
+            if ($request->has('visibility') && $request->visibility !== null && $request->visibility !== '') {
+                $request->boolean('visibility')
+                    ? $query->listed()
+                    : $query->where('visibility', false);
             }
 
             $this->applyDateRangeFilter($query, $request, 'publishedAt');

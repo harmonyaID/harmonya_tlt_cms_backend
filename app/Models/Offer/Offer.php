@@ -79,6 +79,23 @@ class Offer extends BaseModel
      |-------------------------------------------------------------------------
      */
 
+    /**
+     * Offers whose date range includes today: from the start of startDate's day
+     * until the end of endDate's day. An empty date means no limit on that side.
+     */
+    public function scopeRunning($query)
+    {
+        return $query
+            ->where(function ($start) {
+                $start->whereNull('startDate')
+                    ->orWhere('startDate', '<=', now()->endOfDay());
+            })
+            ->where(function ($end) {
+                $end->whereNull('endDate')
+                    ->orWhere('endDate', '>=', now()->startOfDay());
+            });
+    }
+
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($query) use ($request) {
