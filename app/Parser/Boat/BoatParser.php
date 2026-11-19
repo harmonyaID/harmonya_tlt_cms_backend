@@ -37,6 +37,12 @@ class BoatParser extends BaseParser
 
             'priceFiles' => self::priceFiles($data),
 
+            'featuredImage' => $data->featuredImage
+                ? Storage::disk('public')->url(
+                    PathConstant::IMAGES_BOAT_FEATURED . $data->featuredImage
+                )
+                : null,
+
             'mapImage' => $data->mapImage
                 ? Storage::disk('public')->url(
                     PathConstant::IMAGES_BOAT_MAPS . $data->mapImage
@@ -85,6 +91,12 @@ class BoatParser extends BaseParser
             'promoPhotos' => self::promoPhotos($data),
 
             'priceFiles' => self::priceFiles($data),
+
+            'featuredImage' => $data->featuredImage
+                ? Storage::disk('public')->url(
+                    PathConstant::IMAGES_BOAT_FEATURED . $data->featuredImage
+                )
+                : null,
 
             'mapImage' => $data->mapImage
                 ? Storage::disk('public')->url(

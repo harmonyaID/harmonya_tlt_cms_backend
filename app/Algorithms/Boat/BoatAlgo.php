@@ -34,10 +34,12 @@ class BoatAlgo
                     'photos',
                     'promoPhotos',
                     'priceFiles',
+                    'featuredImage',
                     'mapImage',
                     'deletePhotoIds',
                     'deletePromoPhotoIds',
                     'deletePriceFileIds',
+                    'deleteFeaturedImage',
                     'deleteMapImage',
                     'customInformations',
                     'seo',
@@ -55,6 +57,11 @@ class BoatAlgo
 
                 if ($request->hasFile('priceFiles')) {
                     $this->boat->priceFiles = $this->uploadPriceFiles($request);
+                    $this->boat->save();
+                }
+
+                if ($request->hasFile('featuredImage')) {
+                    $this->boat->featuredImage = $this->uploadFeaturedImage($request);
                     $this->boat->save();
                 }
 
@@ -104,10 +111,12 @@ class BoatAlgo
                     'photos',
                     'promoPhotos',
                     'priceFiles',
+                    'featuredImage',
                     'mapImage',
                     'deletePhotoIds',
                     'deletePromoPhotoIds',
                     'deletePriceFileIds',
+                    'deleteFeaturedImage',
                     'deleteMapImage',
                     'customInformations',
                     'seo',
@@ -180,6 +189,18 @@ class BoatAlgo
                 $this->boat->save();
             }
 
+            if ($request->hasFile('featuredImage')) {
+                $this->deleteFeaturedImage();
+
+                $this->boat->featuredImage = $this->uploadFeaturedImage($request);
+                $this->boat->save();
+            } elseif ($request->boolean('deleteFeaturedImage')) {
+                $this->deleteFeaturedImage();
+
+                $this->boat->featuredImage = null;
+                $this->boat->save();
+            }
+
             if ($request->hasFile('mapImage')) {
                 $this->deleteMapImage();
 
@@ -232,6 +253,7 @@ class BoatAlgo
 
                 $this->deletePromoPhotos();
                 $this->deletePriceFiles();
+                $this->deleteFeaturedImage();
                 $this->deleteMapImage();
 
                 $this->boat->customInformations()->delete();
@@ -448,6 +470,35 @@ class BoatAlgo
         $file->move($dirPath, $filename);
 
         return $filename;
+    }
+
+    private function uploadFeaturedImage(Request $request): string
+    {
+        $dirPath = PathConstant::IMAGES_BOAT_FEATURED_STORAGE_PUBLIC_PATH();
+
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
+        $file = $request->file('featuredImage');
+        $filename = filename($file, 'boat-featured-' . $this->boat->id);
+
+        $file->move($dirPath, $filename);
+
+        return $filename;
+    }
+
+    private function deleteFeaturedImage(): void
+    {
+        if (!$this->boat->featuredImage) {
+            return;
+        }
+
+        $path = PathConstant::IMAGES_BOAT_FEATURED_STORAGE_PUBLIC_PATH() . $this->boat->featuredImage;
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
     private function deleteMapImage(): void

@@ -33,6 +33,7 @@ class Boat extends BaseModel
         'priceFiles' => 'array',
         'schedule' => 'array',
 
+        'featuredImage' => 'string',
         'mapImage' => 'string',
 
         'promoLabel' => 'string',
