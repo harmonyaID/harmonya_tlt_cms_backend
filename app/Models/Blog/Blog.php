@@ -106,6 +106,11 @@ class Blog extends BaseModel
         });
     }
 
+    public function scopePubliclyListed($query)
+    {
+        return $query->where('blogs.isActive', true)->listed();
+    }
+
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($query) use ($request) {

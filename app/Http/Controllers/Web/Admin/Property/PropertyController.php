@@ -66,22 +66,15 @@ class PropertyController extends Controller
     public function get(Request $request)
     {
         $properties = Property::filter($request)
-        ->with([
-            'type', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
-            'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
-        ])
-        ->getOrPaginate($request);
+            ->with(Property::BRIEF_RELATIONS)
+            ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
     }
 
     public function detail($id)
     {
-        $property = Property::with([
-            'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-            'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf', 'features',
-            'variants.photos',
-        ])->find($id);
+        $property = Property::with(Property::DETAIL_RELATIONS)->find($id);
 
         if (!$property) {
             errPropertyGet();

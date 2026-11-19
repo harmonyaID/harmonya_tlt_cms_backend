@@ -17,10 +17,7 @@ class PropertyController extends Controller
         $request->merge(['statusId' => PropertyStatus::ACTIVE_ID]);
 
         $properties = Property::filter($request)
-            ->with([
-                'type', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
-                'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
-            ])
+            ->with(Property::BRIEF_RELATIONS)
             ->getOrPaginate($request);
 
         return success(PropertyParser::briefs($properties), pagination: pagination($properties));
@@ -29,12 +26,8 @@ class PropertyController extends Controller
     public function detail($idOrSlug)
     {
         $property = Property::where('statusId', PropertyStatus::ACTIVE_ID)
-        ->bySlugOrId($idOrSlug)    
-        ->with([
-                'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
-                'availability', 'pricing', 'descriptions', 'photos', 'amenities', 'tags', 'seo', 'acf', 'features',
-                'variants.photos',
-            ])
+            ->bySlugOrId($idOrSlug)
+            ->with(Property::DETAIL_RELATIONS)
             ->first();
 
         if (!$property) {
@@ -93,10 +86,7 @@ class PropertyController extends Controller
             ->where('nearby.distanceKm', '<=', $radiusKm)
             ->orderBy('nearby.distanceKm')
             ->limit($limit)
-            ->with([
-                'type', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
-                'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
-            ])
+            ->with(Property::BRIEF_RELATIONS)
             ->get();
 
         return success($nearby->map(function ($item) {

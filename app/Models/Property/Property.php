@@ -7,6 +7,7 @@ use App\Models\SEO\ContentSeo;
 use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasFeatureValue;
 use App\Models\Traits\HasMultiValueFilter;
 use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Property\PropertyParser;
@@ -21,6 +22,7 @@ class Property extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasFeatureValue;
     use HasMultiValueFilter;
     use HasSeoSlugScope;
 
@@ -51,6 +53,19 @@ class Property extends BaseModel
     ];
 
     public $parserClass = PropertyParser::class;
+
+    /** Relations used by PropertyParser::brief(). */
+    public const BRIEF_RELATIONS = [
+        'type', 'sourceType', 'photos', 'variants.photos', 'addresses', 'seo', 'features',
+        'tags', 'amenities', 'rooms.roomType', 'rooms.bedType',
+    ];
+
+    /** Relations used by PropertyParser::first(). */
+    public const DETAIL_RELATIONS = [
+        'type', 'sourceType', 'addresses', 'guestInfo', 'rooms.roomType', 'rooms.bedType',
+        'availability', 'pricing', 'descriptions', 'photos', 'variants.photos', 'amenities',
+        'tags', 'seo', 'acf', 'features',
+    ];
 
     public function variants(): HasMany
     {
@@ -158,22 +173,6 @@ class Property extends BaseModel
         }
 
         return asset('storage/' . PathConstant::IMAGES_PROPERTY_FLOORPLAN . $this->floorplanImage);
-    }
-
-    /**
-     * Value of a feature (e.g. "Bedroom", "Bathroom") as a number, null when not set.
-     * Uses the loaded "features" relation.
-     */
-    public function featureValue(string $name): int|float|null
-    {
-        $feature = $this->features->firstWhere('name', $name);
-        $value = $feature?->pivot?->value;
-
-        if ($value === null || $value === '' || !is_numeric($value)) {
-            return null;
-        }
-
-        return $value + 0;
     }
 
     public function scopeFilter($query, $request)

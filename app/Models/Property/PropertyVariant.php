@@ -7,6 +7,7 @@ use App\Models\SEO\ContentSeo;
 use App\Models\Setting\SettingAmenity;
 use App\Models\Setting\SettingPropertyFeature;
 use App\Models\Traits\HasDateRangeFilter;
+use App\Models\Traits\HasFeatureValue;
 use App\Models\Traits\HasMultiValueFilter;
 use App\Models\Traits\HasSeoSlugScope;
 use App\Parser\Property\PropertyVariantParser;
@@ -21,6 +22,7 @@ class PropertyVariant extends BaseModel
 {
     use SoftDeletes;
     use HasDateRangeFilter;
+    use HasFeatureValue;
     use HasMultiValueFilter;
     use HasSeoSlugScope;
 
@@ -219,22 +221,6 @@ class PropertyVariant extends BaseModel
 
             $this->applyDateRangeFilter($query, $request);
         })->orderBy('id', 'DESC');
-    }
-
-    /**
-     * Value of a feature (e.g. "Bedroom", "Bathroom") as a number, null when not set.
-     * Uses the loaded "features" relation.
-     */
-    public function featureValue(string $name): int|float|null
-    {
-        $feature = $this->features->firstWhere('name', $name);
-        $value = $feature?->pivot?->value;
-
-        if ($value === null || $value === '' || !is_numeric($value)) {
-            return null;
-        }
-
-        return $value + 0;
     }
 
     private function applyFeatureFilter($query, $request, string $exactParam, string $minParam, string $featureName): void

@@ -75,7 +75,7 @@ class ExperienceArea extends BaseModel
             'id',
             $this->blogIds ?? []
         )
-            ->when($this->onlyPublicBlogs, fn ($blogs) => $blogs->where('isActive', true)->listed())
+            ->when($this->onlyPublicBlogs, fn ($blogs) => $blogs->publiclyListed())
             ->get();
     }
 

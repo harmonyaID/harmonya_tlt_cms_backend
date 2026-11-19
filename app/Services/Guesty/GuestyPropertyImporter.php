@@ -138,8 +138,6 @@ class GuestyPropertyImporter
 
             $this->syncAddress($property, $listing);
 
-            $this->syncParentAddress($property);
-
             $this->syncGuestInfo($property, $listing);
 
             $this->syncAvailability($property, $listing);
@@ -157,7 +155,7 @@ class GuestyPropertyImporter
             // Property Features: Bedroom, Bed, Bathroom
             $this->syncFeatures($property, $listing, $spaces);
 
-            $this->syncParentFeatures($property);
+            $this->syncParentFromVariants($property);
 
             $this->syncSeo($property, $listing);
 
@@ -715,43 +713,32 @@ class GuestyPropertyImporter
     |--------------------------------------------------------------------------
     */
 
-    private function syncParentAddress(PropertyVariant $variant): void
-    {
-        $parent = $variant->parentPropertyId
-            ? Property::find($variant->parentPropertyId)
-            : null;
-
-        if ($parent) {
-            app(PropertyPhotoSyncService::class)
-                ->syncAddressesFromFirstVariant($parent);
-        }
-    }
-
     /**
-     * Raise the parent's Bedroom / Bed / Bathroom to the highest value of its variants.
+     * Copy the first variant's address to the parent and raise the parent's
+     * Bedroom / Bed / Bathroom to the highest value of its variants.
      */
-    private function syncParentFeatures(PropertyVariant $variant): void
+    private function syncParentFromVariants(PropertyVariant $variant): void
     {
-        $parent = $variant->parentPropertyId
-            ? Property::find($variant->parentPropertyId)
-            : null;
+        if ($parent = $this->parentOf($variant)) {
+            $sync = app(PropertyPhotoSyncService::class);
 
-        if ($parent) {
-            app(PropertyPhotoSyncService::class)
-                ->syncFeaturesFromVariants($parent);
+            $sync->syncAddressesFromFirstVariant($parent);
+            $sync->syncFeaturesFromVariants($parent);
         }
     }
 
     private function syncParentPhotos(PropertyVariant $variant): void
     {
-        $parent = $variant->parentPropertyId
+        if ($parent = $this->parentOf($variant)) {
+            app(PropertyPhotoSyncService::class)->syncFromFirstVariant($parent);
+        }
+    }
+
+    private function parentOf(PropertyVariant $variant): ?Property
+    {
+        return $variant->parentPropertyId
             ? Property::find($variant->parentPropertyId)
             : null;
-
-        if ($parent) {
-            app(PropertyPhotoSyncService::class)
-                ->syncFromFirstVariant($parent);
-        }
     }
 
     /*
@@ -836,7 +823,7 @@ class GuestyPropertyImporter
 
                 $parentGuestyId = $response['mtl']['p'] ?? null;
 
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 $parentGuestyId = null;
             }
         }
@@ -862,7 +849,7 @@ class GuestyPropertyImporter
                 $data['title'] ?? $data['nickname'] ?? ''
             ));
 
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // No name: an existing parent can still be found by its guestyId.
         }
 
