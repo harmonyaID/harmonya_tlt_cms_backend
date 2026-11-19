@@ -216,7 +216,10 @@ class Property extends BaseModel
             // "Area" = free-text search against the property's address (e.g. "Jungutbatu")
             if ($request->has('area') && strlen($request->area) > 1) {
                 $query->whereHas('addresses', function ($address) use ($request) {
-                    $address->where('address', 'LIKE', "%$request->area%");
+                    $address->where(function ($area) use ($request) {
+                        $area->where('area', $request->area)
+                            ->orWhere('address', 'LIKE', "%$request->area%");
+                    });
                 });
             }
 

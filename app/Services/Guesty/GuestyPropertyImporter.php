@@ -28,6 +28,7 @@ use App\Services\Constant\Property\PropertyListingType;
 use App\Services\Constant\Property\PropertyStatus;
 use App\Services\Constant\Property\PropertyUnitType;
 use App\Services\Constant\Storage\PathConstant;
+use App\Services\Property\PropertyAreaResolver;
 use App\Services\Property\PropertyPhotoSyncService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -392,11 +393,22 @@ class GuestyPropertyImporter
             ],
             [
                 'address' => $address['full'] ?? null,
+                // e.g. "Jungut Batu, Nusa Lembongan, ..." -> "Jungutbatu"
+                'area' => $this->area($address),
                 'buildingName' => $address['apt'] ?? null,
                 'latitude' => $address['lat'] ?? null,
                 'longitude' => $address['lng'] ?? null,
                 'zipCode' => $address['zipcode'] ?? null,
             ]
+        );
+    }
+
+    private function area(array $address): ?string
+    {
+        return app(PropertyAreaResolver::class)->resolve(
+            $address['street'] ?? null,
+            $address['neighborhood'] ?? null,
+            $address['full'] ?? null
         );
     }
 

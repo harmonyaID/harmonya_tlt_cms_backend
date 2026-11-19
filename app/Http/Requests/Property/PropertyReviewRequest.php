@@ -26,6 +26,7 @@ class PropertyReviewRequest extends FormRequest
         return [
             'propertyId' => 'required|integer|exists:properties,id',
             'name' => 'required|string',
+            'country' => 'nullable|string|max:100',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'required|string',
             'isActive' => 'required|boolean',

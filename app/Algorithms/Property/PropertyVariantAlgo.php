@@ -241,10 +241,11 @@ class PropertyVariantAlgo
             );
         }
 
-        if ($request->has('rooms') && is_array($request->rooms)) {
+        // "rooms" sent empty (multipart/form-data cannot send an empty array) removes every room.
+        if ($request->has('rooms')) {
             $this->property->rooms()->delete();
 
-            foreach ($request->rooms as $room) {
+            foreach ((array) ($request->rooms ?: []) as $room) {
                 PropertyVariantRoom::create([
                     'propertyVariantId' => $this->property->id,
                 ] + $room);

@@ -26,6 +26,7 @@ class PropertyVariantReviewRequest extends FormRequest
         return [
             'propertyVariantId' => 'required|integer|exists:property_variants,id',
             'name' => 'required|string',
+            'country' => 'nullable|string|max:100',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'required|string',
             'isActive' => 'required|boolean',

@@ -90,6 +90,7 @@ class PropertyPhotoSyncService
                 'propertyId' => $property->id,
                 'typeId' => $address->typeId,
                 'address' => $address->address,
+                'area' => $address->area,
                 'buildingName' => $address->buildingName,
                 'latitude' => $address->latitude,
                 'longitude' => $address->longitude,

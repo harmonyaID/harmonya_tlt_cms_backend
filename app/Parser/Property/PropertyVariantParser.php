@@ -61,6 +61,7 @@ class PropertyVariantParser extends BaseParser
                     'id' => $address->id,
                     'type' => PropertyAddressType::idName($address->typeId),
                     'address' => $address->address,
+                    'area' => $address->area,
                     'buildingName' => $address->buildingName,
                     'latitude' => $address->latitude,
                     'longitude' => $address->longitude,
@@ -211,6 +212,7 @@ class PropertyVariantParser extends BaseParser
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'coverPhoto' => $cover ? $cover->pathUrl() : null,
             'address' => optional($data->addresses->first())->address,
+            'area' => optional($data->addresses->first())->area,
             'seo' => SeoParser::first($data->seo),
         ];
     }
