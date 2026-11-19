@@ -9,6 +9,7 @@ use App\Models\Setting\SettingNotificationCredential;
 use App\Parser\Setting\SettingNotificationCredentialParser;
 use App\Services\Constant\Access\AccessPermissionName;
 use App\Services\Constant\Setting\FirebaseCredential;
+use App\Services\Constant\Setting\MailtrapCredential;
 use App\Services\Constant\Setting\NotificationProvider;
 use App\Services\Constant\Setting\PostmarkCredential;
 use Illuminate\Http\Request;
@@ -130,5 +131,10 @@ class SettingNotificationCredentialController extends Controller
     public function firebase()
     {
         return success(FirebaseCredential::OPTION);
+    }
+
+    public function mailtrap()
+    {
+        return success(MailtrapCredential::OPTION);
     }
 }

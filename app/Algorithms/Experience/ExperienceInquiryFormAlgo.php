@@ -6,12 +6,12 @@ use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Experience\ExperienceInquiryFormMail;
 use App\Models\Experience\ExperienceInquiryForm;
 use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationMailer;
 use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ExperienceInquiryFormAlgo
 {
@@ -38,14 +38,8 @@ class ExperienceInquiryFormAlgo
                     ->log("New inquiry form submitted. Name: " . $this->form->fullName);
             });
 
-            if (config('mail.notification_to')) {
-                try {
-                    Mail::to(config('mail.notification_to'))
-                        ->queue(new ExperienceInquiryFormMail($this->form));
-                } catch (\Throwable $e) {
-                    logger()->error('Failed to send ExperienceInquiryFormMail: ' . $e->getMessage());
-                }
-            }
+            // Email notification to admin (MAIL_NOTIFICATION_TO)
+            app(NotificationMailer::class)->toAdmin(new ExperienceInquiryFormMail($this->form));
 
             app(NotificationService::class)->notifyStaff(
                 NotificationType::EXPERIENCE_INQUIRY,

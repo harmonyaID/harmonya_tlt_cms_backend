@@ -75,6 +75,7 @@ Route::prefix("settings")
                 Route::get('statics/provider-types', [SettingNotificationCredentialController::class, 'providerType']);
                 Route::get('statics/postmarks', [SettingNotificationCredentialController::class, 'postmark']);
                 Route::get('statics/firebases', [SettingNotificationCredentialController::class, 'firebase']);
+                Route::get('statics/mailtraps', [SettingNotificationCredentialController::class, 'mailtrap']);
             });
 
         Route::get('{id}', [SettingController::class, 'detail']);

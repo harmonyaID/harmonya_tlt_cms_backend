@@ -7,12 +7,12 @@ use App\Http\Requests\Website\WebsiteContactFormChangeStatusRequest;
 use App\Mail\WebsiteContactForm\WebsiteContactFormMail;
 use App\Models\WebsiteContactForm\WebsiteContactForm;
 use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationMailer;
 use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class WebsiteContactFormAlgo
 {
@@ -44,14 +44,8 @@ class WebsiteContactFormAlgo
                     ->log("Enter new contact form. Name: " . $this->contactForm->name);
             });
 
-            if (config('mail.notification_to')) {
-                try {
-                    Mail::to(config('mail.notification_to'))
-                        ->queue(new WebsiteContactFormMail($this->contactForm));
-                } catch (\Throwable $e) {
-                    logger()->error('Failed to send WebsiteContactFormMail: ' . $e->getMessage());
-                }
-            }
+            // Email notification to admin (MAIL_NOTIFICATION_TO)
+            app(NotificationMailer::class)->toAdmin(new WebsiteContactFormMail($this->contactForm));
 
             app(NotificationService::class)->notifyStaff(
                 NotificationType::WEBSITE_CONTACT_FORM,

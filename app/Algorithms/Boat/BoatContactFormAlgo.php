@@ -6,12 +6,12 @@ use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Boat\BoatContactFormMail;
 use App\Models\Boat\BoatContactForm;
 use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationMailer;
 use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class BoatContactFormAlgo
 {
@@ -49,20 +49,8 @@ class BoatContactFormAlgo
                     );
             });
 
-            // Email notification
-            if (config('mail.notification_to')) {
-                try {
-                    Mail::to(config('mail.notification_to'))
-                        ->queue(
-                            new BoatContactFormMail($this->contactForm)
-                        );
-                } catch (\Throwable $e) {
-                    logger()->error(
-                        'Failed to send BoatContactFormMail: ' .
-                            $e->getMessage()
-                    );
-                }
-            }
+            // Email notification to admin (MAIL_NOTIFICATION_TO)
+            app(NotificationMailer::class)->toAdmin(new BoatContactFormMail($this->contactForm));
 
             // Staff notification
             app(NotificationService::class)->notifyStaff(

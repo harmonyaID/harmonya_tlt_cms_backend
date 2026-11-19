@@ -6,12 +6,12 @@ use App\Http\Requests\ChangeMailStatusRequest;
 use App\Mail\Property\PropertyContactFormMail;
 use App\Models\Property\PropertyContactForm;
 use App\Services\Constant\Notification\NotificationType;
+use App\Services\Notification\NotificationMailer;
 use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class PropertyContactFormAlgo
 {
@@ -46,14 +46,8 @@ class PropertyContactFormAlgo
                     ->log("New property inquiry submitted. Name: " . $this->contactForm->name);
             });
 
-            if (config('mail.notification_to')) {
-                try {
-                    Mail::to(config('mail.notification_to'))
-                        ->queue(new PropertyContactFormMail($this->contactForm));
-                } catch (\Throwable $e) {
-                    logger()->error('Failed to send PropertyContactFormMail: ' . $e->getMessage());
-                }
-            }
+            // Email notification to admin (MAIL_NOTIFICATION_TO)
+            app(NotificationMailer::class)->toAdmin(new PropertyContactFormMail($this->contactForm));
 
             app(NotificationService::class)->notifyStaff(
                 NotificationType::PROPERTY_CONTACT_FORM,
