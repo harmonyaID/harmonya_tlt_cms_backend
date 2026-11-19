@@ -12,7 +12,7 @@ Route::prefix("languages")
         Route::get('', [LanguageController::class, 'get']);
         Route::post('', [LanguageController::class, 'create']);
         Route::post('status/main', [LanguageController::class, 'changeMainStatus']);
-        Route::put('{id}', [LanguageController::class, 'update']);
+        Route::match(['post', 'put'], '{id}', [LanguageController::class, 'update']);
         Route::delete('{id}', [LanguageController::class, 'delete']);
 
         Route::prefix('group')

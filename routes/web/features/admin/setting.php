@@ -43,7 +43,7 @@ Route::prefix("settings")
                 Route::get('', [SettingPropertyFeatureController::class, 'get']);
                 Route::post('', [SettingPropertyFeatureController::class, 'create']);
                 Route::get('{id}', [SettingPropertyFeatureController::class, 'detail']);
-                Route::put('{id}', [SettingPropertyFeatureController::class, 'update']);
+                Route::match(['post', 'put'], '{id}', [SettingPropertyFeatureController::class, 'update']);
                 Route::delete('{id}', [SettingPropertyFeatureController::class, 'delete']);
             });
         // Open API Features - generic 3rd-party API credential management
