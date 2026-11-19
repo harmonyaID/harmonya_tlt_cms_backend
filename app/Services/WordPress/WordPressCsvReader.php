@@ -33,6 +33,13 @@ class WordPressCsvReader
 
         $header[0] = preg_replace('/^\xEF\xBB\xBF/', '', $header[0]);
 
+        // A sorted Google Sheet export can have its header row somewhere in the middle.
+        if (!$this->isHeader($header)) {
+            yield from $this->readWithHeaderAnywhere($handle);
+            fclose($handle);
+            return;
+        }
+
         while (($row = fgetcsv($handle)) !== false) {
             if ($row === [null]) {
                 continue;
@@ -42,6 +49,42 @@ class WordPressCsvReader
         }
 
         fclose($handle);
+    }
+
+    private function isHeader(array $row): bool
+    {
+        return trim((string) ($row[0] ?? '')) === 'ID' && in_array('Title', $row, true);
+    }
+
+    private function readWithHeaderAnywhere($handle): \Generator
+    {
+        rewind($handle);
+
+        $rows = [];
+        $header = null;
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if ($row === [null]) {
+                continue;
+            }
+
+            $row[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) $row[0]);
+
+            if (!$header && $this->isHeader($row)) {
+                $header = $row;
+                continue;
+            }
+
+            $rows[] = $row;
+        }
+
+        if (!$header) {
+            throw new \RuntimeException('No header row (ID, Title, ...) found in the CSV file.');
+        }
+
+        foreach ($rows as $row) {
+            yield array_combine($header, array_slice(array_pad($row, count($header), null), 0, count($header)));
+        }
     }
 
     /**

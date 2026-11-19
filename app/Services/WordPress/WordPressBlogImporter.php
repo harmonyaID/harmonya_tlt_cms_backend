@@ -6,6 +6,9 @@ use App\Models\Blog\Blog;
 use App\Models\Blog\BlogCategory;
 use App\Models\Blog\BlogTag;
 use App\Services\Constant\Storage\PathConstant;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -13,8 +16,17 @@ class WordPressBlogImporter
 {
     protected string $baseUrl;
 
-    public function __construct(string $baseUrl)
-    {
+    /**
+     * @param int $delayMs Pause before every request, so the WordPress server's
+     *                     rate limit / firewall is not triggered.
+     * @param int $tries   Attempts per request when the connection fails, times out,
+     *                     or the server answers 429 / 5xx.
+     */
+    public function __construct(
+        string $baseUrl,
+        protected int $delayMs = 500,
+        protected int $tries = 3
+    ) {
         $this->baseUrl = rtrim($baseUrl, '/');
     }
 
@@ -22,16 +34,15 @@ class WordPressBlogImporter
     {
         $perPage = min(max($perPage, 1), 5);
 
-        $response = Http::timeout(120)
-            ->connectTimeout(20)
-            ->get(
-                "{$this->baseUrl}/wp-json/wp/v2/posts",
-                [
-                    'page' => $page,
-                    'per_page' => $perPage,
-                    '_embed' => 1,
-                ]
-            );
+        $response = $this->get(
+            "{$this->baseUrl}/wp-json/wp/v2/posts",
+            [
+                'page' => $page,
+                'per_page' => $perPage,
+                '_embed' => 1,
+            ],
+            120
+        );
 
         if ($response->status() === 400) {
             return [];
@@ -133,28 +144,6 @@ class WordPressBlogImporter
         );
 
         /*
-         * Featured image.
-         */
-        $thumbnailUrl = $this->resolveFeaturedImageUrl(
-            $post
-        );
-
-        if (
-            $thumbnailUrl &&
-            !$blog->thumbnail
-        ) {
-            $filename = $this->downloadThumbnail(
-                $thumbnailUrl,
-                $slug
-            );
-
-            if ($filename) {
-                $blog->thumbnail = $filename;
-                $blog->save();
-            }
-        }
-
-        /*
          * Sync ALL categories.
          *
          * This will remove old relationships that no longer
@@ -174,6 +163,89 @@ class WordPressBlogImporter
         return $blog;
     }
 
+    /**
+     * Download the post's featured image when the blog has no thumbnail yet.
+     * Returns false when the post has an image that could not be downloaded.
+     */
+    public function syncThumbnail(Blog $blog, array $post): bool
+    {
+        $url = $this->resolveFeaturedImageUrl($post);
+
+        if (!$url || $blog->thumbnail) {
+            return true;
+        }
+
+        $filename = $this->downloadImage(
+            $url,
+            PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH(),
+            $blog->slug . '-' . time()
+        );
+
+        if (!$filename) {
+            return false;
+        }
+
+        $blog->thumbnail = $filename;
+        $blog->save();
+
+        return true;
+    }
+
+    /**
+     * Download an image to $dirPath as "$basename.<extension>".
+     * Returns the file name, or null when the download failed.
+     */
+    public function downloadImage(string $url, string $dirPath, string $basename): ?string
+    {
+        try {
+            $response = $this->get($url);
+
+            if (!$response->successful() || $response->body() === '') {
+                logger()->warning("Failed to download WordPress image {$url}: HTTP {$response->status()}");
+
+                return null;
+            }
+
+            if (!file_exists($dirPath)) {
+                mkdir($dirPath, 0777, true);
+            }
+
+            $extension = pathinfo((string) parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+            $filename = $basename . '.' . $extension;
+
+            file_put_contents($dirPath . $filename, $response->body());
+
+            return $filename;
+        } catch (\Throwable $e) {
+            logger()->warning("Failed to download WordPress image {$url}: " . $e->getMessage());
+
+            return null;
+        }
+    }
+
+    /**
+     * GET with a pause before the request and retries with a growing wait
+     * (3s, 6s, ...) on connection errors, timeouts, 429 and 5xx.
+     */
+    private function get(string $url, array $query = [], int $timeout = 60): Response
+    {
+        if ($this->delayMs > 0) {
+            usleep($this->delayMs * 1000);
+        }
+
+        return Http::timeout($timeout)
+            ->connectTimeout(20)
+            ->retry(
+                max($this->tries, 1),
+                fn (int $attempt) => $attempt * 3000,
+                fn (\Throwable $e) => $e instanceof ConnectionException
+                    || ($e instanceof RequestException
+                        && ($e->response->status() === 429 || $e->response->serverError())),
+                throw: false
+            )
+            ->get($url, $query);
+    }
+
     private function fetchRenderedContent(
         ?string $postUrl
     ): ?string {
@@ -182,9 +254,7 @@ class WordPressBlogImporter
         }
 
         try {
-            $response = Http::timeout(60)
-                ->connectTimeout(20)
-                ->get($postUrl);
+            $response = $this->get($postUrl);
 
             if (!$response->successful()) {
                 return null;
@@ -387,61 +457,5 @@ class WordPressBlogImporter
     ): ?string {
         return $post['_embedded']['wp:featuredmedia'][0]['source_url']
             ?? null;
-    }
-
-    private function downloadThumbnail(
-        string $url,
-        string $slug
-    ): ?string {
-        try {
-            $response = Http::timeout(60)
-                ->connectTimeout(20)
-                ->get($url);
-
-            if (!$response->successful()) {
-                return null;
-            }
-
-            $dirPath = PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
-
-            if (!file_exists($dirPath)) {
-                mkdir(
-                    $dirPath,
-                    0777,
-                    true
-                );
-            }
-
-            $extension = pathinfo(
-                parse_url(
-                    $url,
-                    PHP_URL_PATH
-                ),
-                PATHINFO_EXTENSION
-            );
-
-            $extension = $extension ?: 'jpg';
-
-            $filename =
-                $slug .
-                '-' .
-                time() .
-                '.' .
-                $extension;
-
-            file_put_contents(
-                $dirPath . $filename,
-                $response->body()
-            );
-
-            return $filename;
-        } catch (\Throwable $e) {
-            logger()->warning(
-                "Failed to download WP thumbnail for {$slug}: " .
-                $e->getMessage()
-            );
-
-            return null;
-        }
     }
 }
