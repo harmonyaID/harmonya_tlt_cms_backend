@@ -11,6 +11,7 @@ use App\Services\Notification\NotificationService;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PropertyInquiryFormAlgo
@@ -31,7 +32,15 @@ class PropertyInquiryFormAlgo
 
             DB::transaction(function () use ($request) {
 
-                $this->inquiryForm = PropertyInquiryForm::create($request->all());
+                $data = $request->all();
+
+                // "For 4 Nights Stay": taken from the dates when the website does not send it
+                if (empty($data['nights']) && !empty($data['checkInDate']) && !empty($data['checkOutDate'])) {
+                    $nights = Carbon::parse($data['checkInDate'])->diffInDays(Carbon::parse($data['checkOutDate']));
+                    $data['nights'] = $nights > 0 ? (int) $nights : null;
+                }
+
+                $this->inquiryForm = PropertyInquiryForm::create($data);
                 if (!$this->inquiryForm) {
                     errPropertyInquiryFormSave();
                 }

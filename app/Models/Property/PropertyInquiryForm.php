@@ -28,6 +28,13 @@ class PropertyInquiryForm extends BaseModel
         'childrenAges' => 'array',
         'checkInDate' => 'date',
         'checkOutDate' => 'date',
+        'propertyVariantId' => 'integer',
+        'pricePerNight' => 'decimal:2',
+        'nights' => 'integer',
+        'fee' => 'decimal:2',
+        'total' => 'decimal:2',
+        'payableAmount' => 'decimal:2',
+        'rateOptions' => 'array',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
         self::DELETED_AT => 'datetime',
@@ -49,6 +56,31 @@ class PropertyInquiryForm extends BaseModel
     public function sourceType(): BelongsTo
     {
         return $this->belongsTo(PropertySourceType::class, 'sourceTypeId');
+    }
+
+    public function propertyVariant(): BelongsTo
+    {
+        return $this->belongsTo(PropertyVariant::class, 'propertyVariantId');
+    }
+
+    /** Booking quote sent by the website, null when the inquiry has no price. */
+    public function quote(): ?array
+    {
+        if ($this->total === null && $this->pricePerNight === null) {
+            return null;
+        }
+
+        return [
+            'currency' => $this->currency,
+            'pricePerNight' => $this->pricePerNight,
+            'nights' => $this->nights,
+            'fee' => $this->fee,
+            'total' => $this->total,
+            'payableAmount' => $this->payableAmount,
+            'payableCurrency' => $this->payableCurrency,
+            'rateOptions' => $this->rateOptions ?? [],
+            'couponCode' => $this->couponCode,
+        ];
     }
 
     /*

@@ -14,6 +14,9 @@
             <tr><td style="padding: 6px 0; color: #777;">Email</td><td style="padding: 6px 0;">{{ $inquiryForm->email }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Mobile Number</td><td style="padding: 6px 0;">{{ $inquiryForm->countryCode }} {{ $inquiryForm->mobileNumber }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Property</td><td style="padding: 6px 0;">{{ optional($inquiryForm->property)->nickname ?: '-' }}</td></tr>
+            @if($inquiryForm->propertyVariant)
+                <tr><td style="padding: 6px 0; color: #777;">Unit</td><td style="padding: 6px 0;">{{ $inquiryForm->propertyVariant->nickname }}</td></tr>
+            @endif
             @if($inquiryForm->isDatesFlexible)
                 <tr><td style="padding: 6px 0; color: #777;">Dates</td><td style="padding: 6px 0;">Flexible &ndash; {{ $inquiryForm->flexibleMonth }} {{ $inquiryForm->flexibleYear }}</td></tr>
             @else
@@ -31,6 +34,26 @@
                 </td>
             </tr>
         </table>
+
+        @if($quote = $inquiryForm->quote())
+            @php($money = fn ($amount, $currency = null) => $amount === null ? '-' : trim(($currency ?? $quote['currency']) . ' ' . number_format((float) $amount, 2)))
+            <p style="margin-top: 16px; color: #777;">Price shown to the guest</p>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr><td style="padding: 6px 0; width: 200px; color: #777;">Price / Night</td><td style="padding: 6px 0;">{{ $money($quote['pricePerNight']) }}</td></tr>
+                <tr><td style="padding: 6px 0; color: #777;">Nights</td><td style="padding: 6px 0;">{{ $quote['nights'] ?? '-' }}</td></tr>
+                <tr><td style="padding: 6px 0; color: #777;">Fee</td><td style="padding: 6px 0;">{{ $money($quote['fee']) }}</td></tr>
+                <tr><td style="padding: 6px 0; color: #777;">Total</td><td style="padding: 6px 0;"><b>{{ $money($quote['total']) }}</b></td></tr>
+                @if($quote['payableAmount'] !== null)
+                    <tr><td style="padding: 6px 0; color: #777;">Guest Pays (estimate)</td><td style="padding: 6px 0;">{{ $money($quote['payableAmount'], $quote['payableCurrency']) }}</td></tr>
+                @endif
+                @if($quote['rateOptions'])
+                    <tr><td style="padding: 6px 0; color: #777;">Rate Options</td><td style="padding: 6px 0;">{{ implode(', ', $quote['rateOptions']) }}</td></tr>
+                @endif
+                @if($quote['couponCode'])
+                    <tr><td style="padding: 6px 0; color: #777;">Coupon</td><td style="padding: 6px 0;">{{ $quote['couponCode'] }}</td></tr>
+                @endif
+            </table>
+        @endif
 
         @if($inquiryForm->comments)
             <p style="margin-top: 16px; color: #777;">Comments</p>

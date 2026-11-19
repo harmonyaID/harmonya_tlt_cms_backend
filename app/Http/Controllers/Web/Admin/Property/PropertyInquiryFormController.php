@@ -41,13 +41,13 @@ class PropertyInquiryFormController extends Controller
 
     public function get(Request $request)
     {
-        $forms = PropertyInquiryForm::filter($request)->with('property', 'sourceType')->getOrPaginate($request);
+        $forms = PropertyInquiryForm::filter($request)->with('property', 'propertyVariant', 'sourceType')->getOrPaginate($request);
         return success(PropertyInquiryFormParser::briefs($forms), pagination: pagination($forms));
     }
 
     public function detail($id)
     {
-        $form = PropertyInquiryForm::with('property', 'sourceType')->find($id);
+        $form = PropertyInquiryForm::with('property', 'propertyVariant', 'sourceType')->find($id);
         if (!$form) {
             errPropertyInquiryFormGet();
         }

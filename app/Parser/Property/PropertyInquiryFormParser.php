@@ -17,6 +17,7 @@ class PropertyInquiryFormParser extends BaseParser
             'id' => $data->id,
             'status' => MailStatus::idName($data->statusId),
             'property' => optional($data->property)->only('id', 'nickname'),
+            'propertyVariant' => optional($data->propertyVariant)->only('id', 'nickname'),
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'name' => $data->name,
             'email' => $data->email,
@@ -31,6 +32,7 @@ class PropertyInquiryFormParser extends BaseParser
             'childrenAges' => $data->childrenAges,
             'childCount' => $data->childCount(),
             'comments' => $data->comments,
+            'quote' => $data->quote(),
             'isRead' => $data->isRead,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
@@ -46,6 +48,7 @@ class PropertyInquiryFormParser extends BaseParser
             'id' => $data->id,
             'status' => MailStatus::idName($data->statusId),
             'property' => optional($data->property)->only('id', 'nickname'),
+            'propertyVariant' => optional($data->propertyVariant)->only('id', 'nickname'),
             'sourceType' => optional($data->sourceType)->only('id', 'name'),
             'name' => $data->name,
             'email' => $data->email,
@@ -56,6 +59,8 @@ class PropertyInquiryFormParser extends BaseParser
             'isDatesFlexible' => $data->isDatesFlexible,
             'adultCount' => $data->adultCount,
             'childCount' => $data->childCount(),
+            'total' => $data->total,
+            'currency' => $data->currency,
             'isRead' => $data->isRead,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
