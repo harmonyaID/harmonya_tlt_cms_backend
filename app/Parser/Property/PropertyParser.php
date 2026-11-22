@@ -146,7 +146,7 @@ class PropertyParser extends BaseParser
                 return [
                     'id' => $feature->id,
                     'name' => $feature->name,
-                    'icon' => $feature->icon,
+                    'icon' => $feature->iconUrl(),
                     'value' => $feature->pivot->value,
                 ];
             })->values(),

@@ -15,7 +15,7 @@ class SettingPropertyFeatureParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'icon' => $data->icon,
+            'icon' => $data->iconUrl(),
             'hasValue' => $data->hasValue,
             'order' => $data->order,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
@@ -31,7 +31,7 @@ class SettingPropertyFeatureParser extends BaseParser
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'icon' => $data->icon,
+            'icon' => $data->iconUrl(),
             'hasValue' => $data->hasValue,
             'order' => $data->order,
         ];

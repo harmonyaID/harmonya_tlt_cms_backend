@@ -4,7 +4,9 @@ namespace App\Models\Setting;
 
 use App\Models\BaseModel;
 use App\Parser\Setting\SettingPropertyFeatureParser;
+use App\Services\Constant\Storage\PathConstant;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class SettingPropertyFeature extends BaseModel
 {
@@ -42,5 +44,14 @@ class SettingPropertyFeature extends BaseModel
             }
 
         })->orderBy('order', 'ASC')->orderBy('id', 'ASC');
+    }
+
+    public function iconUrl(): ?string
+    {
+        if (!$this->icon) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(PathConstant::IMAGES_PROPERTY_FEATURE . $this->icon);
     }
 }

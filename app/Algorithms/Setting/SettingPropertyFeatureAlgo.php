@@ -3,6 +3,7 @@
 namespace App\Algorithms\Setting;
 
 use App\Models\Setting\SettingPropertyFeature;
+use App\Parser\Setting\SettingPropertyFeatureParser;
 use App\Services\Constant\Activity\ActivityAction;
 use App\Services\Constant\Activity\ActivityType;
 use App\Services\Constant\Storage\PathConstant;
@@ -44,7 +45,7 @@ class SettingPropertyFeatureAlgo
                     ->log("Enter new property feature: " . $this->propertyFeature->name);
             });
 
-            return success($this->propertyFeature->fresh());
+            return success(SettingPropertyFeatureParser::first($this->propertyFeature->fresh()));
 
         } catch (\Error $error) {
             exception($error);
@@ -67,7 +68,7 @@ class SettingPropertyFeatureAlgo
                     ->log("Update property feature: " . $this->propertyFeature->name);
             });
 
-            return success($this->propertyFeature->fresh());
+            return success(SettingPropertyFeatureParser::first($this->propertyFeature->fresh()));
 
         } catch (\Error $error) {
             exception($error);
