@@ -48,8 +48,9 @@ class OfferAlgo
                     $this->offer->properties()->sync($request->propertyIds);
                 }
 
-                if ($request->has('tagIds') && is_array($request->tagIds)) {
-                    $this->offer->tags()->sync($request->tagIds);
+                // "tagIds" sent empty removes every tag (multipart/form-data cannot send an empty array)
+                if ($request->has('tagIds')) {
+                    $this->offer->tags()->sync((array) ($request->tagIds ?: []));
                 }
 
                 (new ContentSeoAlgo($this->offer))->save($request);
@@ -101,8 +102,9 @@ class OfferAlgo
                     $this->offer->properties()->sync($request->propertyIds);
                 }
 
-                if ($request->has('tagIds') && is_array($request->tagIds)) {
-                    $this->offer->tags()->sync($request->tagIds);
+                // "tagIds" sent empty removes every tag (multipart/form-data cannot send an empty array)
+                if ($request->has('tagIds')) {
+                    $this->offer->tags()->sync((array) ($request->tagIds ?: []));
                 }
 
                 (new ContentSeoAlgo($this->offer))->save($request);

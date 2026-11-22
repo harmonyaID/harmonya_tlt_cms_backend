@@ -15,6 +15,14 @@ class OfferRequest extends FormRequest
         return true;
     }
 
+    /** tagIds may come from form-data as text: "1,2" -> [1, 2]. */
+    protected function prepareForValidation()
+    {
+        if (is_string($this->tagIds) && trim($this->tagIds) !== '') {
+            $this->merge(['tagIds' => array_values(array_filter(array_map('trim', explode(',', $this->tagIds)), 'strlen'))]);
+        }
+    }
+
     public function rules()
     {
         $offerId = $this->route('id');

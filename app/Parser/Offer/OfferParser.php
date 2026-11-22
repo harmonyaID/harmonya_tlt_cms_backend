@@ -76,6 +76,7 @@ class OfferParser extends BaseParser
             'thumbnail' => $data->thumbnailUrl(),
             'excerpt' => $data->excerpt,
             'propertyCount' => $data->properties->count(),
+            'tags' => $data->tags->map(fn ($tag) => ['id' => $tag->id, 'name' => $tag->name])->values(),
             'startDate' => optional($data->startDate)
                 ->format('d/m/Y'),
             'endDate' => optional($data->endDate)
