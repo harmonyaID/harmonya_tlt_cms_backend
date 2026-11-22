@@ -28,7 +28,7 @@ class SettingPropertyFeatureAlgo
             DB::transaction(function () use ($request) {
 
                 $this->propertyFeature = SettingPropertyFeature::create(
-                    $request->except(['icon', 'deleteIcon']) + created_by()
+                    $this->attributes($request) + created_by()
                 );
 
                 if (!$this->propertyFeature) {
@@ -56,9 +56,7 @@ class SettingPropertyFeatureAlgo
         try {
             DB::transaction(function () use ($request) {
 
-                $this->propertyFeature->update(
-                    $request->except(['icon', 'deleteIcon'])
-                );
+                $this->propertyFeature->update($this->attributes($request));
 
                 $this->uploadIcon($request);
 
@@ -97,6 +95,18 @@ class SettingPropertyFeatureAlgo
         } catch (\Error $error) {
             exception($error);
         }
+    }
+
+    /**
+     * Only the columns of the feature. Unknown keys sent by the form are ignored, and an
+     * empty "order" / "hasValue" keeps the current value (or the default on create).
+     */
+    private function attributes(Request $request): array
+    {
+        return array_filter(
+            $request->only(['name', 'hasValue', 'order']),
+            fn ($value) => $value !== null && $value !== ''
+        );
     }
 
     private function uploadIcon(Request $request): void
