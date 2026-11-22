@@ -36,6 +36,7 @@ class OfferParser extends BaseParser
                 'id',
                 'name'
             ),
+            'categories' => $data->categories->map(fn ($category) => ['id' => $category->id, 'name' => $category->name])->values(),
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),
@@ -71,6 +72,7 @@ class OfferParser extends BaseParser
                 'id',
                 'name'
             ),
+            'categories' => $data->categories->map(fn ($category) => ['id' => $category->id, 'name' => $category->name])->values(),
             'title' => $data->title,
             'slug' => $data->slug,
             'thumbnail' => $data->thumbnailUrl(),

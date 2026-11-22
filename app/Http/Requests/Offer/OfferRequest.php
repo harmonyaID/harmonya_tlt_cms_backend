@@ -15,11 +15,15 @@ class OfferRequest extends FormRequest
         return true;
     }
 
-    /** tagIds may come from form-data as text: "1,2" -> [1, 2]. */
+    /** tagIds / categoryIds may come from form-data as text: "1,2" -> [1, 2]. */
     protected function prepareForValidation()
     {
-        if (is_string($this->tagIds) && trim($this->tagIds) !== '') {
-            $this->merge(['tagIds' => array_values(array_filter(array_map('trim', explode(',', $this->tagIds)), 'strlen'))]);
+        foreach (['tagIds', 'categoryIds'] as $field) {
+            $value = $this->input($field);
+
+            if (is_string($value) && trim($value) !== '') {
+                $this->merge([$field => array_values(array_filter(array_map('trim', explode(',', $value)), 'strlen'))]);
+            }
         }
     }
 
@@ -53,6 +57,8 @@ class OfferRequest extends FormRequest
             'propertyIds' => 'nullable|array',
             'propertyIds.*' => 'integer|exists:properties,id',
 
+            'categoryIds' => 'nullable|array',
+            'categoryIds.*' => 'integer|exists:offer_categories,id',
             'tagIds' => 'nullable|array',
             'tagIds.*' => 'integer|exists:offer_tags,id',
 

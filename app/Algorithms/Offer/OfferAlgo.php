@@ -30,7 +30,7 @@ class OfferAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'propertyIds', 'tagIds', 'seo', 'acf');
+                $data = $request->except('thumbnail', 'propertyIds', 'tagIds', 'categoryIds', 'seo', 'acf');
                 $data['slug'] = Str::slug($request->slug ?: $request->title);
                 $data['publishedAt'] = $request->publishedAt ?: now();
 
@@ -48,6 +48,8 @@ class OfferAlgo
                     $this->offer->properties()->sync($request->propertyIds);
                 }
 
+                $this->syncCategories($request);
+
                 // "tagIds" sent empty removes every tag (multipart/form-data cannot send an empty array)
                 if ($request->has('tagIds')) {
                     $this->offer->tags()->sync((array) ($request->tagIds ?: []));
@@ -63,7 +65,7 @@ class OfferAlgo
                     ->log("Enter new offer: " . $this->offer->title);
             });
 
-            return success($this->offer->load('properties', 'category', 'tags', 'seo', 'acf'));
+            return success($this->offer->load('properties', 'category', 'categories', 'tags', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -75,7 +77,7 @@ class OfferAlgo
 
             DB::transaction(function () use ($request) {
 
-                $data = $request->except('thumbnail', 'propertyIds', 'tagIds', 'seo', 'acf');
+                $data = $request->except('thumbnail', 'propertyIds', 'tagIds', 'categoryIds', 'seo', 'acf');
                 if ($request->has('slug')) {
                     $data['slug'] = Str::slug($request->slug);
                 }
@@ -102,6 +104,8 @@ class OfferAlgo
                     $this->offer->properties()->sync($request->propertyIds);
                 }
 
+                $this->syncCategories($request);
+
                 // "tagIds" sent empty removes every tag (multipart/form-data cannot send an empty array)
                 if ($request->has('tagIds')) {
                     $this->offer->tags()->sync((array) ($request->tagIds ?: []));
@@ -117,7 +121,7 @@ class OfferAlgo
                     ->log("Update offer: " . $this->offer->title);
             });
 
-            return success($this->offer->load('properties', 'category', 'tags', 'seo', 'acf'));
+            return success($this->offer->load('properties', 'category', 'categories', 'tags', 'seo', 'acf'));
         } catch (\Error $error) {
             exception($error);
         }
@@ -181,5 +185,24 @@ class OfferAlgo
         $image->move($dirPath, $filename);
 
         return $filename;
+    }
+
+    /**
+     * categoryIds[] (several categories) replaces the categories; an empty value removes them.
+     * A single categoryId (old form) is used when categoryIds is not sent.
+     * offers.categoryId keeps the first category for existing clients.
+     */
+    private function syncCategories(Request $request): void
+    {
+        if ($request->has('categoryIds')) {
+            $ids = array_values(array_unique(array_map('intval', (array) ($request->categoryIds ?: []))));
+        } elseif ($request->has('categoryId')) {
+            $ids = $request->categoryId ? [(int) $request->categoryId] : [];
+        } else {
+            return;
+        }
+
+        $this->offer->categories()->sync($ids);
+        $this->offer->update(['categoryId' => $ids[0] ?? null]);
     }
 }

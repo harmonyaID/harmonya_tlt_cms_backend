@@ -13,13 +13,13 @@ class OfferController extends Controller
     {
         $request->merge(['isActive' => true]);
 
-        $offers = Offer::filter($request)->running()->with('properties', 'category', 'tags', 'seo')->getOrPaginate($request);
+        $offers = Offer::filter($request)->running()->with('properties', 'category', 'categories', 'tags', 'seo')->getOrPaginate($request);
         return success(OfferParser::briefs($offers), pagination: pagination($offers));
     }
 
     public function detail($idOrSlug)
     {
-        $offer = Offer::where('isActive', true)->running()->bySlugOrId($idOrSlug)->with('properties', 'category', 'tags', 'seo')->first();
+        $offer = Offer::where('isActive', true)->running()->bySlugOrId($idOrSlug)->with('properties', 'category', 'categories', 'tags', 'seo')->first();
         if (!$offer) {
             errOfferGet();
         }

@@ -58,6 +58,11 @@ class Offer extends BaseModel
         return $this->belongsTo(OfferCategory::class, 'categoryId');
     }
 
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(OfferCategory::class, 'offer_category', 'offerId', 'categoryId');
+    }
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(OfferTag::class, 'offer_tag', 'offerId', 'tagId');
@@ -114,7 +119,9 @@ class Offer extends BaseModel
             }
 
             if ($request->has('categoryIds') && $request->categoryIds) {
-                $query->whereIn('categoryId', $this->toValueArray($request->categoryIds));
+                $query->whereHas('categories', function ($category) use ($request) {
+                    $category->whereIn('offer_categories.id', $this->toValueArray($request->categoryIds));
+                });
             }
 
             if ($request->has('tagIds') && $request->tagIds) {
