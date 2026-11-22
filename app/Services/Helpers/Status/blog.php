@@ -57,6 +57,27 @@ if (!function_exists("errBlogTagDelete")) {
 }
 
 
+if (!function_exists("errBlogAffiliateGet")) {
+    function errBlogAffiliateGet($internalMsg = "")
+    {
+        error(404, "Blog affiliate not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errBlogAffiliateSave")) {
+    function errBlogAffiliateSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save blog affiliate", $internalMsg);
+    }
+}
+
+if (!function_exists("errBlogAffiliateDelete")) {
+    function errBlogAffiliateDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete blog affiliate", $internalMsg);
+    }
+}
+
 if (!function_exists("errBlogGet")) {
     function errBlogGet($internalMsg = "")
     {

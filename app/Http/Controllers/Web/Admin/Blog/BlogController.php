@@ -67,6 +67,7 @@ class BlogController extends Controller
             ->with(
                 'categories',
                 'tags',
+                'affiliates',
                 'properties',
                 'seo',
                 'acf'
@@ -85,6 +86,7 @@ class BlogController extends Controller
         $blog = Blog::with(
             'categories',
             'tags',
+            'affiliates',
             'properties',
             'seo',
             'acf'

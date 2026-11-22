@@ -36,7 +36,9 @@ class BlogAlgo
                     'categoryIds',
                     'propertyIds',
                     'promoBanner',
+                    'promoBannerUrl',
                     'deletePromoBanner',
+                    'affiliateIds',
                     'deleteThumbnail',
                     'seo',
                     'acf'
@@ -65,6 +67,11 @@ class BlogAlgo
                     );
                 }
 
+                // affiliateIds sent empty removes every assigned affiliate (multipart/form-data cannot send an empty array)
+                if ($request->has('affiliateIds')) {
+                    $this->blog->affiliates()->sync((array) ($request->affiliateIds ?: []));
+                }
+
                 if ($request->has('propertyIds')) {
                     $propertyIds = $request->input('propertyIds', []);
 
@@ -73,16 +80,6 @@ class BlogAlgo
                             ? $this->propertySyncData($propertyIds)
                             : []
                     );
-                }
-
-                if (
-                    $request->hasFile('promoBanner')
-                    && $request->file('promoBanner')->isValid()
-                ) {
-                    $this->blog->promoBanner =
-                        $this->uploadPromoBanner($request);
-
-                    $this->blog->save();
                 }
 
                 if (
@@ -117,6 +114,7 @@ class BlogAlgo
                 $this->blog->load(
                     'categories',
                     'tags',
+                    'affiliates',
                     'properties',
                     'seo',
                     'acf'
@@ -137,7 +135,9 @@ class BlogAlgo
                     'categoryIds',
                     'propertyIds',
                     'promoBanner',
+                    'promoBannerUrl',
                     'deletePromoBanner',
+                    'affiliateIds',
                     'deleteThumbnail',
                     'seo',
                     'acf'
@@ -161,6 +161,11 @@ class BlogAlgo
                     );
                 }
 
+                // affiliateIds sent empty removes every assigned affiliate (multipart/form-data cannot send an empty array)
+                if ($request->has('affiliateIds')) {
+                    $this->blog->affiliates()->sync((array) ($request->affiliateIds ?: []));
+                }
+
                 if ($request->has('propertyIds')) {
                     $propertyIds = $request->input('propertyIds', []);
 
@@ -169,20 +174,6 @@ class BlogAlgo
                             ? $this->propertySyncData($propertyIds)
                             : []
                     );
-                }
-
-                if ($request->boolean('deletePromoBanner')) {
-                    $this->deletePromoBanner();
-                }
-
-                if (
-                    $request->hasFile('promoBanner')
-                    && $request->file('promoBanner')->isValid()
-                ) {
-                    $this->blog->promoBanner =
-                        $this->uploadPromoBanner($request);
-
-                    $this->blog->save();
                 }
 
                 if (
@@ -234,6 +225,7 @@ class BlogAlgo
                 $this->blog->load(
                     'categories',
                     'tags',
+                    'affiliates',
                     'properties',
                     'seo',
                     'acf'
@@ -299,29 +291,6 @@ class BlogAlgo
                 ]
             )
             ->all();
-    }
-
-    private function uploadPromoBanner(Request $request): string
-    {
-        $image = $request->file('promoBanner');
-
-        $dirPath =
-            PathConstant::IMAGES_BLOG_STORAGE_PUBLIC_PATH();
-
-        if (!file_exists($dirPath)) {
-            mkdir($dirPath, 0777, true);
-        }
-
-        $this->deletePromoBanner();
-
-        $filename = filename(
-            $image,
-            $this->blog->title . '-promo-banner'
-        );
-
-        $image->move($dirPath, $filename);
-
-        return $filename;
     }
 
     private function deletePromoBanner(): void

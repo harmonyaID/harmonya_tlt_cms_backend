@@ -16,6 +16,16 @@ class BlogRequest extends FormRequest
         return true;
     }
 
+    /** affiliateIds may come from form-data as text: "1,2" -> [1, 2]. */
+    protected function prepareForValidation()
+    {
+        $value = $this->input('affiliateIds');
+
+        if (is_string($value) && trim($value) !== '') {
+            $this->merge(['affiliateIds' => array_values(array_filter(array_map('trim', explode(',', $value)), 'strlen'))]);
+        }
+    }
+
     public function rules()
     {
         $blogId = $this->route('id');
@@ -47,9 +57,13 @@ class BlogRequest extends FormRequest
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'deleteThumbnail' => 'nullable|boolean',
 
-            'promoBanner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
-            'promoBannerUrl' => 'nullable|url|max:2048',
-            'deletePromoBanner' => 'nullable|boolean',
+            // replaces promoBanner: only affiliates that are not applied to every blog can be assigned
+            'affiliateIds' => 'nullable|array',
+            'affiliateIds.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('blog_affiliates', 'id')->where('isAppliedToAll', false)->whereNull('deletedAt'),
+            ],
 
             'propertyIds' => 'nullable|array|max:9',
             'propertyIds.*' => 'integer|distinct|exists:properties,id',

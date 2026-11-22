@@ -49,6 +49,7 @@ class PathConstant
     const IMAGES_PROPERTY_FLOORPLAN = 'images/property-listings/floorplans/';
 
     const IMAGES_BLOG = 'images/blogs/';
+    const IMAGES_BLOG_AFFILIATE = 'images/blogs/affiliates/';
     const IMAGES_OFFER = 'images/offers/';
     const IMAGES_AMENITY = 'images/amenities/';
     const IMAGES_AMENITY_CATEGORY = 'images/amenity-categories/';
@@ -154,6 +155,11 @@ class PathConstant
     public static function IMAGES_BLOG_STORAGE_PUBLIC_PATH()
     {
         return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG);
+    }
+
+    public static function IMAGES_BLOG_AFFILIATE_STORAGE_PUBLIC_PATH()
+    {
+        return storage_path(self::STORAGE_PUBLIC_BASE . self::IMAGES_BLOG_AFFILIATE);
     }
 
     public static function IMAGES_AMENITY_STORAGE_PUBLIC_PATH()

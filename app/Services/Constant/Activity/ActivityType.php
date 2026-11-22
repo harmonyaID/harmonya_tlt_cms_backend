@@ -21,6 +21,7 @@ class ActivityType extends BaseCodeName
     const BOAT_CONTACT_FORM = 'boat_contact_form';
     const BLOG_CATEGORY = 'blog_category';
     const BLOG_TAG = 'blog_tag';
+    const BLOG_AFFILIATE = 'blog_affiliate';
     const BLOG = 'blog';
     const OFFER = 'offer';
     const OFFER_CATEGORY = 'offer_category';
@@ -73,6 +74,7 @@ class ActivityType extends BaseCodeName
         self::BOAT_CONTACT_FORM,
         self::BLOG_CATEGORY,
         self::BLOG_TAG,
+        self::BLOG_AFFILIATE,
         self::BLOG,
         self::OFFER,
         self::OFFER_CATEGORY,

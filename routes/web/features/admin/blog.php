@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\Blog\BlogAffiliateController;
 use App\Http\Controllers\Web\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Web\Admin\Blog\BlogController;
 use App\Http\Controllers\Web\Admin\Blog\BlogTagController;
@@ -29,6 +30,15 @@ Route::prefix("blogs")
                 Route::get('{id}', [BlogTagController::class, 'detail']);
                 Route::put('{id}', [BlogTagController::class, 'update']);
                 Route::delete('{id}', [BlogTagController::class, 'delete']);
+            });
+
+        Route::prefix('affiliates')
+            ->group(function () {
+                Route::get('', [BlogAffiliateController::class, 'get']);
+                Route::post('', [BlogAffiliateController::class, 'create']);
+                Route::get('{id}', [BlogAffiliateController::class, 'detail']);
+                Route::match(['post', 'put'], '{id}', [BlogAffiliateController::class, 'update']);
+                Route::delete('{id}', [BlogAffiliateController::class, 'delete']);
             });
 
         Route::prefix('trash')

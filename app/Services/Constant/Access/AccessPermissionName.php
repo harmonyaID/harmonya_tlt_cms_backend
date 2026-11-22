@@ -126,6 +126,13 @@ class AccessPermissionName
     const STAFF_BLOG_TAG_UPDATE = AccessGroup::STAFF . '.blog-tag.update';
     const STAFF_BLOG_TAG_DELETE = AccessGroup::STAFF . '.blog-tag.delete';
 
+    // Blog Affiliate
+    const STAFF_BLOG_AFFILIATE = AccessGroup::STAFF . '.blog-affiliate.*';
+    const STAFF_BLOG_AFFILIATE_VIEW = AccessGroup::STAFF . '.blog-affiliate.view';
+    const STAFF_BLOG_AFFILIATE_CREATE = AccessGroup::STAFF . '.blog-affiliate.create';
+    const STAFF_BLOG_AFFILIATE_UPDATE = AccessGroup::STAFF . '.blog-affiliate.update';
+    const STAFF_BLOG_AFFILIATE_DELETE = AccessGroup::STAFF . '.blog-affiliate.delete';
+
     // Blog
     const STAFF_BLOG = AccessGroup::STAFF . '.blog.*';
     const STAFF_BLOG_VIEW = AccessGroup::STAFF . '.blog.view';
@@ -485,6 +492,12 @@ class AccessPermissionName
         self::STAFF_BLOG_TAG_CREATE,
         self::STAFF_BLOG_TAG_UPDATE,
         self::STAFF_BLOG_TAG_DELETE,
+
+        self::STAFF_BLOG_AFFILIATE,
+        self::STAFF_BLOG_AFFILIATE_VIEW,
+        self::STAFF_BLOG_AFFILIATE_CREATE,
+        self::STAFF_BLOG_AFFILIATE_UPDATE,
+        self::STAFF_BLOG_AFFILIATE_DELETE,
 
         self::STAFF_EXPERIENCE_TYPE,
         self::STAFF_EXPERIENCE_TYPE_VIEW,

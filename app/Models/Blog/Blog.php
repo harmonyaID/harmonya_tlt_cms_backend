@@ -67,6 +67,23 @@ class Blog extends BaseModel
     {
         return $this->belongsToMany(BlogTag::class, 'blog_tag', 'blogId', 'tagId');
     }
+    public function affiliates(): BelongsToMany
+    {
+        return $this->belongsToMany(BlogAffiliate::class, 'blog_affiliate', 'blogId', 'affiliateId')->orderBy('blog_affiliates.id');
+    }
+
+    /**
+     * Affiliates shown on this blog: the ones assigned to it + every affiliate
+     * applied to all blogs (no duplicates).
+     */
+    public function allAffiliates()
+    {
+        return $this->affiliates
+            ->concat(BlogAffiliate::appliedToAllCached())
+            ->unique('id')
+            ->values();
+    }
+
     public function properties(): BelongsToMany
     {
         return $this->belongsToMany(\App\Models\Property\Property::class, 'blog_property', 'blogId', 'propertyId')
