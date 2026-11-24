@@ -22,14 +22,17 @@
             <tr><td style="padding: 6px 0; color: #777;">Return</td><td style="padding: 6px 0;">{{ optional($contactForm->returnDate)->format('d/m/Y') ?: '-' }} {{ $contactForm->returnTime }}</td></tr>
             @endif
             @if($contactForm->needLandTransport)
-            <tr><td style="padding: 6px 0; color: #777;">Departure - pick up</td><td style="padding: 6px 0;">{{ \App\Models\Boat\BoatContactForm::pointLabel($contactForm->departurePickupPoint) ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Departure - pick up</td><td style="padding: 6px 0;">{{ \App\Models\Boat\BoatContactForm::pointLabel($contactForm->departurePickupPoint) ?: '-' }} &middot; {{ $contactForm->departurePickupLocation ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Departure - flight number / arrival time</td><td style="padding: 6px 0;">{{ $contactForm->departurePickupFlightNumber ?: '-' }} / {{ $contactForm->departurePickupArrivalTime ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Departure - drop off</td><td style="padding: 6px 0;">{{ \App\Models\Boat\BoatContactForm::pointLabel($contactForm->departureDropOffPoint) ?: '-' }} &middot; {{ $contactForm->departureDropOffLocation ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Departure - drop off flight number</td><td style="padding: 6px 0;">{{ $contactForm->departureDropOffFlightNumber ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Departure - drop off arrival time</td><td style="padding: 6px 0;">{{ $contactForm->departureDropOffArrivalTime ?: '-' }}</td></tr>
             @if($contactForm->ticketType === 'return')
             <tr><td style="padding: 6px 0; color: #777;">Return - pick up</td><td style="padding: 6px 0;">{{ \App\Models\Boat\BoatContactForm::pointLabel($contactForm->returnPickupPoint) ?: '-' }} &middot; {{ $contactForm->returnPickupLocation ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Return - pick up flight number</td><td style="padding: 6px 0;">{{ $contactForm->returnPickupFlightNumber ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Return - checkout time</td><td style="padding: 6px 0;">{{ $contactForm->returnPickupCheckoutTime ?: '-' }}</td></tr>
             <tr><td style="padding: 6px 0; color: #777;">Return - drop off</td><td style="padding: 6px 0;">{{ \App\Models\Boat\BoatContactForm::pointLabel($contactForm->returnDropOffPoint) ?: '-' }} &middot; {{ $contactForm->returnDropOffLocation ?: '-' }}</td></tr>
+            <tr><td style="padding: 6px 0; color: #777;">Return - drop off flight number</td><td style="padding: 6px 0;">{{ $contactForm->returnDropOffFlightNumber ?: '-' }}</td></tr>
             @endif
             @else
             <tr><td style="padding: 6px 0; color: #777;">Land transport</td><td style="padding: 6px 0;">No</td></tr>

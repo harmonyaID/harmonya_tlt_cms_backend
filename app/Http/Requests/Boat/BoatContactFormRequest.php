@@ -54,20 +54,24 @@ class BoatContactFormRequest extends FormRequest
                 $points,
             ],
 
+            'departurePickupLocation' => 'nullable|string|max:255',
             'departurePickupFlightNumber' => 'nullable|string|max:100',
             'departurePickupArrivalTime' => 'nullable|string|max:50',
 
             'departureDropOffPoint' => ['nullable', $points],
             'departureDropOffLocation' => 'nullable|string|max:255',
+            'departureDropOffFlightNumber' => 'nullable|string|max:100',
             'departureDropOffArrivalTime' => 'nullable|string|max:50',
 
             // Return leg
             'returnPickupPoint' => ['nullable', $points],
             'returnPickupLocation' => 'nullable|string|max:255',
+            'returnPickupFlightNumber' => 'nullable|string|max:100',
             'returnPickupCheckoutTime' => 'nullable|string|max:50',
 
             'returnDropOffPoint' => ['nullable', $points],
             'returnDropOffLocation' => 'nullable|string|max:255',
+            'returnDropOffFlightNumber' => 'nullable|string|max:100',
 
             // Extras
             'bookedThroughTlt' => 'required|boolean',
@@ -159,19 +163,23 @@ class BoatContactFormRequest extends FormRequest
             $clean += array_fill_keys([
                 'returnPickupPoint',
                 'returnPickupLocation',
+                'returnPickupFlightNumber',
                 'returnPickupCheckoutTime',
                 'returnDropOffPoint',
                 'returnDropOffLocation',
+                'returnDropOffFlightNumber',
             ], null);
         }
 
         if (!$this->boolean('needLandTransport')) {
             $clean += array_fill_keys([
                 'departurePickupPoint',
+                'departurePickupLocation',
                 'departurePickupFlightNumber',
                 'departurePickupArrivalTime',
                 'departureDropOffPoint',
                 'departureDropOffLocation',
+                'departureDropOffFlightNumber',
                 'departureDropOffArrivalTime',
             ], null);
         }
@@ -188,6 +196,16 @@ class BoatContactFormRequest extends FormRequest
                 'departurePickupFlightNumber' => null,
                 'departurePickupArrivalTime' => null,
             ];
+        }
+
+        foreach ([
+            'departureDropOffFlightNumber' => 'departureDropOffPoint',
+            'returnPickupFlightNumber' => 'returnPickupPoint',
+            'returnDropOffFlightNumber' => 'returnDropOffPoint',
+        ] as $flightNumber => $point) {
+            if ($this->input($point) !== BoatContactForm::PICK_UP_AIRPORT) {
+                $clean += [$flightNumber => null];
+            }
         }
 
         $clean['infantCount'] = $this->infantCount ?? 0;
