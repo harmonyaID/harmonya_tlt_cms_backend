@@ -32,7 +32,7 @@ class Experience extends BaseModel
 
     protected $casts = [
         'catalogs' => 'array',
-        'contactInformation' => 'array',
+        'contactInfo' => 'array',
         'isActive' => 'boolean',
         'showInquiry' => 'boolean',
         self::CREATED_AT => 'datetime',
