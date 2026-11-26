@@ -17,7 +17,7 @@ class TestNotificationMailCommand extends Command
     {
         app('mail.manager'); // applies the provider from Settings > Notification Credentials
 
-        $to = $this->option('to') ? [$this->option('to')] : config('mail.notification_to');
+        $to = $this->option('to') ? [$this->option('to')] : $settings->recipients();
         $mailerConfig = config('mail.mailers.' . config('mail.default'), []);
 
         $this->line('Source : ' . ($settings->applied ?? '.env (no active Postmark / Mailtrap in Notification Credentials)'));
@@ -26,7 +26,7 @@ class TestNotificationMailCommand extends Command
         $this->line('To     : ' . ($to ? implode(', ', $to) : '-'));
 
         if (!$to) {
-            $this->error('MAIL_NOTIFICATION_TO is empty in .env, form notifications are not sent.');
+            $this->error('No recipient: fill "To Email" in Notification Credentials or MAIL_NOTIFICATION_TO in .env. Form notifications are not sent.');
             return self::FAILURE;
         }
 

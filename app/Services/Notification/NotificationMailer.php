@@ -6,7 +6,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Emails a form submission to the admin addresses in MAIL_NOTIFICATION_TO.
+ * Emails a form submission to the admin addresses: "To Email" of the active
+ * mail credential (Settings > Notification Credentials), or MAIL_NOTIFICATION_TO.
  *
  * The mail is sent once the HTTP response has been returned, so the visitor
  * does not wait for the mail server and no queue worker is needed.
@@ -15,10 +16,10 @@ class NotificationMailer
 {
     public function toAdmin(Mailable $mail): void
     {
-        $to = config('mail.notification_to');
+        $to = app(MailProviderSettings::class)->recipients();
 
         if (!$to) {
-            logger()->warning('MAIL_NOTIFICATION_TO is empty, ' . class_basename($mail) . ' was not sent.');
+            logger()->warning('No recipient (To Email in Notification Credentials / MAIL_NOTIFICATION_TO), ' . class_basename($mail) . ' was not sent.');
             return;
         }
 

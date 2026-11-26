@@ -57,6 +57,15 @@ class SettingNotificationCredentialRequest extends FormRequest
             // fromEmail / fromName are shared by Postmark and Mailtrap
             'credentials.' . PostmarkCredential::FROM_EMAIL => [$postmark, $mailtrap, 'nullable', 'email'],
             'credentials.' . PostmarkCredential::FROM_NAME => ['nullable', 'string', 'max:255'],
+
+            // admin recipient(s) of the form notifications: "a@x.com, b@x.com"
+            'credentials.' . PostmarkCredential::TO_EMAIL => ['nullable', 'string', 'max:1000', function ($attribute, $value, $fail) {
+                foreach (array_filter(array_map('trim', explode(',', (string) $value))) as $email) {
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $fail("\"{$email}\" is not a valid email address.");
+                    }
+                }
+            }],
         ];
     }
 }

@@ -16,6 +16,9 @@ use App\Services\Constant\Setting\PostmarkCredential;
  * - Several active: the most recently updated one is used.
  * - MAIL_MAILER=log or array in .env (local / tests): .env always wins, so
  *   nothing is really sent from a development machine.
+ *
+ * Recipients of the form notifications: "toEmail" of the active credential,
+ * or MAIL_NOTIFICATION_TO in .env when it is empty.
  */
 class MailProviderSettings
 {
@@ -45,6 +48,15 @@ class MailProviderSettings
         ]);
 
         $this->applied = NotificationProvider::display($credential->providerId) . ' (' . $credential->name . ')';
+    }
+
+    /** Admin addresses for the form notifications. */
+    public function recipients(): array
+    {
+        $to = (string) (((array) ($this->activeCredential()?->credentials ?? []))[PostmarkCredential::TO_EMAIL] ?? '');
+        $emails = array_values(array_filter(array_map('trim', explode(',', $to))));
+
+        return $emails ?: (array) config('mail.notification_to');
     }
 
     private function activeCredential(): ?SettingNotificationCredential

@@ -14,6 +14,7 @@ class MailtrapCredential
     const PASSWORD = 'password';
     const FROM_EMAIL = 'fromEmail';
     const FROM_NAME = 'fromName';
+    const TO_EMAIL = 'toEmail';
 
     /** Email Testing (sandbox) inbox; Email Sending uses live.smtp.mailtrap.io:587. */
     const DEFAULT_HOST = 'sandbox.smtp.mailtrap.io';
@@ -26,5 +27,6 @@ class MailtrapCredential
         self::PASSWORD => 'Password',
         self::FROM_EMAIL => 'From Email',
         self::FROM_NAME => 'From Name',
+        self::TO_EMAIL => 'To Email (admin, comma separated)',
     ];
 }
