@@ -213,11 +213,17 @@ class Property extends BaseModel
                 $query->whereIn('guestyId', $this->toValueArray($request->guestyIds));
             }
 
-            // "Area" = free-text search against the property's address (e.g. "Jungutbatu")
+            if ($request->has('areaIds') && $request->areaIds) {
+                $query->whereHas('addresses', function ($address) use ($request) {
+                    $address->whereIn('areaId', $this->toValueArray($request->areaIds));
+                });
+            }
+
+            // "Area" = text search on the area name or the address (e.g. "Jungutbatu")
             if ($request->has('area') && strlen($request->area) > 1) {
                 $query->whereHas('addresses', function ($address) use ($request) {
                     $address->where(function ($area) use ($request) {
-                        $area->where('area', $request->area)
+                        $area->whereHas('area', fn ($q) => $q->where('name', 'LIKE', "%$request->area%"))
                             ->orWhere('address', 'LIKE', "%$request->area%");
                     });
                 });

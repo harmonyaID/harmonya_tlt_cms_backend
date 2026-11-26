@@ -7,6 +7,7 @@ use App\Http\Controllers\Public\Property\PropertyRelatedController;
 use App\Http\Controllers\Public\Property\PropertyReviewController;
 use App\Http\Controllers\Public\Property\PropertySourceTypeController;
 use App\Http\Controllers\Public\Property\PropertyTagController;
+use App\Http\Controllers\Public\Property\PropertyAreaController;
 use App\Http\Controllers\Public\Property\PropertyTypeController;
 use App\Http\Controllers\Public\Property\PropertyVariantController;
 use App\Http\Controllers\Public\Property\PropertyVariantRelatedController;
@@ -35,6 +36,11 @@ Route::prefix("property-variants")
 Route::prefix("property-types")
     ->group(function () {
         Route::get('', [PropertyTypeController::class, 'get']);
+    });
+
+Route::prefix("property-areas")
+    ->group(function () {
+        Route::get('', [PropertyAreaController::class, 'get']);
     });
 
 Route::prefix("property-tags")

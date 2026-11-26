@@ -10,12 +10,16 @@ class PropertyAddress extends BaseModel
     protected $table = 'property_addresses';
     protected $guarded = ['id'];
 
+    /** The area is shown with every address. */
+    protected $with = ['area'];
+
     const CREATED_AT = 'createdAt';
     const UPDATED_AT = 'updatedAt';
 
     protected $casts = [
         'propertyId' => 'integer',
         'typeId' => 'integer',
+        'areaId' => 'integer',
         'latitude' => 'decimal:6',
         'longitude' => 'decimal:6',
         self::CREATED_AT => 'datetime',
@@ -25,5 +29,10 @@ class PropertyAddress extends BaseModel
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class, 'propertyId');
+    }
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(PropertyArea::class, 'areaId');
     }
 }

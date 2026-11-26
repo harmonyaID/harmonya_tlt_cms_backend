@@ -50,7 +50,7 @@ class PropertyVariantRequest extends FormRequest
             'addresses' => 'nullable|array',
             'addresses.*.typeId' => 'required|integer',
             'addresses.*.address' => 'nullable|string',
-            'addresses.*.area' => 'nullable|string|max:255',
+            'addresses.*.areaId' => 'nullable|integer|exists:property_areas,id',
             'addresses.*.buildingName' => 'nullable|string',
             'addresses.*.latitude' => 'nullable|numeric',
             'addresses.*.longitude' => 'nullable|numeric',

@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\Admin\Property\PropertyReviewController;
 use App\Http\Controllers\Web\Admin\Property\PropertyRoomTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertySourceTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTagController;
+use App\Http\Controllers\Web\Admin\Property\PropertyAreaController;
 use App\Http\Controllers\Web\Admin\Property\PropertyTypeController;
 use App\Http\Controllers\Web\Admin\Property\PropertyVariantController;
 use App\Http\Controllers\Web\Admin\Property\PropertyVariantPhotoController;
@@ -40,6 +41,23 @@ Route::prefix("properties")
                 Route::get('{id}', [PropertyTypeController::class, 'detail']);
                 Route::put('{id}', [PropertyTypeController::class, 'update']);
                 Route::delete('{id}', [PropertyTypeController::class, 'delete']);
+            });
+
+        Route::prefix('areas')
+            ->group(function () {
+                Route::get('', [PropertyAreaController::class, 'get']);
+                Route::post('', [PropertyAreaController::class, 'create']);
+
+                Route::prefix('trash')
+                    ->group(function () {
+                        Route::get('', [PropertyAreaController::class, 'trash']);
+                        Route::post('{id}/restore', [PropertyAreaController::class, 'restore']);
+                        Route::delete('{id}', [PropertyAreaController::class, 'forceDelete']);
+                    });
+
+                Route::get('{id}', [PropertyAreaController::class, 'detail']);
+                Route::put('{id}', [PropertyAreaController::class, 'update']);
+                Route::delete('{id}', [PropertyAreaController::class, 'delete']);
             });
 
         Route::prefix('room-types')

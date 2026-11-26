@@ -10,12 +10,16 @@ class PropertyVariantAddress extends BaseModel
     protected $table = 'property_variant_addresses';
     protected $guarded = ['id'];
 
+    /** The area is shown with every address. */
+    protected $with = ['area'];
+
     const CREATED_AT = 'createdAt';
     const UPDATED_AT = 'updatedAt';
 
     protected $casts = [
         'propertyVariantId' => 'integer',
         'typeId' => 'integer',
+        'areaId' => 'integer',
         'latitude' => 'decimal:6',
         'longitude' => 'decimal:6',
         self::CREATED_AT => 'datetime',
@@ -25,5 +29,10 @@ class PropertyVariantAddress extends BaseModel
     public function propertyVariant(): BelongsTo
     {
         return $this->belongsTo(PropertyVariant::class, 'propertyVariantId');
+    }
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(PropertyArea::class, 'areaId');
     }
 }

@@ -393,8 +393,8 @@ class GuestyPropertyImporter
             ],
             [
                 'address' => $address['full'] ?? null,
-                // e.g. "Jungut Batu, Nusa Lembongan, ..." -> "Jungutbatu"
-                'area' => $this->area($address),
+                // e.g. "Jungut Batu, Nusa Lembongan, ..." -> the area "Jungutbatu"
+                'areaId' => $this->areaId($address),
                 'buildingName' => $address['apt'] ?? null,
                 'latitude' => $address['lat'] ?? null,
                 'longitude' => $address['lng'] ?? null,
@@ -403,9 +403,9 @@ class GuestyPropertyImporter
         );
     }
 
-    private function area(array $address): ?string
+    private function areaId(array $address): ?int
     {
-        return app(PropertyAreaResolver::class)->resolve(
+        return app(PropertyAreaResolver::class)->resolveId(
             $address['street'] ?? null,
             $address['neighborhood'] ?? null,
             $address['full'] ?? null

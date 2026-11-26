@@ -263,6 +263,13 @@ class AccessPermissionName
     const STAFF_PROPERTY_TYPE_UPDATE = AccessGroup::STAFF . '.property-type.update';
     const STAFF_PROPERTY_TYPE_DELETE = AccessGroup::STAFF . '.property-type.delete';
 
+    // Property Area
+    const STAFF_PROPERTY_AREA = AccessGroup::STAFF . '.property-area.*';
+    const STAFF_PROPERTY_AREA_VIEW = AccessGroup::STAFF . '.property-area.view';
+    const STAFF_PROPERTY_AREA_CREATE = AccessGroup::STAFF . '.property-area.create';
+    const STAFF_PROPERTY_AREA_UPDATE = AccessGroup::STAFF . '.property-area.update';
+    const STAFF_PROPERTY_AREA_DELETE = AccessGroup::STAFF . '.property-area.delete';
+
     // Property Source Type
     const STAFF_PROPERTY_SOURCE_TYPE = AccessGroup::STAFF . '.property-source-type.*';
     const STAFF_PROPERTY_SOURCE_TYPE_VIEW = AccessGroup::STAFF . '.property-source-type.view';
@@ -573,6 +580,12 @@ class AccessPermissionName
         self::STAFF_PROPERTY_TYPE_CREATE,
         self::STAFF_PROPERTY_TYPE_UPDATE,
         self::STAFF_PROPERTY_TYPE_DELETE,
+
+        self::STAFF_PROPERTY_AREA,
+        self::STAFF_PROPERTY_AREA_VIEW,
+        self::STAFF_PROPERTY_AREA_CREATE,
+        self::STAFF_PROPERTY_AREA_UPDATE,
+        self::STAFF_PROPERTY_AREA_DELETE,
 
         self::STAFF_PROPERTY_SOURCE_TYPE,
         self::STAFF_PROPERTY_SOURCE_TYPE_VIEW,

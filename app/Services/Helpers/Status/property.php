@@ -28,6 +28,34 @@ if (!function_exists("errPropertyTypeDelete")) {
     }
 }
 
+if (!function_exists("errPropertyAreaGet")) {
+    function errPropertyAreaGet($internalMsg = "")
+    {
+        error(404, "Property area not found", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyAreaSave")) {
+    function errPropertyAreaSave($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to save property area", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyAreaUpdate")) {
+    function errPropertyAreaUpdate($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to update property area", $internalMsg);
+    }
+}
+
+if (!function_exists("errPropertyAreaDelete")) {
+    function errPropertyAreaDelete($internalMsg = "", $status = 500)
+    {
+        error($status, "Unable to delete property area", $internalMsg);
+    }
+}
+
 if (!function_exists("errPropertySourceTypeGet")) {
     function errPropertySourceTypeGet($internalMsg = "")
     {
