@@ -25,6 +25,7 @@ class PropertyVariantAlgo
         'addresses',
         'guestInfo',
         'rooms',
+        'deleteRoomIds',
         'availability',
         'pricing',
         'descriptions',
@@ -241,7 +242,13 @@ class PropertyVariantAlgo
             );
         }
 
-        // "rooms" sent empty (multipart/form-data cannot send an empty array) removes every room.
+        // Rooms removed one by one (form-data cannot send an empty "rooms" array);
+        // only rooms of this property are deleted.
+        if ($request->filled('deleteRoomIds')) {
+            $this->property->rooms()->reorder()->whereIn('id', (array) $request->deleteRoomIds)->delete();
+        }
+
+        // "rooms" replaces every room; sent empty it removes them all.
         if ($request->has('rooms')) {
             $this->property->rooms()->delete();
 

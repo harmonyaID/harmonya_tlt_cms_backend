@@ -14,6 +14,18 @@ class PropertyVariantRequest extends FormRequest
         return true;
     }
 
+    /** form-data sends "deleteRoomIds" as "1,2" or as a single value */
+    protected function prepareForValidation(): void
+    {
+        $ids = $this->input('deleteRoomIds');
+
+        if ($this->has('deleteRoomIds') && !is_array($ids)) {
+            $this->merge([
+                'deleteRoomIds' => array_values(array_filter(array_map('trim', explode(',', (string) $ids)), fn ($id) => $id !== '')),
+            ]);
+        }
+    }
+
     public function rules()
     {
         $propertyVariantId = $this->route('id');
@@ -60,6 +72,8 @@ class PropertyVariantRequest extends FormRequest
             'rooms.*.bedTypeId' => 'nullable|integer|exists:property_bed_types,id',
             'rooms.*.bedCount' => 'nullable|integer|min:0',
             'rooms.*.order' => 'nullable|integer',
+            'deleteRoomIds' => 'nullable|array',
+            'deleteRoomIds.*' => 'integer',
 
             'availability' => 'nullable|array',
             'availability.defaultAvailabilityId' => 'nullable|integer',
