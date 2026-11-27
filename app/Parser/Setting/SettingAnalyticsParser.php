@@ -16,7 +16,8 @@ class SettingAnalyticsParser extends BaseParser
             'id' => $data->id,
             'name' => $data->name,
             'key' => $data->key,
-            'value' => $data->value,
+            'head' => $data->head,
+            'body' => $data->body,
             'createdAt' => optional($data->createdAt)->format('d/m/Y H:i'),
         ];
     }
@@ -31,7 +32,8 @@ class SettingAnalyticsParser extends BaseParser
             'id' => $data->id,
             'name' => $data->name,
             'key' => $data->key,
-            'value' => $data->value,
+            'head' => $data->head,
+            'body' => $data->body,
         ];
     }
 }

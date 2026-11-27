@@ -33,7 +33,8 @@ class SettingAnalyticsAlgo
                 $this->analytics = SettingAnalytic::create([
                     'name' => $request->name,
                     'key' => $request->key,
-                    'value' => $request->value,
+                    'head' => $request->head,
+                    'body' => $request->body,
                 ] + created_by());
 
                 if (!$this->analytics) {
@@ -69,7 +70,8 @@ class SettingAnalyticsAlgo
                 $this->analytics->update([
                     'name' => $request->name,
                     'key' => $request->key,
-                    'value' => $request->value,
+                    'head' => $request->head,
+                    'body' => $request->body,
                 ]);
 
                 activity()->setCausedBy()

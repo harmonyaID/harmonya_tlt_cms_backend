@@ -16,7 +16,8 @@ class SettingAnalyticsRequest extends FormRequest
         return [
             'name' => 'required|string|max:250',
             'key' => 'required|string|max:250',
-            'value' => 'required|string',
+            'head' => 'required|string',
+            'body' => 'nullable|string',
         ];
     }
 }
