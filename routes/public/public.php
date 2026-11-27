@@ -23,3 +23,4 @@ require($base . "team.php");
 require($base . "tlt-testimonial.php");
 require($base . "visitor.php");
 require($base . "guesty.php");
+require($base . "sitemap.php");

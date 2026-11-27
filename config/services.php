@@ -14,6 +14,13 @@ return [
     |
     */
 
+    'sitemap' => [
+        // jika diisi, FE wajib mengirim header X-Sitemap-Token yang sama saat request generate
+        'token' => env('SITEMAP_TOKEN'),
+        // jeda (detik) sebelum scan otomatis jalan, memberi waktu cache FE ter-revalidate
+        'auto_delay' => (int)env('SITEMAP_AUTO_DELAY', 60),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
