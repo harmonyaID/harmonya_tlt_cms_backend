@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class MenuAlgo
 {
+    /** @var string[] */
+    protected array $existingImages = [];
+
     public function __construct(protected Menu|int|null $menu = null)
     {
         if (is_int($this->menu)) {
@@ -62,6 +65,12 @@ class MenuAlgo
                 ]);
 
                 if ($request->has('items') && is_array($request->items)) {
+                    // simpan nama file gambar lama agar bisa dipertahankan bila URL-nya dikirim balik
+                    $this->existingImages = MenuItem::where('menuId', $this->menu->id)
+                        ->whereNotNull('featuredImage')
+                        ->pluck('featuredImage')
+                        ->all();
+
                     // hapus semua item lama lalu sync ulang
                     MenuItem::where('menuId', $this->menu->id)->delete();
                     $this->syncItems($request->items, 0, $request, 'items');
@@ -121,6 +130,13 @@ class MenuAlgo
             if ($imageFile && $imageFile->isValid()) {
                 $menuItem->featuredImage = $this->uploadImage($imageFile, $menuItem);
                 $menuItem->save();
+            } elseif (!empty($item['featuredImage']) && is_string($item['featuredImage'])) {
+                // URL gambar lama dikirim balik: pertahankan jika memang milik menu ini
+                $filename = basename(parse_url($item['featuredImage'], PHP_URL_PATH) ?: '');
+                if ($filename && in_array($filename, $this->existingImages, true)) {
+                    $menuItem->featuredImage = $filename;
+                    $menuItem->save();
+                }
             }
 
             // rekursif untuk children

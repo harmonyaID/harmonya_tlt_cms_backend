@@ -23,7 +23,7 @@ class MenuRequest extends FormRequest
             'items.*.menuParent' => 'nullable|integer',
             'items.*.typeId' => 'nullable|integer|in:1,2',
             'items.*.description' => 'nullable|string',
-            'items.*.featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'items.*.featuredImage' => $this->featuredImageRules(),
 
             'items.*.children' => 'nullable|array',
             'items.*.children.*.menuLabel' => 'required_with:items.*.children|string',
@@ -31,7 +31,34 @@ class MenuRequest extends FormRequest
             'items.*.children.*.menuOrder' => 'nullable|integer',
             'items.*.children.*.typeId' => 'nullable|integer|in:1,2',
             'items.*.children.*.description' => 'nullable|string',
-            'items.*.children.*.featuredImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'items.*.children.*.featuredImage' => $this->featuredImageRules(),
+        ];
+    }
+
+    /**
+     * featuredImage boleh berupa file baru (upload) atau string URL gambar lama
+     * (hasil GET) yang dikirim balik agar gambar tetap dipertahankan.
+     */
+    private function featuredImageRules(): array
+    {
+        return [
+            'nullable',
+            function ($attribute, $value, $fail) {
+                if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    $validator = validator(
+                        ['file' => $value],
+                        ['file' => 'image|mimes:jpg,jpeg,png,webp|max:2048']
+                    );
+                    if ($validator->fails()) {
+                        $fail($validator->errors()->first('file'));
+                    }
+                    return;
+                }
+
+                if (!is_string($value)) {
+                    $fail('The ' . $attribute . ' must be an image file or an image URL.');
+                }
+            },
         ];
     }
 }
