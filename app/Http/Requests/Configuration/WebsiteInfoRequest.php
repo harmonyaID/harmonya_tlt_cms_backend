@@ -62,6 +62,7 @@ class WebsiteInfoRequest extends FormRequest
 
         return [
                 'title' => 'required|string',
+                'websiteUrl' => 'nullable|url',
                 'emails' => 'array|nullable',
                 'phones' => 'array|nullable',
                 'fax' => 'nullable',
